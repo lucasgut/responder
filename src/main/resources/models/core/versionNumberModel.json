@@ -1,0 +1,25 @@
+{
+  "rimVersion": "2.0",
+  "domainId": "core",
+  "packageId": "core",
+  "models": {
+    "VersionNumberModel": {
+      "type": "object",
+      "description": "Version information",
+      "properties": {
+        "versionNumber": {
+          "type": "number",
+          "description": "Version number of this API-D deployment"
+        },
+        "buildDate": {
+          "type": "date",
+          "description": "The build date of this artefact"
+        },
+        "blameThisPerson": {
+          "type": "string",
+          "description": "Who built this?"
+        }
+      }
+    }
+  }
+}

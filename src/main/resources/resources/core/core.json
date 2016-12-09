@@ -1,0 +1,29 @@
+{
+  "rimVersion": "2.0",
+  "domainId": "core",
+  "packageId": "core",
+  "resources": {
+    "appVersion": {
+      "scope": "public",
+      "resourceType": "resource",
+      "cleanName": "Application version number",
+      "description": "This static resource returns the version number of the deployed API-D instance",
+      "path": "version",
+      "version": "0.0.1",
+      "tags": [
+        "Core",
+        "Version"
+      ],
+      "directive": {
+        "GET": {
+          "workflow": "VersionNumberWorkflow",
+          "responses": {
+            "200": {
+              "collection": { "item": "VersionNumberModel" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

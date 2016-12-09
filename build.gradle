@@ -1,0 +1,43 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'jacoco'
+apply from: 'gradle/cargo.gradle'
+
+repositories {
+    maven {
+    	url = 'http://maven.temenosgroup.com/content/groups/all/'
+    }
+}
+
+eclipse {
+	wtp {
+		facet = []
+		facet {
+			facet name: 'java', version: '1.8'
+			facet name: 'jst.web', version: '3.0'
+			facet name: 'wst.jsdt.web', version: '1.0'
+		}
+	}
+}
+
+dependencies {
+    //compilation dependencies
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-simple:1.7.21'
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.24.1'
+    compile 'org.codehaus.groovy:groovy-all:2.4.6'
+    compile 'com.google.inject:guice:4.1.0'
+    
+    //test compilation dependencies
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'cglib:cglib-nodep:2.2.2'
+    testCompile 'org.objenesis:objenesis:2.4'
+    
+    //compilation dependencies available at deployment time
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    providedCompile 'javax.ws.rs:javax.ws.rs-api:2.0'
+}
