@@ -11,7 +11,7 @@ class JsonProducerTest extends Specification {
     @Unroll
     def "Serialise #data as #output"(data, output) {
         when:
-            def result = JsonProducer.serialise(data)
+            def result = new JsonProducer().serialise(data)
         then:
             result == output
         where:
@@ -22,7 +22,7 @@ class JsonProducerTest extends Specification {
     @Unroll
     def "Deserialise #data as #output"(data, output) {
         when:
-            def result = JsonProducer.deserialise(data)
+            def result = new JsonProducer().deserialise(data)
         then:
             result == output
         where:

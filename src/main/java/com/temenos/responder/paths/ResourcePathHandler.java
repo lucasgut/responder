@@ -1,6 +1,7 @@
 package com.temenos.responder.paths;
 
 import com.temenos.responder.entity.configuration.Resource;
+import com.temenos.responder.exception.ResourceNotFoundException;
 
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
@@ -11,35 +12,35 @@ import java.util.Map;
  * Created by Douglas Groves on 09/12/2016.
  */
 public class ResourcePathHandler implements PathHandler {
-    @Override
-    public Resource resolvePathSpecification(String path) {
-        return null;
-    }
-
     private final List<Resource> resources;
+    private static final String NOT_FOUND_MSG = "No resource could be resolved for path: %s";
 
     public ResourcePathHandler(List<Resource> resources){
         this.resources = resources;
     }
 
-    public Resource resolvePathSpecification(String path, int index) {
+    @Override
+    public Resource resolvePathSpecification(String path) throws ResourceNotFoundException {
         for(Resource r : resources){
             if(r.equals(path) || pathMatchesSpec(path, r.getPathSpec())){
                 return r;
             }
         }
-        return null;
+        throw new ResourceNotFoundException(String.format(NOT_FOUND_MSG, path));
     }
 
     private boolean pathMatchesSpec(String path, String spec){
-        String[] pathSegments = path.split("/");
-        String[] specSegments = path.split("/");
+        String[] pathSegments = path.split("/"), specSegments = spec.split("/");
         if(pathSegments.length != specSegments.length){
             return false;
         }
-        for(String segment : pathSegments){
-
+        for(int i = 0; i < pathSegments.length; i++){
+            if(specSegments[i].matches("\\{.+?\\}") || pathSegments[i].equals(specSegments[i])){
+                continue;
+            }else{
+                return false;
+            }
         }
-        return false;
+        return true;
     }
 }

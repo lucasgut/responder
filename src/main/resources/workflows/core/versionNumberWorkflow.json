@@ -1,0 +1,20 @@
+{
+  "rimFormat": "2.0",
+  "domainId": "core",
+  "packageId": "core",
+  "workflows": {
+    "VersionNumberWorkflow": {
+      "workflowType": "workflow",
+      "output": {
+        "finalResult": { "item": "core.core.VersionNumberModel" }
+      },
+      "sequence": [
+        {
+          "command": "VersionInformation",
+          "from": ["versionInfo.json"],
+          "into": "finalResult"
+        }
+      ]
+    }
+  }
+}

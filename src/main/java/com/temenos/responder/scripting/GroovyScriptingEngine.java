@@ -23,12 +23,12 @@ public class GroovyScriptingEngine implements ScriptingEngine {
         this.loader = new ClasspathScriptLoader();
     }
 
-    @Inject
-    public GroovyScriptingEngine(@GroovyScript ScriptEngine engine) {
+    public GroovyScriptingEngine(ScriptEngine engine) {
         this.engine = engine;
         this.loader = new ClasspathScriptLoader();
     }
 
+    @Inject
     public GroovyScriptingEngine(@GroovyScript ScriptEngine engine, ScriptLoader loader) {
         this.engine = engine;
         this.loader = loader;

@@ -32,7 +32,7 @@ public class RequestHandler {
 
     //inject application properties
     @Context
-    Configuration configuration;
+    private Configuration configuration;
 
     @GET
     public Response get(@PathParam("path") String path) {

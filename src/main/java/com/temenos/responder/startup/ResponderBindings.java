@@ -21,5 +21,6 @@ public class ResponderBindings extends AbstractModule {
     @Override
     protected void configure() {
         bind(ScriptEngine.class).annotatedWith(GroovyScript.class).toInstance(engine);
+        bind(ScriptLoader.class).to(ClasspathScriptLoader.class);
     }
 }
