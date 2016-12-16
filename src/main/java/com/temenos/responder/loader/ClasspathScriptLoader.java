@@ -14,6 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ClasspathScriptLoader implements ScriptLoader {
 
+    private final String root;
+
+    public ClasspathScriptLoader(String root){
+        this.root = root;
+    }
+
     @Override
     public String load(String name) throws IOException {
         URL resource = getClass().getClassLoader().getResource(name);
@@ -25,7 +31,7 @@ public class ClasspathScriptLoader implements ScriptLoader {
     }
 
     @Override
-    public Map<String, String> loadAll(String root) throws IOException {
+    public Map<String, String> loadAll() throws IOException {
         Map<String, String> filesToContents = new HashMap<>();
         URL classpathResource = getClass().getClassLoader().getResource(root);
         if(classpathResource != null) {
@@ -56,8 +62,8 @@ public class ClasspathScriptLoader implements ScriptLoader {
         BufferedReader reader = new BufferedReader(new FileReader(name));
         String line;
         while((line = reader.readLine()) != null) {
-            sb.append(line);
+            sb.append(line).append("\n");
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 }

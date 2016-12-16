@@ -1,11 +1,15 @@
 package com.temenos.responder.exception;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 /**
  * Created by Douglas Groves on 12/12/2016.
  */
-public class ResourceNotFoundException extends Exception {
+public class ResourceNotFoundException extends WebApplicationException {
     private String message;
     private Throwable cause;
+    private Response response;
 
     public ResourceNotFoundException() {
     }
@@ -20,10 +24,21 @@ public class ResourceNotFoundException extends Exception {
         this.cause = cause;
     }
 
+    public ResourceNotFoundException(Response response) {
+        super(response);
+        this.response = response;
+    }
+
     public ResourceNotFoundException(String message, Throwable cause) {
         super(message, cause);
         this.message = message;
         this.cause = cause;
+    }
+
+    public ResourceNotFoundException(String message, Response response) {
+        super(message, response);
+        this.message = message;
+        this.response = response;
     }
 
     @Override
@@ -34,5 +49,10 @@ public class ResourceNotFoundException extends Exception {
     @Override
     public Throwable getCause() {
         return cause;
+    }
+
+    @Override
+    public Response getResponse() {
+        return response;
     }
 }

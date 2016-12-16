@@ -1,7 +1,6 @@
 package com.temenos.responder.scripting;
 
 import com.google.inject.Inject;
-import com.temenos.responder.annotations.GroovyScript;
 import com.temenos.responder.exception.ScriptExecutionException;
 import com.temenos.responder.loader.ClasspathScriptLoader;
 import com.temenos.responder.loader.ScriptLoader;
@@ -18,18 +17,8 @@ public class GroovyScriptingEngine implements ScriptingEngine {
     private final ScriptEngine engine;
     private final ScriptLoader loader;
 
-    public GroovyScriptingEngine() {
-        this.engine = new ScriptEngineManager().getEngineByName("Groovy");
-        this.loader = new ClasspathScriptLoader();
-    }
-
-    public GroovyScriptingEngine(ScriptEngine engine) {
-        this.engine = engine;
-        this.loader = new ClasspathScriptLoader();
-    }
-
     @Inject
-    public GroovyScriptingEngine(@GroovyScript ScriptEngine engine, ScriptLoader loader) {
+    public GroovyScriptingEngine(ScriptEngine engine, ScriptLoader loader) {
         this.engine = engine;
         this.loader = loader;
     }

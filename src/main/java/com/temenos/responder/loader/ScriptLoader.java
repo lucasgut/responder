@@ -9,5 +9,5 @@ import java.util.Map;
  */
 public interface ScriptLoader {
     String load(String name) throws IOException;
-    Map<String, String> loadAll(String root) throws IOException;
+    Map<String, String> loadAll() throws IOException;
 }

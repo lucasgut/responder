@@ -2,7 +2,7 @@
   "rimVersion": "2.0",
   "domainId": "core",
   "packageId": "core",
-  "resources": {
+  "resources": [{
     "appVersion": {
       "scope": "public",
       "resourceType": "resource",
@@ -25,5 +25,5 @@
         }
       }
     }
-  }
+  }]
 }

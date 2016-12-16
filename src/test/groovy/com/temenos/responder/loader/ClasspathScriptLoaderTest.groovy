@@ -9,7 +9,7 @@ import spock.lang.Unroll
 class ClasspathScriptLoaderTest extends Specification {
     def "Loader.loadScript() reads a single file from the classpath and returns a string"(scriptName, expectedResult) {
         setup:
-            def loader = new ClasspathScriptLoader()
+            def loader = new ClasspathScriptLoader('resources')
         when:
             def result = loader.load(scriptName)
         then:
@@ -22,7 +22,7 @@ class ClasspathScriptLoaderTest extends Specification {
     @Unroll
     def "Loader.loadScript() throws #exception if #condition"(scriptName, exception, condition) {
         setup:
-            def loader = new ClasspathScriptLoader()
+            def loader = new ClasspathScriptLoader('resources')
         when:
             loader.load(scriptName)
         then:
@@ -37,9 +37,9 @@ class ClasspathScriptLoaderTest extends Specification {
     def "Loader.loadAllScripts() reads #size script files from directory #directory \
         and returns a list with #size strings totaling #contentSize characters"(size, directory, contentSize) {
         setup:
-            def loader = new ClasspathScriptLoader()
+            def loader = new ClasspathScriptLoader(directory)
         when:
-            def result = loader.loadAll(directory)
+            def result = loader.loadAll()
         then:
             result.size() == size
             getContentSize(result) == contentSize
@@ -54,9 +54,9 @@ class ClasspathScriptLoaderTest extends Specification {
     @Unroll
     def "Loader.loadAllScripts() throws #exception if #condition"(scriptName, exception, condition, message) {
         setup:
-            def loader = new ClasspathScriptLoader()
+            def loader = new ClasspathScriptLoader(scriptName)
         when:
-            loader.loadAll(scriptName)
+            loader.loadAll()
         then:
             def exceptionThrown = thrown(exception)
             exceptionThrown.message == message
