@@ -6,16 +6,19 @@ import javax.ws.rs.core.*;
 import com.temenos.responder.context.DefaultExecutionContext;
 import com.temenos.responder.context.ExecutionContext;
 import com.temenos.responder.configuration.Resource;
+import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.paths.PathHandler;
+import com.temenos.responder.producer.EntityProducer;
 import com.temenos.responder.producer.Producer;
 import com.temenos.responder.startup.ApplicationContext;
+import com.temenos.responder.validator.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/{path: .*}")
-@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+@Consumes({MediaType.APPLICATION_JSON})
+@Produces({MediaType.APPLICATION_JSON})
 public class RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
@@ -58,15 +61,15 @@ public class RequestHandler {
         //execute the resource's workflow
         resolvedResource.getFlowSpec().execute(ctx);
 
-        //TODO: Add self link?
-
-
+        //validate the entity against the resource's model definition
+        if(!ApplicationContext.getInstance().getInjector(Validator.class)
+                .isValid((Entity)ctx.getAttribute("finalResult"), resolvedResource.getModelSpec().get(Response.Status.OK.getStatusCode()))){
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        }
 
         //construct a response
         return Response.ok()
-                .entity(ApplicationContext.getInstance()
-                        .getInjector(Producer.class)
-                        .serialise(ctx.getAttribute("finalResult")))
+                .entity(ctx.getAttribute("finalResult"))
                 .build();
     }
 }

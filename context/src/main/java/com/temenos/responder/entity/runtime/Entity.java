@@ -13,22 +13,23 @@ import java.util.regex.Pattern;
  */
 public class Entity {
     private final Map<String, Object> properties;
+    private final List<String> entityNames;
+    private final Map<String, Type> entityNamesToTypes;
     private static final String PROPERTY_NOT_FOUND_MSG = "Property %s doesn't exist";
     private static final String TYPE_ERROR_MSG = "Expected %s but found %s";
     private static final String ARRAY_BOUNDS_EXCEEDED = "Tried to access element %d in a %d element array";
 
     public Entity(){
-        Map<String, Object> initialiserMap = new HashMap<>();
-        initialiserMap.put("_links", new ArrayList<>());
-        initialiserMap.put("_embedded", new ArrayList<>());
-        properties = initialiserMap;
+        properties = new HashMap<>();
+        this.entityNames = new ArrayList<>();
+        this.entityNamesToTypes = new HashMap<>();
     }
 
     public Entity(Map<String, Object> properties){
         this.properties = new HashMap<>();
-        this.properties.put("_links", new ArrayList<Object>());
-        this.properties.put("_embedded", new ArrayList<Object>());
         this.properties.putAll(properties);
+        this.entityNames = getEntityNames();
+        this.entityNamesToTypes = new HashMap<>();
     }
 
     public Object get(String key) throws EntityException {
@@ -81,11 +82,41 @@ public class Entity {
         return matches;
     }
 
-    public List<String> getEntityNames(){
-        return getEntityNames(properties);
+    public Map<String, Object> getProperties(){
+        return new HashMap<>(properties);
     }
 
-    private List<String> getEntityNames(Object properties){
+    public List<String> getEntityNames(){
+        List<String> entityNames = new ArrayList<String>();
+        getEntityNames(properties, entityNames, "");
+        return entityNames;
+    }
+
+    private void getEntityNames(Object properties, List<String> names, String baseName){
+        if(properties instanceof Map){
+            Map<?, ?> myProperties = (Map<?, ?>)properties;
+            for(Map.Entry<?, ?> entry : myProperties.entrySet()){
+                if(entry.getValue() instanceof List || entry.getValue() instanceof Map){
+                    names.add((String)entry.getKey());
+                    getEntityNames(entry.getValue(), names, baseName.isEmpty() ? (String)entry.getKey() : "." + baseName + entry.getKey());
+                }else{
+                    names.add((String)entry.getKey());
+                }
+            }
+        }else{
+            names.add((String)properties);
+        }
+    }
+
+    private List<String> getEntityNames(List<String> contents, Object properties){
+        return null;
+    }
+
+    public Map<String, Class<?>> getEntityNamesAndTypes(){
+        return getEntityNamesAndTypes(properties);
+    }
+
+    private Map<String, Class<?>> getEntityNamesAndTypes(Object properties){
         return null;
     }
 

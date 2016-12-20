@@ -3,7 +3,7 @@ package com.temenos.responder.producer
 /**
  * Created by Douglas Groves on 09/12/2016.
  */
-interface Producer {
-    def deserialise(String json);
-    String serialise(model);
+interface Producer<T,E> {
+    T deserialise(E input);
+    E serialise(T input);
 }

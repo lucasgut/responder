@@ -52,4 +52,19 @@ class EntityTest extends Specification {
             'Greeting.Subject.Missing' | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]] | TypeMismatchException     | 'Expected a map but found an array'              | 'an invalid type specifier is given'
             'Greeting.Subject[4]'      | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]] | IndexOutOfBoundsException | 'Tried to access element 5 in a 4 element array' | 'array bounds are exceeded'
     }
+
+    @Unroll
+    def "Entity.#getterMethod returns #entityNames from map #map"(getterMethod, entityNames, map) {
+        setup:
+            def entity = new Entity(map)
+        when:
+            def result = entity."${getterMethod}"()
+        then:
+            result == entityNames
+        where:
+            getterMethod             | entityNames                                       | map
+            "getEntityNames"         | ['Greeting', 'Subject']                           | ['Greeting': 'Hello', 'Subject': 'World']
+            "getEntityNames"         | ['Greeting', 'Greeting.Subject']                  | ['Greeting': ['Subject': 'World']]
+            "getEntityNamesAndTypes" | ['Greeting': Type.STRING, 'Subject': Type.STRING] | ['Greeting': 'Hello', 'Subject': 'World']
+    }
 }
