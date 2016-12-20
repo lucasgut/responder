@@ -24,8 +24,9 @@ public class ApplicationContext extends AbstractModule implements Context {
     private final ScriptEngine G_SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("groovy");
     private final ScriptLoader CP_SCRIPT_LOADER = new ClasspathScriptLoader(RESOURCE_ROOT);
     private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+    private Injector injector;
 
-    private static Injector INJECTOR_INSTANCE;
+    private static ApplicationContext INSTANCE;
     private static final String RESOURCE_ROOT = "resources";
 
     private ApplicationContext(){}
@@ -50,10 +51,17 @@ public class ApplicationContext extends AbstractModule implements Context {
         return true;
     }
 
-    public static <T> T getInjector(Class<T> clazz){
-        if(INJECTOR_INSTANCE == null){
-            INJECTOR_INSTANCE = Guice.createInjector(new ApplicationContext());
+    public <T> T getInjector(Class<T> clazz){
+        if(injector == null){
+            injector = Guice.createInjector(this);
         }
-        return clazz.cast(INJECTOR_INSTANCE.getInstance(clazz));
+        return clazz.cast(injector.getInstance(clazz));
+    }
+
+    public static ApplicationContext getInstance(){
+        if(INSTANCE == null){
+            INSTANCE = new ApplicationContext();
+        }
+        return INSTANCE;
     }
 }

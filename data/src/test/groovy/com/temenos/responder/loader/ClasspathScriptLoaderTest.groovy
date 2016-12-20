@@ -46,9 +46,9 @@ class ClasspathScriptLoaderTest extends Specification {
         where:
             size | directory             | contentSize
             1    | 'resources/1_res'     | 40
-            2    | 'resources/2_res'     | 82
-            3    | 'resources/3_res'     | 123
-            3    | 'resources/cmplx_res' | 123
+            2    | 'resources/2_res'     | 80
+            3    | 'resources/3_res'     | 121
+            3    | 'resources/cmplx_res' | 121
     }
 
     @Unroll

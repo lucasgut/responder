@@ -1,6 +1,5 @@
 {
   "rimVersion": "2.0",
-  "domainId": "core",
   "packageId": "core",
   "resources": [{
     "appVersion": {
@@ -16,10 +15,10 @@
       ],
       "directive": {
         "GET": {
-          "workflow": "VersionNumberWorkflow",
+          "workflow": "com.temenos.responder.commands.VersionInformation",
           "responses": {
             "200": {
-              "collection": { "item": "VersionNumberModel" }
+              "collection": { "item": "core.core.VersionNumberModel" }
             }
           }
         }

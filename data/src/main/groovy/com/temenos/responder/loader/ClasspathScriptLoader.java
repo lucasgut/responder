@@ -59,10 +59,11 @@ public class ClasspathScriptLoader implements ScriptLoader {
 
     private String fetchScript(String name) throws IOException {
         StringBuilder sb = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new FileReader(name));
-        String line;
-        while((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
+        try(BufferedReader reader = new BufferedReader(new FileReader(name))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
         }
         return sb.toString().trim();
     }

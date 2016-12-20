@@ -10,7 +10,7 @@
       },
       "sequence": [
         {
-          "command": "VersionInformation",
+          "command": "com.temenos.responder.commands.VersionInformation",
           "from": ["versionInfo.json"],
           "into": "finalResult"
         }

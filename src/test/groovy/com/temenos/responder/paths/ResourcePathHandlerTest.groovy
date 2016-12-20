@@ -1,6 +1,6 @@
 package com.temenos.responder.paths
 
-import com.temenos.responder.entity.configuration.Resource
+import com.temenos.responder.configuration.Resource
 import com.temenos.responder.exception.ResourceNotFoundException
 import com.temenos.responder.loader.ScriptLoader;
 import spock.lang.Specification

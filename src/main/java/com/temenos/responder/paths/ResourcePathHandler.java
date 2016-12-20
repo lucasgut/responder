@@ -1,23 +1,16 @@
 package com.temenos.responder.paths;
 
 import com.google.inject.Inject;
-import com.temenos.responder.entity.configuration.Resource;
+import com.temenos.responder.configuration.Resource;
 import com.temenos.responder.exception.ResourceNotFoundException;
-import com.temenos.responder.exception.ScriptExecutionException;
-import com.temenos.responder.loader.ClasspathScriptLoader;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.mapper.ResourceMapper;
 import com.temenos.responder.producer.Producer;
-import com.temenos.responder.scripting.GroovyScriptingEngine;
-import com.temenos.responder.scripting.ScriptingEngine;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Douglas Groves on 09/12/2016.

@@ -10,6 +10,7 @@
 // Apply the groovy plugin to add support for Groovy
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'project-report'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -24,7 +25,9 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.6'
     compile 'javax.ws.rs:javax.ws.rs-api:2.0'
 
-    // We use the awesome Spock testing and specification framework
-    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'cglib:cglib-nodep:2.2.2'
+    testCompile 'org.objenesis:objenesis:2.4'
+
 }

@@ -1,6 +1,7 @@
 package com.temenos.responder.mapper
 
-import com.temenos.responder.entity.configuration.Resource
+import com.temenos.responder.commands.Command
+import com.temenos.responder.configuration.Resource
 
 /**
  * Created by Douglas Groves on 09/12/2016.
@@ -14,7 +15,7 @@ class ResourceMapper {
                         defn.path,
                         name,
                         [:],
-                        null,
+                        this.class.classLoader.loadClass(defn.directive.GET.workflow as String)?.newInstance() as Command,
                         defn.scope
                 ))
             }

@@ -1,28 +1,39 @@
+import groovy.json.JsonBuilder
+
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'war'
 apply plugin: 'eclipse'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'jacoco'
+apply plugin: 'project-report'
 apply from: 'gradle/cargo.gradle'
 
-version = 0.1
+project.ext.minorMajorVersion = '0.1'
+version = project.ext.minorMajorVersion + (System.properties['buildNumber'] ?: '-SNAPSHOT')
 
 repositories {
     maven {
-    	url = 'http://maven.temenosgroup.com/content/groups/all/'
+        url = 'http://maven.temenosgroup.com/content/groups/all/'
     }
 }
 
 eclipse {
-	wtp {
-		facet = []
-		facet {
-			facet name: 'java', version: '1.8'
-			facet name: 'jst.web', version: '3.0'
-			facet name: 'wst.jsdt.web', version: '1.0'
-		}
-	}
+    wtp {
+        facet = []
+        facet {
+            facet name: 'java', version: '1.8'
+            facet name: 'jst.web', version: '3.0'
+            facet name: 'wst.jsdt.web', version: '1.0'
+        }
+    }
+}
+
+war {
+    from "${buildDir}/versionInfo.json", {
+        into 'WEB-INF/classes'
+    }
+    archiveName = "${project.name}.war"
 }
 
 configurations {
@@ -32,10 +43,12 @@ configurations {
 
 sourceSets {
     integrationTest {
+        resources.srcDir file('src/it/resources')
         groovy {
             srcDirs = ['src/it/groovy']
         }
-        compileClasspath += main.output + test.output + configurations.integrationTestCompile
+        compileClasspath = main.output + configurations.testCompile + configurations.integrationTestCompile
+        runtimeClasspath = output + compileClasspath
     }
 }
 
@@ -63,3 +76,23 @@ dependencies {
     providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
     providedCompile 'javax.ws.rs:javax.ws.rs-api:2.0'
 }
+
+task createVersionInfoFile() {
+    outputs.upToDateWhen { false }
+    def jsonFile = new File("${buildDir}/versionInfo.json")
+    jsonFile.write(new JsonBuilder(
+            ["versionNumber"  : version,
+             "buildDate"      : new Date().toString(),
+             "blameThisPerson": System.getProperty("builtBy") ?: 'Anonymous']
+    ).toString())
+}
+
+war.dependsOn tasks['createVersionInfoFile']
+
+task integrationTest(type: Test){
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    reports.html.destination = file("$buildDir/reports/integrationTests")
+}
+
+test.finalizedBy integrationTest
