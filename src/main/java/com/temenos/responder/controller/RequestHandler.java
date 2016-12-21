@@ -10,61 +10,67 @@ import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.paths.PathHandler;
 import com.temenos.responder.producer.EntityProducer;
-import com.temenos.responder.producer.Producer;
 import com.temenos.responder.startup.ApplicationContext;
 import com.temenos.responder.validator.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/{path: .*}")
-@Consumes({MediaType.APPLICATION_JSON})
-@Produces({MediaType.APPLICATION_JSON})
 public class RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
 
-    //inject application properties and request info
-    private @Context Configuration configuration;
-    private @Context UriInfo info;
+    @Context
+    private Configuration configuration;
+
+    @Context
+    private UriInfo info;
 
     @GET
     public Response get() {
-        return serviceRequest(info.getPath());
+        return serviceRequest(info.getPath(), "GET", null);
     }
 
     @POST
-    public Response post(Object request) {
-        return null;
+    public Response post(Entity request) {
+        return serviceRequest(info.getPath(), "POST", request);
     }
 
     @PUT
-    public Response put(Object request) {
+    public Response put(Entity request) {
         return null;
     }
 
     @DELETE
-    public Response delete(Object request) {
+    public Response delete(Entity request) {
         return null;
     }
 
-    private Response serviceRequest(String path){
+    /**
+     * TODO: Move this to a workflow executor
+     */
+    private Response serviceRequest(String path, String method, Entity requestBody) {
         //locate a resource corresponding to the request path
-        Resource resolvedResource = ApplicationContext.getInstance().getInjector(PathHandler.class).resolvePathSpecification(path);
+        Resource resolvedResource = ApplicationContext.getInstance().getInjector(PathHandler.class).resolvePathSpecification(path, method);
+        LOGGER.info("Found: {} /{}", resolvedResource.getHttpMethod(), resolvedResource.getPathSpec());
 
         //construct execution context
         ExecutionContext ctx = new DefaultExecutionContext(
-                info.getBaseUri().toString()+path,
-                ApplicationContext.getInstance().getInjector(Producer.class),
-                ApplicationContext.getInstance().getInjector(ScriptLoader.class)
+                info.getBaseUri().toString() + path,
+                ApplicationContext.getInstance().getInjector(EntityProducer.class),
+                ApplicationContext.getInstance().getInjector(ScriptLoader.class),
+                requestBody
         );
 
         //execute the resource's workflow
         resolvedResource.getFlowSpec().execute(ctx);
 
-        //validate the entity against the resource's model definition
-        if(!ApplicationContext.getInstance().getInjector(Validator.class)
-                .isValid((Entity)ctx.getAttribute("finalResult"), resolvedResource.getModelSpec().get(Response.Status.OK.getStatusCode()))){
-            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        //validate the entity against the model definition
+        if (!ApplicationContext.getInstance().getInjector(Validator.class)
+                .isValid((Entity) ctx.getAttribute("finalResult"), resolvedResource.getModelSpec().get(ctx.getResponseCode()))) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(ctx.getAttribute("finalResult"))
+                    .build();
         }
 
         //construct a response

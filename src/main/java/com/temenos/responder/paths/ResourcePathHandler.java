@@ -48,9 +48,9 @@ public class ResourcePathHandler implements PathHandler {
 
 
     @Override
-    public Resource resolvePathSpecification(String path) throws ResourceNotFoundException {
+    public Resource resolvePathSpecification(String path, String method) throws ResourceNotFoundException {
         for(Resource r : resources){
-            if(r.getPathSpec().equals(path) || pathMatchesSpec(path, r.getPathSpec())){
+            if((r.getPathSpec().equals(path) || pathMatchesSpec(path, r.getPathSpec())) && r.getHttpMethod().equals(method)){
                 return r;
             }
         }

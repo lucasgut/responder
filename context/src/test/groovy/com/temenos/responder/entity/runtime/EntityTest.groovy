@@ -25,6 +25,7 @@ class EntityTest extends Specification {
             'Greeting'                        | ['Greeting': 'Hello World!']                                                                                | 'Hello World!'
             'Greeting'                        | ['Subject': 'World', 'Greeting': 'Hello']                                                                   | 'Hello'
             'Greeting.Subject'                | ['Greeting': ['Subject': 'World']]                                                                          | 'World'
+            'Greeting.Subject'                | ['Greeting': ['Subject': ['FirstName': 'Jim', 'LastName': 'Smith']]]                                        | ['FirstName': 'Jim', 'LastName': 'Smith']
             'Greeting.Subject.LastName'       | ['Greeting': ['Subject': ['FirstName': 'Jim', 'LastName': 'Smith']]]                                        | 'Smith'
             'Greeting.Subject'                | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]]                                             | ['Village', 'Town', 'City', 'World']
             'Greeting.Subject[0]'             | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]]                                             | 'Village'
@@ -46,11 +47,8 @@ class EntityTest extends Specification {
             def expectedException = thrown(exception)
             expectedException.message == message
         where:
-            key                        | map                                                             | exception                 | message                                          | cause
-            'Greeting.Missing'         | ["Greeting": "Hello World!"]                                    | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist'       | 'a matching property doesn\'t exist'
-            'Greeting[0]'              | ["Greeting": "Hello World!"]                                    | TypeMismatchException     | 'Expected an array but found a map'              | 'an invalid type specifier is given'
-            'Greeting.Subject.Missing' | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]] | TypeMismatchException     | 'Expected a map but found an array'              | 'an invalid type specifier is given'
-            'Greeting.Subject[4]'      | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]] | IndexOutOfBoundsException | 'Tried to access element 5 in a 4 element array' | 'array bounds are exceeded'
+            key                | map                          | exception                 | message                                    | cause
+            'Greeting.Missing' | ["Greeting": "Hello World!"] | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching property doesn\'t exist'
     }
 
     @Unroll
@@ -63,8 +61,8 @@ class EntityTest extends Specification {
             result == entityNames
         where:
             getterMethod             | entityNames                                       | map
-            "getEntityNames"         | ['Greeting', 'Subject']                           | ['Greeting': 'Hello', 'Subject': 'World']
-            "getEntityNames"         | ['Greeting', 'Greeting.Subject']                  | ['Greeting': ['Subject': 'World']]
+            "getEntityNames"         | ['Greeting', 'Subject'] as Set                    | ['Greeting': 'Hello', 'Subject': 'World']
+            "getEntityNames"         | ['Greeting', 'Greeting.Subject'] as Set           | ['Greeting': ['Subject': 'World']]
             "getEntityNamesAndTypes" | ['Greeting': Type.STRING, 'Subject': Type.STRING] | ['Greeting': 'Hello', 'Subject': 'World']
     }
 }

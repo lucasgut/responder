@@ -16,30 +16,39 @@ class ResourcePathHandlerTest extends Specification {
     def setup() {
         def mockCollectionResource = Mock(Resource),
             mockItemResource = Mock(Resource),
+            mockAnotherItemResource = Mock(Resource),
             mockItemWithItemResource = Mock(Resource)
         def mockScriptLoader = Mock(ScriptLoader)
         _ * mockCollectionResource.getPathSpec() >> 'tests'
+        _ * mockCollectionResource.getHttpMethod() >> "GET"
         _ * mockItemResource.getPathSpec() >> 'tests/{id}'
+        _ * mockItemResource.getHttpMethod() >> "GET"
+        _ * mockAnotherItemResource.getPathSpec() >> 'tests/{id}'
+        _ * mockAnotherItemResource.getHttpMethod() >> "POST"
         _ * mockItemWithItemResource.getPathSpec() >> 'tests/{TestId}/history/{HistoryId}'
-        resources = [mockCollectionResource, mockItemResource, mockItemWithItemResource]
+        _ * mockItemWithItemResource.getHttpMethod() >> "GET"
+        resources = [mockCollectionResource, mockItemResource, mockAnotherItemResource, mockItemWithItemResource]
     }
 
     @Unroll
-    def "Resolve #spec if path #path is requested"(path, spec) {
+    def "Resolve #spec if path #path is requested"(path, spec, method) {
         setup:
             def pathHandler = new ResourcePathHandler(resources)
         when:
-            def result = pathHandler.resolvePathSpecification(path)
+            def result = pathHandler.resolvePathSpecification(path, method)
         then:
             result.pathSpec == spec
+            result.httpMethod == method
         where:
-            path                 | spec
-            'tests'              | 'tests'
-            'tests/'             | 'tests'
-            'tests/1'            | 'tests/{id}'
-            'tests/1/'           | 'tests/{id}'
-            'tests/1/history/2'  | 'tests/{TestId}/history/{HistoryId}'
-            'tests/1/history/2/' | 'tests/{TestId}/history/{HistoryId}'
+            path                 | spec                                 | method
+            'tests'              | 'tests'                              | 'GET'
+            'tests/'             | 'tests'                              | 'GET'
+            'tests/1'            | 'tests/{id}'                         | 'GET'
+            'tests/1/'           | 'tests/{id}'                         | 'GET'
+            'tests/1'            | 'tests/{id}'                         | 'POST'
+            'tests/1/'           | 'tests/{id}'                         | 'POST'
+            'tests/1/history/2'  | 'tests/{TestId}/history/{HistoryId}' | 'GET'
+            'tests/1/history/2/' | 'tests/{TestId}/history/{HistoryId}' | 'GET'
     }
 
     @Unroll
@@ -47,7 +56,7 @@ class ResourcePathHandlerTest extends Specification {
         setup:
             def pathHandler = new ResourcePathHandler(resources)
         when:
-            pathHandler.resolvePathSpecification(path)
+            pathHandler.resolvePathSpecification(path, "GET")
         then:
             def thrownException = thrown(exception)
             thrownException.message == message

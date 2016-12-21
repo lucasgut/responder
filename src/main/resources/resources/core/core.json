@@ -1,28 +1,54 @@
 {
   "rimVersion": "2.0",
   "packageId": "core",
-  "resources": [{
-    "appVersion": {
-      "scope": "public",
-      "resourceType": "resource",
-      "cleanName": "Application version number",
-      "description": "This static resource returns the version number of the deployed API-D instance",
-      "path": "version",
-      "version": "0.0.1",
-      "tags": [
-        "Core",
-        "Version"
-      ],
-      "directive": {
-        "GET": {
-          "workflow": "com.temenos.responder.commands.VersionInformation",
-          "responses": {
-            "200": {
-              "item": "com.temenos.responder.commands.ScaffoldVersion"
+  "resources": [
+    {
+      "appVersion": {
+        "scope": "public",
+        "resourceType": "resource",
+        "cleanName": "Application version number",
+        "description": "This static resource returns the version number of the deployed API-D instance",
+        "path": "version",
+        "version": "0.0.1",
+        "tags": [
+          "Core",
+          "Version"
+        ],
+        "directive": {
+          "GET": {
+            "workflow": "com.temenos.responder.commands.VersionInformation",
+            "responses": {
+              "200": {
+                "item": "com.temenos.responder.commands.ScaffoldVersion"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "add": {
+        "scope": "public",
+        "resource": "resource",
+        "cleanName": "Simple addition resource",
+        "description": "This static resource sums a list of operands",
+        "path": "add",
+        "version": "0.0.1",
+        "tags": [
+          "Core",
+          "Version"
+        ],
+        "directive": {
+          "POST": {
+            "workflow": "com.temenos.responder.commands.AdditionCommand",
+            "responses": {
+              "200": {
+                "item": "com.temenos.responder.commands.ScaffoldAddition"
+              }
             }
           }
         }
       }
     }
-  }]
+  ]
 }

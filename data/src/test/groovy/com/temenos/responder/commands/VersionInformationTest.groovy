@@ -1,12 +1,15 @@
 package com.temenos.responder.commands
 
 import com.temenos.responder.context.ExecutionContext
+import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.exception.ScriptExecutionException
 import com.temenos.responder.loader.ScriptLoader
 import com.temenos.responder.producer.JsonProducer
 import com.temenos.responder.producer.Producer
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import javax.ws.rs.core.Response
 
 /**
  * Created by Douglas Groves on 09/12/2016.
@@ -30,11 +33,11 @@ class VersionInformationTest extends Specification {
             1 * producer.deserialise(dataAsJson) >> pData
             _ * context.getAttribute('from') >> [versionFile]
             _ * context.getAttribute('into') >> 'finalResult'
-            1 * context.getSelf() >> 'http://localhost:8080/mock-responder-servlet/version'
-            1 * context.setAttribute('finalResult', data)
+            1 * context.setAttribute('finalResult', new Entity(data))
+            1 * context.setResponseCode('200')
         where:
-            versionFile        | dataAsJson                                                                              | data                                                                                                                                                                                                                           | pData
-            'versionInfo.json' | '{"versionNumber":0.1,"buildDate":"2016-12-09T16:00:00Z","blameThisPerson": "Jenkins"}' | ['_links': ['self': ['href': 'http://localhost:8080/mock-responder-servlet/version']], '_embedded': [:], 'core.VersionNumberModel': ['versionNumber': 0.1, "buildDate": '2016-12-09T16:00:00Z', 'blameThisPerson': 'Jenkins']] | ['versionNumber': 0.1, "buildDate": '2016-12-09T16:00:00Z', 'blameThisPerson': 'Jenkins']
+            versionFile        | dataAsJson                                                                              | data                                                                                      | pData
+            'versionInfo.json' | '{"versionNumber":0.1,"buildDate":"2016-12-09T16:00:00Z","blameThisPerson": "Jenkins"}' | ['versionNumber': 0.1, "buildDate": '2016-12-09T16:00:00Z', 'blameThisPerson': 'Jenkins'] | ['versionNumber': 0.1, "buildDate": '2016-12-09T16:00:00Z', 'blameThisPerson': 'Jenkins']
     }
 
     @Unroll
@@ -55,10 +58,9 @@ class VersionInformationTest extends Specification {
             0 * context.getProducer() >> producer
             0 * producer.deserialise(_)
             1 * context.setAttribute('exception', _)
+            1 * context.setResponseCode('500')
         where:
-            exception                | condition                                  | fromField            | intoField     | expectedLoaderInvocations
-            ScriptExecutionException | 'version information file cannot be found' | ['missing.json']     | 'finalResult' | 1
-//          ScriptExecutionException | 'no from attribute has been set'           | null                 | 'finalResult' | 0
-//          ScriptExecutionException | 'no into attribute has been set'           | ['versionInfo.json'] | null          | 0
+            exception                | condition                                  | fromField        | intoField     | expectedLoaderInvocations
+            ScriptExecutionException | 'version information file cannot be found' | ['missing.json'] | 'finalResult' | 1
     }
 }

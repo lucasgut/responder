@@ -12,13 +12,15 @@ import java.util.Map;
 class Resource {
     private final String pathSpec;
     private final String nameSpec;
-    private final Map<Integer,Class<Scaffold>> modelSpec;
+    private final String httpMethod;
+    private final Map<String,Class<Scaffold>> modelSpec;
     private final Command flowSpec;
     private final String scope;
 
-    public Resource(String pathSpec, String nameSpec, Map<Integer,Class<Scaffold>> modelSpec, Command flowSpec, String scope){
+    public Resource(String pathSpec, String nameSpec, String httpMethod, Map<String,Class<Scaffold>> modelSpec, Command flowSpec, String scope){
         this.pathSpec = pathSpec;
         this.nameSpec = nameSpec;
+        this.httpMethod = httpMethod;
         this.modelSpec = modelSpec;
         this.flowSpec = flowSpec;
         this.scope = scope;
@@ -32,7 +34,7 @@ class Resource {
         return nameSpec
     }
 
-    public Map<Integer, Class<Scaffold>> getModelSpec() {
+    public Map<String, Class<Scaffold>> getModelSpec() {
         return modelSpec
     }
 
@@ -42,5 +44,9 @@ class Resource {
 
     public String getScope() {
         return scope
+    }
+
+    public String getHttpMethod() {
+        return httpMethod
     }
 }

@@ -2,6 +2,7 @@ package com.temenos.responder.mapper
 
 import com.temenos.responder.commands.Command
 import com.temenos.responder.commands.Scaffold
+import com.temenos.responder.configuration.HttpMethods
 import com.temenos.responder.configuration.Resource
 
 import javax.ws.rs.core.Response
@@ -9,19 +10,24 @@ import javax.ws.rs.core.Response
 /**
  * Created by Douglas Groves on 09/12/2016.
  */
-//TODO: Where are the tests?
 class ResourceMapper {
+    //TODO: this method is too slow
     def map(resourceDef) {
         def resourceList = []
         resourceDef.resources.each { resource ->
             resource.each { name, defn ->
-                resourceList.add(new Resource(
-                        defn.path,
-                        name,
-                        [200:loadMeA(defn.directive.GET.responses['200'].item)] as Map<Integer, Class<Scaffold>>,
-                        loadMeA(defn.directive.GET.workflow)?.newInstance() as Command,
-                        defn.scope
-                ))
+                HttpMethods.enumConstants.each { httpMethod ->
+                    if(httpMethod.value in defn.directive){
+                        resourceList.add(new Resource(
+                                defn.path,
+                                name,
+                                httpMethod.value,
+                                getModelFromResponseCode(defn, httpMethod.value),
+                                loadMeA(defn.directive."${httpMethod.value}".workflow)?.newInstance() as Command,
+                                defn.scope
+                        ))
+                    }
+                }
             }
         }
         return resourceList
@@ -35,7 +41,19 @@ class ResourceMapper {
         return resourceList
     }
 
+    def getModelFromResponseCode(defn, httpMethod){
+        def responseCodeMap = [:]
+        for(responseCode in defn.directive."${httpMethod}".responses){
+            responseCodeMap["${responseCode.key}"] = (loadMeA(defn.directive."${httpMethod}".responses."${responseCode.key}".item) ?: loadMeA(defn.directive."${httpMethod}".responses."${responseCode.key}".collection))
+        }
+        return responseCodeMap
+    }
+
     def loadMeA(what){
-        return this.class.classLoader.loadClass(what)
+        if(!what){
+            return null
+        }else {
+            return this.class.classLoader.loadClass(what)
+        }
     }
 }

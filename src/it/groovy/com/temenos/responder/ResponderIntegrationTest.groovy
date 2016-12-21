@@ -2,9 +2,12 @@ package com.temenos.responder
 
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.startup.ResponderApplication
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import org.glassfish.jersey.test.JerseyTest
+import spock.lang.Ignore
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import javax.ws.rs.core.Response
 
@@ -14,7 +17,7 @@ import javax.ws.rs.core.Response
 class ResponderIntegrationTest extends Specification {
 
     @Delegate
-    static JerseyTest test = new JerseyTest(new ResponderApplication()) {}
+    JerseyTest test = new JerseyTest(new ResponderApplication()) {}
 
     def setup() { setUp() }
 
@@ -22,23 +25,37 @@ class ResponderIntegrationTest extends Specification {
 
     def "GET request to /version returns 200 OK and returns contents of versionInfo.json"() {
         when:
-            def result = new JsonSlurper().parseText(target('version').request().get(String.class))
+            def result = target('version').request().get()
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
-            result['core.VersionNumberModel']['versionNumber'] == 0.1
-            result['core.VersionNumberModel']['buildDate'] == '2016-12-09T16:00:00Z'
-            result['core.VersionNumberModel']['blameThisPerson'] == 'Jenkins'
-            result['_links'] != null
-            result['_embedded'] != null
+            result.status == Response.Status.OK.statusCode
+            body['versionNumber'] == 0.1
+            body['buildDate'] == '2016-12-09T16:00:00Z'
+            body['blameThisPerson'] == 'Jenkins'
     }
-
 
     def "GET request to nonexistent resource returns 404 Not Found with response body 'Not Found'"() {
         when:
             def result = target('missing').request().get()
             def json = new JsonSlurper().parseText(result.readEntity(String.class));
         then:
-            result.status == 404
+            result.status == Response.Status.NOT_FOUND.statusCode
             json.Message == 'Not Found'
             result.headers.get('Content-Type').first() as String == 'application/json'
+    }
+
+    @Unroll
+    @Ignore
+    def "POST request to /add returns 200 OK and returns the sum of #operands as #sum"(data, sum, operands) {
+        when:
+            def result = target('add').request().post(javax.ws.rs.client.Entity.json(new JsonBuilder(data).toString()))
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
+        then:
+            result.status == Response.Status.OK.statusCode
+            body['result'] == sum
+            body['sum'] == null
+        where:
+            data                 | sum | operands
+            ['operands': [1, 1]] | 2   | '1 and 1'
     }
 }

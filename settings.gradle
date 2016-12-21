@@ -18,4 +18,4 @@ include 'services:webservice'
 
 include 'data'
 include 'context'
-rootProject.name = 'mock-responder-servlet'
+rootProject.name = 'responder'

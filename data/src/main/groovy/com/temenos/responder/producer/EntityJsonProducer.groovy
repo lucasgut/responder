@@ -11,12 +11,11 @@ class EntityJsonProducer implements EntityProducer{
 
     @Override
     Entity deserialise(String json) {
-        def deserialisedProperties = new JsonSlurper().parseText(json) as Map
-        return new Entity(deserialisedProperties)
+        return new Entity(new JsonSlurper().parseText(json) as Map)
     }
 
     @Override
     String serialise(Entity model) {
-        return new JsonBuilder(model.properties).toString()
+        return new JsonBuilder(model.getProperties()).toString()
     }
 }

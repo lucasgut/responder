@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.ws.rs.core.Application;
 
 import com.temenos.responder.controller.RequestHandler;
+import com.temenos.responder.provider.JsonProvider;
 
 public class ResponderApplication extends Application {
     private Set<Object> singletons = new HashSet<Object>();
@@ -20,6 +21,7 @@ public class ResponderApplication extends Application {
     public ResponderApplication() {
         //construct RequestHandler objects per-request
         classes.add(RequestHandler.class);
+        singletons.add(new JsonProvider());
     }
 
     @Override

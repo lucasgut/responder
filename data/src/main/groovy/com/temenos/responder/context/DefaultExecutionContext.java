@@ -1,5 +1,6 @@
 package com.temenos.responder.context;
 
+import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.loader.ClasspathScriptLoader;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.producer.JsonProducer;
@@ -17,11 +18,14 @@ public class DefaultExecutionContext implements ExecutionContext {
     private final Producer producer;
     private final ScriptLoader loader;
     private final String self;
+    private final Entity requestBody;
+    private String responseCode;
 
     public DefaultExecutionContext(String self){
         this.self = self;
         this.contextAttributes = new ConcurrentHashMap<>();
         this.producer = new JsonProducer();
+        this.requestBody = null;
         this.loader = new ClasspathScriptLoader("resources");
     }
 
@@ -29,14 +33,16 @@ public class DefaultExecutionContext implements ExecutionContext {
         this.self = self;
         this.contextAttributes = new ConcurrentHashMap<>(contextAttributes);
         this.producer = new JsonProducer();
+        this.requestBody = null;
         this.loader = new ClasspathScriptLoader("resources");
     }
 
-    public DefaultExecutionContext(String self, Producer producer, ScriptLoader loader){
+    public DefaultExecutionContext(String self, Producer producer, ScriptLoader loader, Entity requestBody){
         this.self = self;
         this.contextAttributes = new ConcurrentHashMap<>();
         this.producer = producer;
         this.loader = loader;
+        this.requestBody = requestBody;
     }
 
     @Override
@@ -63,5 +69,19 @@ public class DefaultExecutionContext implements ExecutionContext {
     @Override
     public String getSelf() {
         return self;
+    }
+
+    @Override
+    public String getResponseCode() {
+        return responseCode;
+    }
+
+    @Override
+    public Entity getRequestBody() {
+        return requestBody;
+    }
+
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
     }
 }
