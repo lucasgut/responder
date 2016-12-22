@@ -79,12 +79,15 @@ dependencies {
 
 task createVersionInfoFile() {
     outputs.upToDateWhen { false }
-    def jsonFile = new File("${buildDir}/versionInfo.json")
-    jsonFile.write(new JsonBuilder(
-            ["versionNumber"  : version,
-             "buildDate"      : new Date().toString(),
-             "blameThisPerson": System.getProperty("builtBy") ?: 'Anonymous']
-    ).toString())
+    doLast {
+        def jsonFile = new File("${buildDir}/versionInfo.json")
+        jsonFile.createNewFile()
+        jsonFile.write(new JsonBuilder(
+                ["versionNumber"  : version,
+                 "buildDate"      : new Date().toString(),
+                 "blameThisPerson": System.getProperty("builtBy") ?: 'Anonymous']
+        ).toString())
+    }
 }
 
 war.dependsOn tasks['createVersionInfoFile']
