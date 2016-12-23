@@ -45,7 +45,6 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    @Ignore
     def "POST request to /add returns 200 OK and returns the sum of #operands as #sum"(data, sum, operands) {
         when:
             def result = target('add').request().post(javax.ws.rs.client.Entity.json(new JsonBuilder(data).toString()))
