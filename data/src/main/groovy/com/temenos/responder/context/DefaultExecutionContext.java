@@ -37,12 +37,16 @@ public class DefaultExecutionContext implements ExecutionContext {
         this.loader = new ClasspathScriptLoader("resources");
     }
 
-    public DefaultExecutionContext(String self, Producer producer, ScriptLoader loader, Entity requestBody){
+    public DefaultExecutionContext(String self, Producer producer, ScriptLoader loader, Parameters parameters, Entity requestBody){
         this.self = self;
         this.contextAttributes = new ConcurrentHashMap<>();
         this.producer = producer;
         this.loader = loader;
         this.requestBody = requestBody;
+
+        for(String paramKey : parameters.getParameterKeys()) {
+            setAttribute(paramKey, parameters.getValue(paramKey));
+        }
     }
 
     @Override
@@ -53,6 +57,11 @@ public class DefaultExecutionContext implements ExecutionContext {
     @Override
     public ScriptLoader getScriptLoader() {
         return loader;
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return null;
     }
 
     @Override

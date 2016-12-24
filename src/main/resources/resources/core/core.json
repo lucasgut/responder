@@ -49,6 +49,30 @@
           }
         }
       }
+    },
+    {
+      "customerInfo": {
+        "scope": "public",
+        "resourceType": "resource",
+        "cleanName": "Customer information",
+        "description": "This static resource returns information about a customer",
+        "path": "customer/{id}",
+        "version": "0.0.1",
+        "tags": [
+          "Core",
+          "Customer"
+        ],
+        "directive": {
+          "GET": {
+            "workflow": "com.temenos.responder.commands.CustomerInformation",
+            "responses": {
+              "200": {
+                "item": "com.temenos.responder.commands.ScaffoldCustomer"
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

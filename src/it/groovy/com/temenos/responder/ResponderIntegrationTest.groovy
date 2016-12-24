@@ -57,4 +57,21 @@ class ResponderIntegrationTest extends Specification {
             data                 | sum | operands
             ['operands': [1, 1]] | 2   | '1 and 1'
     }
+
+    def "GET request to /customer/#id in T24CustomerInformation mock command"(id, name, address) {
+        setup:
+            def path = 'customer/' + id
+        when:
+            def result = target(path).request().get()
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
+        then:
+            result.status == Response.Status.OK.statusCode
+            body['CustomerId'] == id
+            body['CustomerName'] == name
+            body['CustomerAddress'] == address
+        where:
+            id       | name          | address
+            '100100' | 'John Smith'  | 'No Name Street'
+            '100200' | 'Iris Law'    | '2 Lansdowne Rd'
+    }
 }

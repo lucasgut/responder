@@ -8,4 +8,5 @@ import com.temenos.responder.entity.runtime.Entity;
  */
 interface Validator {
     boolean isValid(Entity entity, Class<Scaffold> scaffold);
+    boolean isValid(Entity entity, Entity model);
 }

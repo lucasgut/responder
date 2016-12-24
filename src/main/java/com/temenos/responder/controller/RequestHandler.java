@@ -3,9 +3,12 @@ package com.temenos.responder.controller;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import com.temenos.responder.builders.EntityBuilder;
+import com.temenos.responder.commands.Scaffold;
 import com.temenos.responder.context.DefaultExecutionContext;
 import com.temenos.responder.context.ExecutionContext;
 import com.temenos.responder.configuration.Resource;
+import com.temenos.responder.context.Parameters;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.paths.PathHandler;
@@ -52,6 +55,7 @@ public class RequestHandler {
     private Response serviceRequest(String path, String method, Entity requestBody) {
         //locate a resource corresponding to the request path
         Resource resolvedResource = ApplicationContext.getInstance().getInjector(PathHandler.class).resolvePathSpecification(path, method);
+        Parameters parameters = ApplicationContext.getInstance().getInjector(PathHandler.class).resolvePathParameters(path, resolvedResource);
         LOGGER.info("Found: {} /{}", resolvedResource.getHttpMethod(), resolvedResource.getPathSpec());
 
         //construct execution context
@@ -59,6 +63,7 @@ public class RequestHandler {
                 info.getBaseUri().toString() + path,
                 ApplicationContext.getInstance().getInjector(EntityProducer.class),
                 ApplicationContext.getInstance().getInjector(ScriptLoader.class),
+                parameters,
                 requestBody
         );
 
@@ -70,7 +75,7 @@ public class RequestHandler {
                 .isValid((Entity) ctx.getAttribute("finalResult"), resolvedResource.getModelSpec().get(ctx.getResponseCode()))) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ctx.getAttribute("finalResult"))
-                    .build();
+                   .build();
         }
 
         //construct a response

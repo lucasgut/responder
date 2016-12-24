@@ -34,6 +34,8 @@ public class Entity {
         return properties.get(key);
     }
 
+    public Type getType(String key) { return fqPropertyNameAndType.get(key); }
+
     public Set<String> getEntityNames(){
         return properties.keySet();
     }

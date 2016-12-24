@@ -11,6 +11,7 @@ public interface ExecutionContext extends Context {
     String getSelf();
     Producer getProducer();
     ScriptLoader getScriptLoader();
+    Parameters getParameters();
     Entity getRequestBody();
     void setResponseCode(String code);
     String getResponseCode();

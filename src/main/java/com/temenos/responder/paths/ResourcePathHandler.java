@@ -2,6 +2,7 @@ package com.temenos.responder.paths;
 
 import com.google.inject.Inject;
 import com.temenos.responder.configuration.Resource;
+import com.temenos.responder.context.Parameters;
 import com.temenos.responder.exception.ResourceNotFoundException;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.mapper.ResourceMapper;
@@ -56,6 +57,21 @@ public class ResourcePathHandler implements PathHandler {
         }
         throw new ResourceNotFoundException(String.format(NOT_FOUND_MSG, path),
                 Response.status(Response.Status.NOT_FOUND).entity("{\"Message\":\"Not Found\", \"code\": 404}").header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build());
+    }
+
+    @Override
+    public Parameters resolvePathParameters(String path, Resource resource) {
+        Parameters parameters = new Parameters();
+        String[] pathSegments = path.split("/"), specSegments = resource.getPathSpec().split("/");
+        for(int i = 0; i < pathSegments.length; i++) {
+            if (specSegments[i].matches("\\{.+?\\}")) {
+                // remove brackets
+                String param = specSegments[i].substring(1, specSegments[i].length()-1);
+                parameters.setValue(param, pathSegments[i]);
+            }
+        }
+
+        return parameters;
     }
 
     private boolean pathMatchesSpec(String path, String spec){
