@@ -3,8 +3,6 @@ package com.temenos.responder.controller;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import com.temenos.responder.builders.EntityBuilder;
-import com.temenos.responder.commands.Scaffold;
 import com.temenos.responder.context.DefaultExecutionContext;
 import com.temenos.responder.context.ExecutionContext;
 import com.temenos.responder.configuration.Resource;
