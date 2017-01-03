@@ -64,7 +64,6 @@ class ClasspathScriptLoaderTest extends Specification {
         where:
             scriptName               | exception   | condition                      | message
             'resources/doesnt_exist' | IOException | 'the directory doesn\'t exist' | 'Directory resources/doesnt_exist does not exist.'
-            'resources/0_res'        | IOException | 'the directory is empty'       | 'Directory resources/0_res is empty.'
     }
 
     private def getContentSize(Map<String, String> content) {

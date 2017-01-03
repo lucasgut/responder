@@ -22,6 +22,7 @@ class ResourceMapper {
                                 defn.path,
                                 name,
                                 httpMethod.value,
+                                getModel(defn, httpMethod.value) as Class<Scaffold>,
                                 getModelFromResponseCode(defn, httpMethod.value),
                                 loadMeA(defn.directive."${httpMethod.value}".workflow)?.newInstance() as Command,
                                 defn.scope
@@ -39,6 +40,10 @@ class ResourceMapper {
             resourceList += map(resource)
         }
         return resourceList
+    }
+
+    def getModel(defn, httpMethod){
+        return (loadMeA(defn.directive."${httpMethod}".item) ?: loadMeA(defn.directive."${httpMethod}".collection))
     }
 
     def getModelFromResponseCode(defn, httpMethod){

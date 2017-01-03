@@ -11,6 +11,9 @@ class ModelValidator implements Validator {
 
     @Override
     boolean isValid(Entity entity, Class<Scaffold> scaffold) {
+        if(entity == null && scaffold == null){
+            return true
+        }
         def entityNames = entity.getEntityNames()
         def entityNamesAndTypes = entity.getEntityNamesAndTypes()
         def result = true

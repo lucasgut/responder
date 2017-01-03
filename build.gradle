@@ -10,7 +10,7 @@ apply plugin: 'project-report'
 apply from: 'gradle/cargo.gradle'
 
 project.ext.minorMajorVersion = '0.1'
-version = project.ext.minorMajorVersion + (System.properties['buildNumber'] ?: '-SNAPSHOT')
+version = project.ext.minorMajorVersion + (System.properties['buildNumber'] ?: '-SNAPSHOT') as String
 
 repositories {
     maven {

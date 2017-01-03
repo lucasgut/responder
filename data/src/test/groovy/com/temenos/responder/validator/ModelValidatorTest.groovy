@@ -1,5 +1,6 @@
 package com.temenos.responder.validator
 
+import com.temenos.responder.commands.Scaffold
 import com.temenos.responder.commands.ScaffoldVersion
 import com.temenos.responder.entity.runtime.Type
 import com.temenos.responder.entity.runtime.Entity
@@ -15,7 +16,7 @@ class ModelValidatorTest extends Specification {
             def validator = new ModelValidator()
             Entity entity = Mock(Entity)
             1 * entity.getEntityNames() >> ["versionNumber", "buildDate", "blameThisPerson"]
-            1 * entity.getEntityNamesAndTypes() >> ["versionNumber": Type.NUMBER, "buildDate": Type.STRING, "blameThisPerson": Type.STRING]
+            1 * entity.getEntityNamesAndTypes() >> ["versionNumber": Type.STRING, "buildDate": Type.STRING, "blameThisPerson": Type.STRING]
         when:
             def result = validator.isValid(entity, ScaffoldVersion)
         then:
@@ -35,7 +36,7 @@ class ModelValidatorTest extends Specification {
             !result
         where:
             property        | entityNames                      | entityNamesAndTypes
-            'versionNumber' | ['buildDate', 'blameThisPerson'] | ["versionNumber": Type.NUMBER, "buildDate": Type.NUMBER, "blameThisPerson": Type.STRING]
+            'versionNumber' | ['buildDate', 'blameThisPerson'] | ["versionNumber": Type.STRING, "buildDate": Type.STRING, "blameThisPerson": Type.STRING]
     }
 
     def "Validator returns false if property types are invalid"() {
@@ -43,11 +44,20 @@ class ModelValidatorTest extends Specification {
             def validator = new ModelValidator()
             Entity entity = Mock(Entity)
             1 * entity.getEntityNames() >> ["versionNumber", "buildDate", "blameThisPerson"]
-            1 * entity.getEntityNamesAndTypes() >> ["versionNumber": Type.NUMBER, "buildDate": Type.NUMBER, "blameThisPerson": Type.STRING]
+            1 * entity.getEntityNamesAndTypes() >> ["versionNumber": Type.NUMBER, "buildDate": Type.STRING, "blameThisPerson": Type.STRING]
         when:
             def result = validator.isValid(entity, ScaffoldVersion)
         then:
             !result
+    }
+
+    def "Validator returns true if both entity and scaffold are null"(){
+        given:
+            def validator = new ModelValidator()
+        when:
+            def result = validator.isValid(null as Entity, null as Class<Scaffold>)
+        then:
+            result
     }
 
 }

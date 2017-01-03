@@ -36,14 +36,15 @@
         "version": "0.0.1",
         "tags": [
           "Core",
-          "Version"
+          "Add"
         ],
         "directive": {
           "POST": {
+            "item": "com.temenos.responder.commands.ScaffoldAdditionInput",
             "workflow": "com.temenos.responder.commands.AdditionCommand",
             "responses": {
               "200": {
-                "item": "com.temenos.responder.commands.ScaffoldAddition"
+                "item": "com.temenos.responder.commands.ScaffoldAdditionOutput"
               }
             }
           }

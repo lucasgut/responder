@@ -8,7 +8,7 @@
       "description": "Version information",
       "properties": {
         "versionNumber": {
-          "type": "number",
+          "type": "string",
           "description": "Version number of this API-D deployment"
         },
         "buildDate": {

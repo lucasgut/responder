@@ -10,20 +10,23 @@ import java.util.Map;
  * Created by Douglas Groves on 09/12/2016.
  */
 class Resource {
-    private final String pathSpec;
-    private final String nameSpec;
-    private final String httpMethod;
-    private final Map<String,Class<Scaffold>> modelSpec;
-    private final Command flowSpec;
-    private final String scope;
+    private final String pathSpec
+    private final String nameSpec
+    private final String httpMethod
+    private final Class<Scaffold> inputModelSpec
+    private final Map<String,Class<Scaffold>> outputModelSpec
+    private final Command flowSpec
+    private final String scope
 
-    public Resource(String pathSpec, String nameSpec, String httpMethod, Map<String,Class<Scaffold>> modelSpec, Command flowSpec, String scope){
-        this.pathSpec = pathSpec;
-        this.nameSpec = nameSpec;
-        this.httpMethod = httpMethod;
-        this.modelSpec = modelSpec;
-        this.flowSpec = flowSpec;
-        this.scope = scope;
+    public Resource(String pathSpec, String nameSpec, String httpMethod, Class<Scaffold> inputModelSpec,
+                    Map<String,Class<Scaffold>> outputModelSpec, Command flowSpec, String scope){
+        this.pathSpec = pathSpec
+        this.nameSpec = nameSpec
+        this.httpMethod = httpMethod
+        this.inputModelSpec = inputModelSpec
+        this.outputModelSpec = outputModelSpec
+        this.flowSpec = flowSpec
+        this.scope = scope
     }
 
     public String getPathSpec() {
@@ -34,8 +37,12 @@ class Resource {
         return nameSpec
     }
 
-    public Map<String, Class<Scaffold>> getModelSpec() {
-        return modelSpec
+    public Class<Scaffold> getInputModelSpec(){
+        return inputModelSpec
+    }
+
+    public Map<String, Class<Scaffold>> getOutputModelSpec() {
+        return outputModelSpec
     }
 
     public Command getFlowSpec() {

@@ -29,7 +29,7 @@ class ResponderIntegrationTest extends Specification {
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
             result.status == Response.Status.OK.statusCode
-            body['versionNumber'] == 0.1
+            body['versionNumber'] == "0.1-SNAPSHOT"
             body['buildDate'] == '2016-12-09T16:00:00Z'
             body['blameThisPerson'] == 'Jenkins'
     }
@@ -52,12 +52,13 @@ class ResponderIntegrationTest extends Specification {
         then:
             result.status == Response.Status.OK.statusCode
             body['result'] == sum
-            body['sum'] == null
+            body['operands'] == null
         where:
             data                 | sum | operands
             ['operands': [1, 1]] | 2   | '1 and 1'
     }
 
+    @Unroll
     def "GET request to /customer/#id in T24CustomerInformation mock command"(id, name, address) {
         setup:
             def path = 'customer/' + id
@@ -70,8 +71,19 @@ class ResponderIntegrationTest extends Specification {
             body['CustomerName'] == name
             body['CustomerAddress'] == address
         where:
-            id       | name          | address
-            '100100' | 'John Smith'  | 'No Name Street'
-            '100200' | 'Iris Law'    | '2 Lansdowne Rd'
+            id       | name         | address
+            '100100' | 'John Smith' | 'No Name Street'
+            '100200' | 'Iris Law'   | '2 Lansdowne Rd'
     }
+
+    @Unroll
+    def "POST request to /add with invalid request data returns 400 Bad Request"(data) {
+        when:
+            def result = target('add').request().post(javax.ws.rs.client.Entity.json(new JsonBuilder(data).toString()))
+        then:
+            result.status == Response.Status.BAD_REQUEST.statusCode
+        where:
+            data << [['operands': "John Smith"]]
+    }
+
 }

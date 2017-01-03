@@ -26,7 +26,7 @@ class AdditionCommand implements Command {
             }
 
             Map<String, Integer> map = new HashMap<>()
-            map.put("operands", operands)
+            //map.put("operands", operands)
             map.put("result", sum)
             Entity responseBody = new Entity(map);
             executionContext.setResponseCode(Response.Status.OK.statusCode as String)
