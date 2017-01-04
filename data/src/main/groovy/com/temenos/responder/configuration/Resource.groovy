@@ -1,10 +1,8 @@
 package com.temenos.responder.configuration
 
 import com.temenos.responder.commands.Command
-import com.temenos.responder.commands.Scaffold;
-
-import javax.ws.rs.core.Response;
-import java.util.Map;
+import com.temenos.responder.flows.Flow
+import com.temenos.responder.scaffold.Scaffold
 
 /**
  * Created by Douglas Groves on 09/12/2016.
@@ -15,11 +13,11 @@ class Resource {
     private final String httpMethod
     private final Class<Scaffold> inputModelSpec
     private final Map<String,Class<Scaffold>> outputModelSpec
-    private final Command flowSpec
+    private final Flow flowSpec
     private final String scope
 
     public Resource(String pathSpec, String nameSpec, String httpMethod, Class<Scaffold> inputModelSpec,
-                    Map<String,Class<Scaffold>> outputModelSpec, Command flowSpec, String scope){
+                    Map<String,Class<Scaffold>> outputModelSpec, Flow flowSpec, String scope){
         this.pathSpec = pathSpec
         this.nameSpec = nameSpec
         this.httpMethod = httpMethod
@@ -45,7 +43,7 @@ class Resource {
         return outputModelSpec
     }
 
-    public Command getFlowSpec() {
+    public Flow getFlowSpec() {
         return flowSpec
     }
 

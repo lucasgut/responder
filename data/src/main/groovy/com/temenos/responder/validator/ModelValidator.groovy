@@ -1,6 +1,6 @@
 package com.temenos.responder.validator
 
-import com.temenos.responder.commands.Scaffold
+import com.temenos.responder.scaffold.Scaffold
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.entity.runtime.Type
 

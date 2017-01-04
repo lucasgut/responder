@@ -1,5 +1,9 @@
 package com.temenos.responder.context;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.temenos.responder.commands.Command;
+import com.temenos.responder.commands.injector.CommandInjector;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.loader.ClasspathScriptLoader;
 import com.temenos.responder.loader.ScriptLoader;
@@ -10,6 +14,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Default implementation of Execution Context class.
+ *
  * Created by Douglas Groves on 18/12/2016.
  */
 public class DefaultExecutionContext implements ExecutionContext {
@@ -19,6 +25,7 @@ public class DefaultExecutionContext implements ExecutionContext {
     private final ScriptLoader loader;
     private final String self;
     private final Entity requestBody;
+    private final Injector commandInjector;
     private String responseCode;
 
     public DefaultExecutionContext(String self){
@@ -27,6 +34,7 @@ public class DefaultExecutionContext implements ExecutionContext {
         this.producer = new JsonProducer();
         this.requestBody = null;
         this.loader = new ClasspathScriptLoader("resources");
+        this.commandInjector = Guice.createInjector(new CommandInjector());
     }
 
     public DefaultExecutionContext(String self, Map<String, Object> contextAttributes){
@@ -35,6 +43,7 @@ public class DefaultExecutionContext implements ExecutionContext {
         this.producer = new JsonProducer();
         this.requestBody = null;
         this.loader = new ClasspathScriptLoader("resources");
+        this.commandInjector = Guice.createInjector(new CommandInjector());
     }
 
     public DefaultExecutionContext(String self, Producer producer, ScriptLoader loader, Parameters parameters, Entity requestBody){
@@ -43,10 +52,10 @@ public class DefaultExecutionContext implements ExecutionContext {
         this.producer = producer;
         this.loader = loader;
         this.requestBody = requestBody;
-
         for(String paramKey : parameters.getParameterKeys()) {
             setAttribute(paramKey, parameters.getValue(paramKey));
         }
+        this.commandInjector = Guice.createInjector(new CommandInjector());
     }
 
     @Override
@@ -92,5 +101,10 @@ public class DefaultExecutionContext implements ExecutionContext {
 
     public void setResponseCode(String responseCode) {
         this.responseCode = responseCode;
+    }
+
+    @Override
+    public Command getCommand(Class<Command> clazz) {
+        return clazz.cast(commandInjector.getInstance(clazz));
     }
 }

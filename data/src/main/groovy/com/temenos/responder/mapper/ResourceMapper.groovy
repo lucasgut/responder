@@ -1,11 +1,10 @@
 package com.temenos.responder.mapper
 
 import com.temenos.responder.commands.Command
-import com.temenos.responder.commands.Scaffold
+import com.temenos.responder.flows.Flow
+import com.temenos.responder.scaffold.Scaffold
 import com.temenos.responder.configuration.HttpMethods
 import com.temenos.responder.configuration.Resource
-
-import javax.ws.rs.core.Response
 
 /**
  * Created by Douglas Groves on 09/12/2016.
@@ -24,7 +23,7 @@ class ResourceMapper {
                                 httpMethod.value,
                                 getModel(defn, httpMethod.value) as Class<Scaffold>,
                                 getModelFromResponseCode(defn, httpMethod.value),
-                                loadMeA(defn.directive."${httpMethod.value}".workflow)?.newInstance() as Command,
+                                loadMeA(defn.directive."${httpMethod.value}".workflow)?.newInstance() as Flow,
                                 defn.scope
                         ))
                     }

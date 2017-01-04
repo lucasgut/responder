@@ -1,4 +1,4 @@
-package com.temenos.responder.commands
+package com.temenos.responder.scaffold
 
 import com.temenos.responder.entity.runtime.Type
 

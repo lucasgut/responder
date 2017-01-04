@@ -34,16 +34,6 @@ class ResponderIntegrationTest extends Specification {
             body['blameThisPerson'] == 'Jenkins'
     }
 
-    def "GET request to nonexistent resource returns 404 Not Found with response body 'Not Found'"() {
-        when:
-            def result = target('missing').request().get()
-            def json = new JsonSlurper().parseText(result.readEntity(String.class));
-        then:
-            result.status == Response.Status.NOT_FOUND.statusCode
-            json.Message == 'Not Found'
-            result.headers.get('Content-Type').first() as String == 'application/json'
-    }
-
     @Unroll
     def "POST request to /add returns 200 OK and returns the sum of #operands as #sum"(data, sum, operands) {
         when:
@@ -72,18 +62,28 @@ class ResponderIntegrationTest extends Specification {
             body['CustomerAddress'] == address
         where:
             id       | name         | address
-            '100100' | 'John Smith' | 'No Name Street'
-            '100200' | 'Iris Law'   | '2 Lansdowne Rd'
+            100100 | 'John Smith' | 'No Name Street'
+            100200 | 'Iris Law'   | '2 Lansdowne Rd'
     }
 
     @Unroll
-    def "POST request to /add with invalid request data returns 400 Bad Request"(data) {
+    def "POST request to /#resource with invalid request data returns 400 Bad Request"(data, resource) {
         when:
-            def result = target('add').request().post(javax.ws.rs.client.Entity.json(new JsonBuilder(data).toString()))
+            def result = target(resource).request().post(javax.ws.rs.client.Entity.json(new JsonBuilder(data).toString()))
         then:
             result.status == Response.Status.BAD_REQUEST.statusCode
         where:
-            data << [['operands': "John Smith"]]
+            data                       | resource
+            ['operands': "John Smith"] | 'add'
     }
 
+    def "GET request to nonexistent resource returns 404 Not Found with response body 'Not Found'"() {
+        when:
+            def result = target('missing').request().get()
+            def json = new JsonSlurper().parseText(result.readEntity(String.class));
+        then:
+            result.status == Response.Status.NOT_FOUND.statusCode
+            json.Message == 'Not Found'
+            result.headers.get('Content-Type').first() as String == 'application/json'
+    }
 }

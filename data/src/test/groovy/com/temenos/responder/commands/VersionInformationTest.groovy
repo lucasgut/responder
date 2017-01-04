@@ -1,5 +1,6 @@
 package com.temenos.responder.commands
 
+import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.exception.ScriptExecutionException
@@ -20,15 +21,13 @@ class VersionInformationTest extends Specification {
     def "Version information command injects deserialised \
         contents of #versionFile into execution context"(versionFile, dataAsJson, data, pData) {
         given:
-            def command = new VersionInformation()
-            def context = Mock(ExecutionContext)
+            def context = Mock(CommandContext)
             def scriptLoader = Mock(ScriptLoader)
             def producer = Mock(Producer)
+            def command = new VersionInformation(scriptLoader, producer)
         when:
             command.execute(context)
         then:
-            1 * context.getScriptLoader() >> scriptLoader
-            1 * context.getProducer() >> producer
             1 * scriptLoader.load(versionFile) >> dataAsJson
             1 * producer.deserialise(dataAsJson) >> pData
             _ * context.getAttribute('from') >> [versionFile]
@@ -44,18 +43,16 @@ class VersionInformationTest extends Specification {
     def "Version information command adds #exception.simpleName \
         to execution context if #condition"(exception, condition, fromField, intoField, expectedLoaderInvocations) {
         given:
-            def command = new VersionInformation()
-            def context = Mock(ExecutionContext)
+            def context = Mock(CommandContext)
             def scriptLoader = Mock(ScriptLoader)
             def producer = Mock(Producer)
+            def command = new VersionInformation(scriptLoader, producer)
         when:
             command.execute(context)
         then:
-            _ * context.getAttribute('from') >> fromField
-            _ * context.getAttribute('into') >> intoField
-            _ * context.getScriptLoader() >> scriptLoader
+            1 * context.getAttribute('from') >> fromField
+            1 * context.getAttribute('into') >> intoField
             expectedLoaderInvocations * scriptLoader.load(_) >> { throw new IOException() }
-            0 * context.getProducer() >> producer
             0 * producer.deserialise(_)
             1 * context.setAttribute('exception', _)
             1 * context.setResponseCode('500')

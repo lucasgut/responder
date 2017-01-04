@@ -16,10 +16,10 @@
         ],
         "directive": {
           "GET": {
-            "workflow": "com.temenos.responder.commands.VersionInformation",
+            "workflow": "com.temenos.responder.flows.VersionInformationFlow",
             "responses": {
               "200": {
-                "item": "com.temenos.responder.commands.ScaffoldVersion"
+                "item": "com.temenos.responder.scaffold.ScaffoldVersion"
               }
             }
           }
@@ -40,11 +40,11 @@
         ],
         "directive": {
           "POST": {
-            "item": "com.temenos.responder.commands.ScaffoldAdditionInput",
-            "workflow": "com.temenos.responder.commands.AdditionCommand",
+            "item": "com.temenos.responder.scaffold.ScaffoldAdditionInput",
+            "workflow": "com.temenos.responder.flows.AdditionFlow",
             "responses": {
               "200": {
-                "item": "com.temenos.responder.commands.ScaffoldAdditionOutput"
+                "item": "com.temenos.responder.scaffold.ScaffoldAdditionOutput"
               }
             }
           }
@@ -65,10 +65,10 @@
         ],
         "directive": {
           "GET": {
-            "workflow": "com.temenos.responder.commands.CustomerInformation",
+            "workflow": "com.temenos.responder.flows.CustomerInformation",
             "responses": {
               "200": {
-                "item": "com.temenos.responder.commands.ScaffoldCustomer"
+                "item": "com.temenos.responder.scaffold.ScaffoldCustomer"
               }
             }
           }

@@ -1,5 +1,6 @@
 package com.temenos.responder.commands
 
+import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.exception.ScriptExecutionException
@@ -9,10 +10,10 @@ import javax.ws.rs.core.Response
 /**
  * Created by aburgos on 23/12/2016.
  */
-class T24CustomerInformation implements Command {
+class ExternalCustomerInformation implements Command {
 
     @Override
-    def execute(ExecutionContext executionContext) {
+    def execute(CommandContext executionContext) {
         //TODO: parameters are currently hardcoded as we are not using JSON for workflows yet
         try {
             def fromDirective = ['id']
@@ -22,11 +23,11 @@ class T24CustomerInformation implements Command {
             // mock T24 customer information
             Map<String, String> map = new HashMap<>()
             if(customerId == "100100") {
-                map.put("CUSTOMER_ID", "100100")
+                map.put("CUSTOMER_ID", 100100)
                 map.put("CUSTOMER_NAME", "John Smith")
                 map.put("CUSTOMER_ADDRESS", "No Name Street")
             } else if(customerId == "100200") {
-                map.put("CUSTOMER_ID", "100200")
+                map.put("CUSTOMER_ID", 100200)
                 map.put("CUSTOMER_NAME", "Iris Law")
                 map.put("CUSTOMER_ADDRESS", "2 Lansdowne Rd")
             } else {
