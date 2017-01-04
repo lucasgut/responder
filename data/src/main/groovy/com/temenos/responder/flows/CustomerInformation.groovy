@@ -2,6 +2,7 @@ package com.temenos.responder.flows
 
 import com.temenos.responder.commands.Command
 import com.temenos.responder.commands.ExternalCustomerInformation
+import com.temenos.responder.commands.transformers.CustomerTransformer
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.DefaultCommandContext
 import com.temenos.responder.context.DefaultExecutionContext
@@ -34,23 +35,25 @@ class CustomerInformation implements Flow {
             getExternalCustomer.execute(commandContext)
 
             // check result
-            Entity extnCustomer = (Entity)commandContext.getAttribute('finalResult')
-            if(!commandContext.getResponseCode().equals(Response.Status.OK.statusCode as String)) {
+            Entity extnCustomer = (Entity) commandContext.getAttribute('finalResult')
+            
+            //TODO: use an exception instead
+            if (!commandContext.getResponseCode().equals(Response.Status.OK.statusCode as String)) {
                 executionContext.setResponseCode(commandContext.getResponseCode() as String)
                 executionContext.setAttribute(into, new Entity())
                 return;
             }
+
             // transform external customer model into internal customer model
-            Map<String, String> map = new HashMap<>()
-            map.put("CustomerId", extnCustomer.get("CUSTOMER_ID"))
-            map.put("CustomerName", extnCustomer.get("CUSTOMER_NAME"))
-            map.put("CustomerAddress", extnCustomer.get("CUSTOMER_ADDRESS"))
+            Command transformer = executionContext.getCommand(CustomerTransformer.class)
+            commandContext = new DefaultCommandContext([from: ['ExtnCustomer'], into: 'finalResult'])
+            commandContext.setAttribute('ExtnCustomer', extnCustomer)
+            transformer.execute(commandContext)
 
-            Entity responseBody = new Entity(map);
-
+            Entity responseBody = commandContext.getAttribute('finalResult') as Entity;
             executionContext.setResponseCode(Response.Status.OK.statusCode as String)
             executionContext.setAttribute(into, responseBody)
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             executionContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
             executionContext.setAttribute('exception', new ScriptExecutionException(exception))
         }

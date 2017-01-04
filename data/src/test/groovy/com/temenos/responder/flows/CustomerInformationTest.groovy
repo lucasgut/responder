@@ -1,6 +1,8 @@
 package com.temenos.responder.flows
 
+import com.temenos.responder.commands.Command
 import com.temenos.responder.commands.ExternalCustomerInformation
+import com.temenos.responder.commands.transformers.CustomerTransformer
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.entity.runtime.Entity
@@ -19,6 +21,7 @@ class CustomerInformationTest extends Specification {
             def command = new CustomerInformation()
             def context = Mock(ExecutionContext)
             def externalCommand = Mock(ExternalCustomerInformation)
+            def transformCommand = Mock(CustomerTransformer)
         when:
             command.execute(context)
         then:
@@ -27,8 +30,13 @@ class CustomerInformationTest extends Specification {
             1 * context.setAttribute('finalResult', new Entity(map))
             1 * context.setResponseCode('200')
             1 * context.getCommand(ExternalCustomerInformation) >> externalCommand
+            1 * context.getCommand(CustomerTransformer) >> transformCommand
             1 * externalCommand.execute(_) >> { CommandContext ctx ->
                 ctx.setAttribute("finalResult", new Entity(extnMap))
+                ctx.setResponseCode('200')
+            }
+            1 * transformCommand.execute(_) >> { CommandContext ctx ->
+                ctx.setAttribute('finalResult', new Entity(map))
                 ctx.setResponseCode('200')
             }
         where:

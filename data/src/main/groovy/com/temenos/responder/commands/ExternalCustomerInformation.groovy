@@ -14,7 +14,6 @@ class ExternalCustomerInformation implements Command {
 
     @Override
     def execute(CommandContext executionContext) {
-        //TODO: parameters are currently hardcoded as we are not using JSON for workflows yet
         try {
             def fromDirective = ['id']
             def intoDirective = 'finalResult'
@@ -35,9 +34,7 @@ class ExternalCustomerInformation implements Command {
                 executionContext.setAttribute(intoDirective, new Entity())
                 return;
             }
-
             Entity responseBody = new Entity(map);
-
             executionContext.setResponseCode(Response.Status.OK.statusCode as String)
             executionContext.setAttribute(intoDirective, responseBody)
         } catch(IOException exception) {

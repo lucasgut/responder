@@ -28,7 +28,7 @@ class AdditionFlow implements Flow {
         //execute command
         command.execute(commandContext)
 
-        //marshall response into execution context and set response code
+        //pass command output back to execution context and set response code
         context.setAttribute("finalResult", commandContext.getAttribute("finalResult"))
         context.setResponseCode(commandContext.getResponseCode())
     }

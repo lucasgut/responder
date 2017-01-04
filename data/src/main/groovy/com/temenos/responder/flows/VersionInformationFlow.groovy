@@ -27,14 +27,11 @@ class VersionInformationFlow implements Flow {
         //set 'into' attribute
         ctx.setAttribute("into", "finalResult")
 
-
         //execute the command
         command.execute(ctx)
 
-        //pass command output back to execution context
+        //pass command output and response codes back to execution context
         context.setAttribute("finalResult", ctx.getAttribute("finalResult"))
-
-        //set response code to 200 OK
         context.setResponseCode(ctx.getResponseCode())
     }
 }
