@@ -24,7 +24,7 @@ import java.lang.reflect.Type;
 @Provider
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
-public class JsonProvider implements MessageBodyReader<Entity>, MessageBodyWriter<Document> {
+public class JsonProvider implements MessageBodyReader<Entity>, MessageBodyWriter<Entity> {
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -37,10 +37,10 @@ public class JsonProvider implements MessageBodyReader<Entity>, MessageBodyWrite
     }
 
     @Override
-    public void writeTo(Document document, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
+    public void writeTo(Entity document, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         Writer writer = new OutputStreamWriter(entityStream);
-        writer.write(ApplicationContext.getInstance().getInjector(DocumentProducer.class).serialise(document));
+        writer.write(ApplicationContext.getInstance().getInjector(EntityProducer.class).serialise(document));
         writer.flush();
     }
 
@@ -56,7 +56,7 @@ public class JsonProvider implements MessageBodyReader<Entity>, MessageBodyWrite
     }
 
     @Override
-    public long getSize(Document document, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+    public long getSize(Entity document, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return 0;
     }
 }

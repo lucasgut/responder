@@ -8,6 +8,7 @@ import com.temenos.responder.entity.runtime.Entity;
  */
 public interface ExecutionContext extends Context {
     String getSelf();
+    String getResourceName();
     Command getCommand(Class<Command> clazz);
     Parameters getParameters();
     Entity getRequestBody();

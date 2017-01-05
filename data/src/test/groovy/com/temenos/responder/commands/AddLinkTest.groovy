@@ -13,7 +13,7 @@ import spock.lang.Unroll
 class AddLinkTest extends Specification {
 
     @Unroll
-    def "Add link to external resource #resource returns #code"(resource, from, code, linkData) {
+    def "Add link to external resource #resource with parameters #from returns #code"(resource, from, code, linkData) {
         given:
             def command = new AddLink()
             def commandContext = Mock(CommandContext)
@@ -28,6 +28,7 @@ class AddLinkTest extends Specification {
         where:
             resource         | from                                          | code  | linkData
             'http://0.0.0.0' | ['http://0.0.0.0', 'Example', 'Example link'] | '200' | ['Example': ['href': 'http://0.0.0.0', 'name': 'Example', 'description': 'Example link']]
+            'http://0.0.0.0' | ['http://0.0.0.0', 'Example']                 | '200' | ['Example': ['href': 'http://0.0.0.0', 'name': 'Example']]
     }
 
     @Ignore

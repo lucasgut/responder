@@ -1,5 +1,6 @@
 package com.temenos.responder.flows
 
+import com.temenos.responder.commands.AddLink
 import com.temenos.responder.commands.Command
 import com.temenos.responder.commands.VersionInformation
 import com.temenos.responder.context.CommandContext
@@ -33,5 +34,27 @@ class VersionInformationFlow implements Flow {
         //pass command output and response codes back to execution context
         context.setAttribute("finalResult", ctx.getAttribute("finalResult"))
         context.setResponseCode(ctx.getResponseCode())
+
+        //add self link
+        generateSelfLink(context)
+    }
+
+    //TODO: move upwards to an abstract class and extend
+    private void generateSelfLink(ExecutionContext context){
+        //fetch command
+        Command command = context.getCommand(AddLink.class);
+
+        //create command-scoped context
+        CommandContext ctx = new DefaultCommandContext()
+
+        //set 'from' and 'into' attributes
+        ctx.setAttribute("from", [context.getSelf(), context.getResourceName()])
+        ctx.setAttribute("into", 'document.links.self')
+
+        //execute the command
+        command.execute(ctx)
+
+        //pass command output back to execution context
+        context.setAttribute('document.links.self', ctx.getAttribute('document.links.self'))
     }
 }

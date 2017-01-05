@@ -63,6 +63,7 @@ public class RequestHandler {
         //construct execution context
         ExecutionContext ctx = new DefaultExecutionContext(
                 info.getBaseUri().toString() + path,
+                resolvedResource.getNameSpec(),
                 parameters,
                 requestBody
         );

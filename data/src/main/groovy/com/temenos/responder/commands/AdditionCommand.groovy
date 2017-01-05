@@ -20,8 +20,8 @@ class AdditionCommand implements Command {
             def from = commandContext.getAttribute("from")
             def into = commandContext.getAttribute("into")
             int sum = 0;
-            from.each {
-                sum += it
+            from.each { element ->
+                sum += element
             }
             commandContext.setResponseCode(Response.Status.OK.statusCode as String)
             commandContext.setAttribute(into, new Entity(["result":sum]))

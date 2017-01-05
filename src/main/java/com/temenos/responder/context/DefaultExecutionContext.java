@@ -17,27 +17,31 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultExecutionContext implements ExecutionContext {
 
     private final Map<String, Object> contextAttributes;
+    private final String resourceName;
     private final String self;
     private final Entity requestBody;
     private final Injector commandInjector;
     private String responseCode;
 
-    public DefaultExecutionContext(String self){
+    public DefaultExecutionContext(String self, String resourceName){
         this.self = self;
+        this.resourceName = resourceName;
         this.contextAttributes = new ConcurrentHashMap<>();
         this.requestBody = null;
         this.commandInjector = Guice.createInjector(new CommandInjector());
     }
 
-    public DefaultExecutionContext(String self, Map<String, Object> contextAttributes){
+    public DefaultExecutionContext(String self, String resourceName, Map<String, Object> contextAttributes){
         this.self = self;
+        this.resourceName = resourceName;
         this.contextAttributes = new ConcurrentHashMap<>(contextAttributes);
         this.requestBody = null;
         this.commandInjector = Guice.createInjector(new CommandInjector());
     }
 
-    public DefaultExecutionContext(String self, Parameters parameters, Entity requestBody){
+    public DefaultExecutionContext(String self, String resourceName, Parameters parameters, Entity requestBody){
         this.self = self;
+        this.resourceName = resourceName;
         this.contextAttributes = new ConcurrentHashMap<>();
         this.requestBody = requestBody;
         for(String paramKey : parameters.getParameterKeys()) {
@@ -65,6 +69,11 @@ public class DefaultExecutionContext implements ExecutionContext {
     @Override
     public String getSelf() {
         return self;
+    }
+
+    @Override
+    public String getResourceName() {
+        return resourceName;
     }
 
     @Override
