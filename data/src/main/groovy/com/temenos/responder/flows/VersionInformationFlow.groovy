@@ -12,10 +12,10 @@ import com.temenos.responder.context.ExecutionContext
  *
  * Created by Douglas Groves on 04/01/2017.
  */
-class VersionInformationFlow implements Flow {
+class VersionInformationFlow extends AbstractFlow {
 
     @Override
-    def execute(ExecutionContext context) {
+    public void doExecute(ExecutionContext context) {
         //fetch command
         Command command = context.getCommand(VersionInformation.class)
 
@@ -34,27 +34,6 @@ class VersionInformationFlow implements Flow {
         //pass command output and response codes back to execution context
         context.setAttribute("finalResult", ctx.getAttribute("finalResult"))
         context.setResponseCode(ctx.getResponseCode())
-
-        //add self link
-        generateSelfLink(context)
     }
 
-    //TODO: move upwards to an abstract class and extend
-    private void generateSelfLink(ExecutionContext context){
-        //fetch command
-        Command command = context.getCommand(AddLink.class);
-
-        //create command-scoped context
-        CommandContext ctx = new DefaultCommandContext()
-
-        //set 'from' and 'into' attributes
-        ctx.setAttribute("from", [context.getSelf(), context.getResourceName()])
-        ctx.setAttribute("into", 'document.links.self')
-
-        //execute the command
-        command.execute(ctx)
-
-        //pass command output back to execution context
-        context.setAttribute('document.links.self', ctx.getAttribute('document.links.self'))
-    }
 }

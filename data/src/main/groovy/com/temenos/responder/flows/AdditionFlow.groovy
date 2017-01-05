@@ -9,10 +9,10 @@ import com.temenos.responder.context.ExecutionContext
 /**
  * Created by Douglas Groves on 04/01/2017.
  */
-class AdditionFlow implements Flow {
+class AdditionFlow extends AbstractFlow {
 
     @Override
-    def execute(ExecutionContext context) {
+    public void doExecute(ExecutionContext context) {
         //fetch command
         Command command = context.getCommand(AdditionCommand)
 

@@ -70,7 +70,7 @@ dependencies {
 
     //integration test compilation dependencies
     integrationTestCompile 'org.glassfish.jersey.test-framework:jersey-test-framework-core:2.24.1'
-    integrationTestCompile 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:2.24.1'
+    integrationTestCompile 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-simple:2.24.1'
 
     //compilation dependencies available at deployment time
     providedCompile 'javax.servlet:javax.servlet-api:3.1.0'

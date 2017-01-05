@@ -7,6 +7,7 @@ import com.temenos.responder.context.DefaultExecutionContext;
 import com.temenos.responder.context.ExecutionContext;
 import com.temenos.responder.configuration.Resource;
 import com.temenos.responder.context.Parameters;
+import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.paths.PathHandler;
@@ -78,6 +79,9 @@ public class RequestHandler {
         }
 
         //construct a response
-        return Response.ok().entity(ctx.getAttribute("finalResult")).build();
+        return Response.ok().entity(new Document((Entity)ctx.getAttribute("document.links.self"),
+                new Entity(),
+                (Entity)ctx.getAttribute("finalResult"),
+                resolvedResource.getNameSpec())).build();
     }
 }

@@ -1,14 +1,13 @@
 package com.temenos.responder
 
-import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.startup.ResponderApplication
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import org.glassfish.jersey.test.JerseyTest
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import javax.ws.rs.client.Entity
 import javax.ws.rs.core.Response
 
 /**
@@ -29,20 +28,24 @@ class ResponderIntegrationTest extends Specification {
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
             result.status == Response.Status.OK.statusCode
-            body['versionNumber'] == "0.1-SNAPSHOT"
-            body['buildDate'] == '2016-12-09T16:00:00Z'
-            body['blameThisPerson'] == 'Jenkins'
+            body['appVersion']['versionNumber'] == "0.1-SNAPSHOT"
+            body['appVersion']['buildDate'] == '2016-12-09T16:00:00Z'
+            body['appVersion']['blameThisPerson'] == 'Jenkins'
+            body['_links']['self']['href'] == 'http://localhost:9998/version'
+            body['_embedded'] != null
     }
 
     @Unroll
     def "POST request to /add returns 200 OK and returns the sum of #operands as #sum"(data, sum, operands) {
         when:
-            def result = target('add').request().post(javax.ws.rs.client.Entity.json(new JsonBuilder(data).toString()))
+            def result = target('add').request().post(Entity.json(new JsonBuilder(data).toString()))
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
             result.status == Response.Status.OK.statusCode
-            body['result'] == sum
-            body['operands'] == null
+            body['add']['result'] == sum
+            body['add']['operands'] == null
+            body['_links']['self']['href'] == 'http://localhost:9998/add'
+            body['_embedded'] != null
         where:
             data                 | sum | operands
             ['operands': [1, 1]] | 2   | '1 and 1'
@@ -57,11 +60,13 @@ class ResponderIntegrationTest extends Specification {
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
             result.status == Response.Status.OK.statusCode
-            body['CustomerId'] == id
-            body['CustomerName'] == name
-            body['CustomerAddress'] == address
+            body['customerInfo']['CustomerId'] == id
+            body['customerInfo']['CustomerName'] == name
+            body['customerInfo']['CustomerAddress'] == address
+            body['_links']['self']['href'] == "http://localhost:9998/customer/${id}"
+            body['_embedded'] != null
         where:
-            id       | name         | address
+            id     | name         | address
             100100 | 'John Smith' | 'No Name Street'
             100200 | 'Iris Law'   | '2 Lansdowne Rd'
     }
@@ -69,7 +74,7 @@ class ResponderIntegrationTest extends Specification {
     @Unroll
     def "POST request to /#resource with invalid request data returns 400 Bad Request"(data, resource) {
         when:
-            def result = target(resource).request().post(javax.ws.rs.client.Entity.json(new JsonBuilder(data).toString()))
+            def result = target(resource).request().post(Entity.json(new JsonBuilder(data).toString()))
         then:
             result.status == Response.Status.BAD_REQUEST.statusCode
         where:

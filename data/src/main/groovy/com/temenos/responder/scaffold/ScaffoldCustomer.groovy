@@ -8,6 +8,7 @@ import com.temenos.responder.entity.runtime.Type
 enum ScaffoldCustomer implements Scaffold {
     // should be a NUMBER but currently Entity
     // loses the type when constructed
+
     CUSTOMER_ID('CustomerId', Type.INTEGER),
     CUSTOMER_NAME('CustomerName', Type.STRING),
     CUSTOMER_ADDRESS('CustomerAddress', Type.STRING);

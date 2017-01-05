@@ -17,7 +17,7 @@ class DocumentJsonProducer implements DocumentProducer {
 
     @Override
     String serialise(Document model) {
-        return null;
+        return new JsonBuilder(model.getDocument().getValues()).toString()
     }
 
 }

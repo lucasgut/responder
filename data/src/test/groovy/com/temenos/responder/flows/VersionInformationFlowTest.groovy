@@ -35,7 +35,6 @@ class VersionInformationFlowTest extends Specification {
             1 * executionContext.setAttribute("finalResult", _)
             1 * executionContext.setResponseCode("200")
             1 * executionContext.getSelf() >> 'http://0.0.0.0/version'
-            1 * executionContext.getResourceName() >> 'appVersion'
             1 * executionContext.setAttribute("document.links.self", new Entity(expectedData))
     }
 }

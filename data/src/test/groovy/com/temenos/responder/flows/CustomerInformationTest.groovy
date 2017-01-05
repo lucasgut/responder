@@ -1,5 +1,6 @@
 package com.temenos.responder.flows
 
+import com.temenos.responder.commands.AddLink
 import com.temenos.responder.commands.Command
 import com.temenos.responder.commands.ExternalCustomerInformation
 import com.temenos.responder.commands.transformers.CustomerTransformer
@@ -22,6 +23,7 @@ class CustomerInformationTest extends Specification {
             def context = Mock(ExecutionContext)
             def externalCommand = Mock(ExternalCustomerInformation)
             def transformCommand = Mock(CustomerTransformer)
+            def addLinkCommand = Mock(AddLink)
         when:
             command.execute(context)
         then:
@@ -31,6 +33,7 @@ class CustomerInformationTest extends Specification {
             1 * context.setResponseCode('200')
             1 * context.getCommand(ExternalCustomerInformation) >> externalCommand
             1 * context.getCommand(CustomerTransformer) >> transformCommand
+            1 * context.getCommand(AddLink) >> addLinkCommand
             1 * externalCommand.execute(_) >> { CommandContext ctx ->
                 ctx.setAttribute("finalResult", new Entity(extnMap))
                 ctx.setResponseCode('200')
@@ -51,6 +54,7 @@ class CustomerInformationTest extends Specification {
             def command = new CustomerInformation()
             def context = Mock(ExecutionContext)
             def externalCommand = Mock(ExternalCustomerInformation)
+            def addLinkCommand = Mock(AddLink)
         when:
             command.execute(context)
         then:
@@ -59,6 +63,7 @@ class CustomerInformationTest extends Specification {
             1 * context.setAttribute('finalResult', new Entity())
             1 * context.setResponseCode('404')
             1 * context.getCommand(ExternalCustomerInformation) >> externalCommand
+            1 * context.getCommand(AddLink) >> addLinkCommand
             1 * externalCommand.execute(_) >> { CommandContext ctx ->
                 ctx.setAttribute('finalResult', new Entity())
                 ctx.setResponseCode('404')

@@ -26,9 +26,10 @@ class AddLinkTest extends Specification {
             1 * commandContext.setAttribute('document.links.example', myEntity)
             1 * commandContext.setResponseCode(code)
         where:
-            resource         | from                                          | code  | linkData
-            'http://0.0.0.0' | ['http://0.0.0.0', 'Example', 'Example link'] | '200' | ['Example': ['href': 'http://0.0.0.0', 'name': 'Example', 'description': 'Example link']]
-            'http://0.0.0.0' | ['http://0.0.0.0', 'Example']                 | '200' | ['Example': ['href': 'http://0.0.0.0', 'name': 'Example']]
+            resource         | from                                                     | code  | linkData
+            'http://0.0.0.0' | ['example', 'http://0.0.0.0', 'Example', 'Example link'] | '200' | ['example': ['href': 'http://0.0.0.0', 'name': 'Example', 'description': 'Example link']]
+            'http://0.0.0.0' | ['example', 'http://0.0.0.0', 'Example']                 | '200' | ['example': ['href': 'http://0.0.0.0', 'name': 'Example']]
+            'http://0.0.0.0' | ['example', 'http://0.0.0.0']                            | '200' | ['example': ['href': 'http://0.0.0.0']]
     }
 
     @Ignore

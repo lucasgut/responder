@@ -20,13 +20,13 @@ public class Entity {
     public Entity(){
         values = new LinkedHashMap<>();
         properties = new LinkedHashMap<>();
-        fqPropertyNameAndType = new HashMap<>();
+        fqPropertyNameAndType = new LinkedHashMap<>();
     }
 
     public Entity(Map<String, Object> properties){
-        this.values = properties;
+        this.values = new LinkedHashMap<>(properties);
         this.properties = new LinkedHashMap<>();
-        this.fqPropertyNameAndType = new HashMap<>();
+        this.fqPropertyNameAndType = new LinkedHashMap<>();
         getEntityNamesAndTypes(properties, "");
     }
 
@@ -76,7 +76,7 @@ public class Entity {
         }
     }
 
-    protected Map<String, Object> getValues(){
+    public Map<String, Object> getValues(){
         return values;
     }
 

@@ -5,7 +5,7 @@ import com.temenos.responder.entity.runtime.Type
 /**
  * Created by aburgos on 23/12/2016.
  */
-enum ScaffoldT24Customer implements Scaffold {
+enum ScaffoldExternalCustomer implements Scaffold {
     CUSTOMER_ID('CUSTOMER_ID', Type.INTEGER),
     CUSTOMER_NAME('CUSTOMER_NAME', Type.STRING),
     CUSTOMER_ADDRESS('CUSTOMER_ADDRESS', Type.STRING);
@@ -13,7 +13,7 @@ enum ScaffoldT24Customer implements Scaffold {
     final String name
     final Type type
 
-    private ScaffoldT24Customer(final String name, final Type type){
+    private ScaffoldExternalCustomer(final String name, final Type type){
         this.name = name
         this.type = type
     }

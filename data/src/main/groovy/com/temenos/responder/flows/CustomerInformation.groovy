@@ -15,10 +15,10 @@ import javax.ws.rs.core.Response
  *
  * Created by aburgos on 23/12/2016.
  */
-class CustomerInformation implements Flow {
+class CustomerInformation extends AbstractFlow {
 
     @Override
-    def execute(ExecutionContext executionContext) {
+    public void doExecute(ExecutionContext executionContext) {
         try {
             def from = ['id']
             def into = 'finalResult'

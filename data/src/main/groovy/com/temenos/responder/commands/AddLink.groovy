@@ -14,11 +14,14 @@ class AddLink implements Command {
     void execute(CommandContext context) {
         def from = context.getAttribute('from') as List
         def into = context.getAttribute('into') as String
-        def uri = from[0], title = from[1], description = from[2]
+        def id = from[0], uri = from[1], name = from[2], description = from[3]
         def myMap = [:]
-        myMap[title] = ['href':uri,'name':title]
+        myMap[id] = ['href':uri]
+        if(name){
+            myMap[id]['name'] = name
+        }
         if(description){
-            myMap[title]['description'] = description
+            myMap[id]['description'] = description
         }
         def entity = new Entity(myMap)
         context.setAttribute(into, entity)
