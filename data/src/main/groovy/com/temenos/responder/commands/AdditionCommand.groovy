@@ -8,29 +8,23 @@ import com.temenos.responder.exception.ScriptExecutionException
 import javax.ws.rs.core.Response
 
 /**
- * Add two numbers together
+ * Add a list of numbers together.
  *
  * Created by Douglas Groves on 21/12/2016.
  */
 class AdditionCommand implements Command {
 
     @Override
-    def execute(CommandContext commandContext) {
+    void execute(CommandContext commandContext) {
         try {
             def from = commandContext.getAttribute("from")
             def into = commandContext.getAttribute("into")
-
-            Integer sum = 0;
-            for(Integer operand : from) {
-                sum += operand
+            int sum = 0;
+            from.each {
+                sum += it
             }
-
-            Map<String, Integer> map = new HashMap<>()
-            //map.put("operands", operands)
-            map.put("result", sum)
-            Entity responseBody = new Entity(map);
             commandContext.setResponseCode(Response.Status.OK.statusCode as String)
-            commandContext.setAttribute(into, responseBody)
+            commandContext.setAttribute(into, new Entity(["result":sum]))
         } catch(IOException exception) {
             commandContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
             commandContext.setAttribute('exception', new ScriptExecutionException(exception))

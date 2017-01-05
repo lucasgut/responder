@@ -5,10 +5,6 @@ import com.google.inject.Injector;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.commands.injector.CommandInjector;
 import com.temenos.responder.entity.runtime.Entity;
-import com.temenos.responder.loader.ClasspathScriptLoader;
-import com.temenos.responder.loader.ScriptLoader;
-import com.temenos.responder.producer.JsonProducer;
-import com.temenos.responder.producer.Producer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,8 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultExecutionContext implements ExecutionContext {
 
     private final Map<String, Object> contextAttributes;
-    private final Producer producer;
-    private final ScriptLoader loader;
     private final String self;
     private final Entity requestBody;
     private final Injector commandInjector;
@@ -31,41 +25,25 @@ public class DefaultExecutionContext implements ExecutionContext {
     public DefaultExecutionContext(String self){
         this.self = self;
         this.contextAttributes = new ConcurrentHashMap<>();
-        this.producer = new JsonProducer();
         this.requestBody = null;
-        this.loader = new ClasspathScriptLoader("resources");
         this.commandInjector = Guice.createInjector(new CommandInjector());
     }
 
     public DefaultExecutionContext(String self, Map<String, Object> contextAttributes){
         this.self = self;
         this.contextAttributes = new ConcurrentHashMap<>(contextAttributes);
-        this.producer = new JsonProducer();
         this.requestBody = null;
-        this.loader = new ClasspathScriptLoader("resources");
         this.commandInjector = Guice.createInjector(new CommandInjector());
     }
 
-    public DefaultExecutionContext(String self, Producer producer, ScriptLoader loader, Parameters parameters, Entity requestBody){
+    public DefaultExecutionContext(String self, Parameters parameters, Entity requestBody){
         this.self = self;
         this.contextAttributes = new ConcurrentHashMap<>();
-        this.producer = producer;
-        this.loader = loader;
         this.requestBody = requestBody;
         for(String paramKey : parameters.getParameterKeys()) {
             setAttribute(paramKey, parameters.getValue(paramKey));
         }
         this.commandInjector = Guice.createInjector(new CommandInjector());
-    }
-
-    @Override
-    public Producer getProducer() {
-        return producer;
-    }
-
-    @Override
-    public ScriptLoader getScriptLoader() {
-        return loader;
     }
 
     @Override

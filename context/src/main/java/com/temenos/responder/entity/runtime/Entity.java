@@ -12,16 +12,19 @@ import java.util.regex.Pattern;
  * Created by Douglas Groves on 16/12/2016.
  */
 public class Entity {
+    private final Map<String, Object> values;
     private final Map<String, Object> properties;
     private final Map<String, Type> fqPropertyNameAndType;
     private static final String PROPERTY_NOT_FOUND_MSG = "Property %s doesn't exist";
 
     public Entity(){
+        values = new LinkedHashMap<>();
         properties = new LinkedHashMap<>();
         fqPropertyNameAndType = new HashMap<>();
     }
 
     public Entity(Map<String, Object> properties){
+        this.values = properties;
         this.properties = new LinkedHashMap<>();
         this.fqPropertyNameAndType = new HashMap<>();
         getEntityNamesAndTypes(properties, "");
@@ -71,6 +74,10 @@ public class Entity {
                 fqPropertyNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
             }
         }
+    }
+
+    protected Map<String, Object> getValues(){
+        return values;
     }
 
     @Override

@@ -6,10 +6,7 @@ import com.temenos.responder.loader.ClasspathScriptLoader;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.paths.PathHandler;
 import com.temenos.responder.paths.ResourcePathHandler;
-import com.temenos.responder.producer.EntityJsonProducer;
-import com.temenos.responder.producer.EntityProducer;
-import com.temenos.responder.producer.JsonProducer;
-import com.temenos.responder.producer.Producer;
+import com.temenos.responder.producer.*;
 import com.temenos.responder.scripting.GroovyScriptingEngine;
 import com.temenos.responder.scripting.ScriptingEngine;
 import com.temenos.responder.validator.ModelValidator;
@@ -44,6 +41,7 @@ public class ApplicationContext extends AbstractModule implements Context {
         bind(ScriptEngine.class).toInstance(G_SCRIPT_ENGINE);
         bind(Validator.class).to(ModelValidator.class);
         bind(EntityProducer.class).to(EntityJsonProducer.class);
+        bind(DocumentProducer.class).to(DocumentJsonProducer.class);
     }
 
     @Override

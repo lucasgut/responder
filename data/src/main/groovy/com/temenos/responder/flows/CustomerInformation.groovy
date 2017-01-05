@@ -5,7 +5,6 @@ import com.temenos.responder.commands.ExternalCustomerInformation
 import com.temenos.responder.commands.transformers.CustomerTransformer
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.DefaultCommandContext
-import com.temenos.responder.context.DefaultExecutionContext
 import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.exception.ScriptExecutionException
@@ -36,7 +35,7 @@ class CustomerInformation implements Flow {
 
             // check result
             Entity extnCustomer = (Entity) commandContext.getAttribute('finalResult')
-            
+
             //TODO: use an exception instead
             if (!commandContext.getResponseCode().equals(Response.Status.OK.statusCode as String)) {
                 executionContext.setResponseCode(commandContext.getResponseCode() as String)

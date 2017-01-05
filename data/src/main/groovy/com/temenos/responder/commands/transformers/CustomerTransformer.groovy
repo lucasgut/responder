@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response
 class CustomerTransformer implements Command {
 
     @Override
-    def execute(CommandContext context) {
+    void execute(CommandContext context) {
         //fetch entity from command context
         def from = context.getAttribute('from') as List<String>
         def into = context.getAttribute('into')

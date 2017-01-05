@@ -24,8 +24,8 @@ import javax.ws.rs.core.Response
  */
 class VersionInformation implements Command {
 
-    private ScriptLoader loader
-    private Producer producer
+    private final ScriptLoader loader
+    private final Producer producer
 
     @Inject
     VersionInformation(ScriptLoader loader, Producer producer){
@@ -33,7 +33,7 @@ class VersionInformation implements Command {
         this.producer = producer
     }
 
-    def execute(CommandContext commandContext){
+    void execute(CommandContext commandContext){
         try {
             def fromDirective = commandContext.getAttribute("from")
             def intoDirective = commandContext.getAttribute("into")

@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response
 class ExternalCustomerInformation implements Command {
 
     @Override
-    def execute(CommandContext executionContext) {
+    void execute(CommandContext executionContext) {
         try {
             def fromDirective = ['id']
             def intoDirective = 'finalResult'

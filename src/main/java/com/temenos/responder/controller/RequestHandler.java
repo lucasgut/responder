@@ -39,17 +39,14 @@ public class RequestHandler {
 
     @PUT
     public Response put(Entity request) {
-        return null;
+        return serviceRequest(info.getPath(), "PUT", request);
     }
 
     @DELETE
     public Response delete(Entity request) {
-        return null;
+        return serviceRequest(info.getPath(), "DELETE", request);
     }
 
-    /**
-     * TODO: Move this to a workflow executor
-     */
     private Response serviceRequest(String path, String method, Entity requestBody) {
         //locate a resource corresponding to the request path
         PathHandler handler = ApplicationContext.getInstance().getInjector(PathHandler.class);
@@ -66,8 +63,6 @@ public class RequestHandler {
         //construct execution context
         ExecutionContext ctx = new DefaultExecutionContext(
                 info.getBaseUri().toString() + path,
-                ApplicationContext.getInstance().getInjector(EntityProducer.class),
-                ApplicationContext.getInstance().getInjector(ScriptLoader.class),
                 parameters,
                 requestBody
         );
