@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response
  *
  * Created by aburgos on 23/12/2016.
  */
-class CustomerInformation extends AbstractFlow {
+class CustomerInformationWithTransformer extends AbstractFlow {
 
     @Override
     public void doExecute(ExecutionContext executionContext) {

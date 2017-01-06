@@ -1,25 +1,23 @@
 package com.temenos.responder.flows
 
 import com.temenos.responder.commands.AddLink
-import com.temenos.responder.commands.Command
 import com.temenos.responder.commands.ExternalCustomerInformation
 import com.temenos.responder.commands.transformers.CustomerTransformer
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.entity.runtime.Entity
-import com.temenos.responder.flows.CustomerInformation
 import spock.lang.Specification
 import spock.lang.Unroll
 
 /**
  * Created by aburgos on 24/12/2016.
  */
-class CustomerInformationTest extends Specification {
+class CustomerInformationWithTransformerTest extends Specification {
 
     @Unroll
     def "Customer information command"(id, map, extnMap) {
         setup:
-            def command = new CustomerInformation()
+            def command = new CustomerInformationWithTransformer()
             def context = Mock(ExecutionContext)
             def externalCommand = Mock(ExternalCustomerInformation)
             def transformCommand = Mock(CustomerTransformer)
@@ -51,7 +49,7 @@ class CustomerInformationTest extends Specification {
     @Unroll
     def "Customer information command for inexistent customers"(id) {
         setup:
-            def command = new CustomerInformation()
+            def command = new CustomerInformationWithTransformer()
             def context = Mock(ExecutionContext)
             def externalCommand = Mock(ExternalCustomerInformation)
             def addLinkCommand = Mock(AddLink)

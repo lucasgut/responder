@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.temenos.responder.commands.*;
 import com.temenos.responder.commands.transformers.CustomerTransformer;
-import com.temenos.responder.flows.CustomerInformation;
+import com.temenos.responder.flows.CustomerInformationWithTransformer;
 import com.temenos.responder.loader.ClasspathScriptLoader;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.producer.EntityJsonProducer;
@@ -23,9 +23,9 @@ public class CommandInjector extends AbstractModule {
 
         //command bindings
         bind(AdditionCommand.class).in(Singleton.class);
-        bind(CustomerInformation.class).in(Singleton.class);
+        bind(CustomerInformationWithTransformer.class).in(Singleton.class);
         bind(GETResource.class).in(Singleton.class);
-        bind(CustomerInformation.class).in(Singleton.class);
+        bind(CustomerInformationWithTransformer.class).in(Singleton.class);
         bind(VersionInformation.class).in(Singleton.class);
         bind(CustomerTransformer.class).in(Singleton.class);
     }
