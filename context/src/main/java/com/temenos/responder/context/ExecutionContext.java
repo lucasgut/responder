@@ -12,6 +12,7 @@ public interface ExecutionContext extends Context {
     Command getCommand(Class<Command> clazz);
     Parameters getParameters();
     Entity getRequestBody();
+    Object getFieldFromRequestBody(String fieldName);
     void setResponseCode(String code);
     String getResponseCode();
 }

@@ -16,19 +16,17 @@ class CustomerTransformer implements Command {
     @Override
     void execute(CommandContext context) {
         //fetch entity from command context
-        def from = context.getAttribute('from') as List<String>
-        def into = context.getAttribute('into')
-        def entity = context.getAttribute(from[0]) as Entity
+        def entity = context.getAttribute(context.from()[0]) as Entity
 
         // transform external customer model into internal customer model
-        def map = [:]
-        map.put(ScaffoldCustomer.CUSTOMER_ID, entity.get(ScaffoldExternalCustomer.CUSTOMER_ID))
-        map.put(ScaffoldCustomer.CUSTOMER_NAME, entity.get(ScaffoldExternalCustomer.CUSTOMER_NAME))
-        map.put(ScaffoldCustomer.CUSTOMER_ADDRESS, entity.get(ScaffoldExternalCustomer.CUSTOMER_ADDRESS))
-        Entity responseBody = new Entity(map)
+        Entity responseBody = new Entity([
+                (ScaffoldCustomer.CUSTOMER_ID) : entity.get(ScaffoldExternalCustomer.CUSTOMER_ID),
+                (ScaffoldCustomer.CUSTOMER_NAME) : entity.get(ScaffoldExternalCustomer.CUSTOMER_NAME),
+                (ScaffoldCustomer.CUSTOMER_ADDRESS) : entity.get(ScaffoldExternalCustomer.CUSTOMER_ADDRESS)
+        ])
 
         //construct response
         context.setResponseCode(Response.Status.OK.statusCode as String)
-        context.setAttribute(into, responseBody)
+        context.setAttribute(context.into(), responseBody)
     }
 }

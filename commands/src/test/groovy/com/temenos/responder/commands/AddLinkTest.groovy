@@ -21,8 +21,8 @@ class AddLinkTest extends Specification {
         when:
             command.execute(commandContext)
         then:
-            1 * commandContext.getAttribute('from') >> from
-            1 * commandContext.getAttribute('into') >> 'document.links.example'
+            1 * commandContext.from() >> from
+            1 * commandContext.into() >> 'document.links.example'
             1 * commandContext.setAttribute('document.links.example', myEntity)
             1 * commandContext.setResponseCode(code)
         where:
@@ -41,8 +41,8 @@ class AddLinkTest extends Specification {
         when:
             command.execute(commandContext)
         then:
-            1 * commandContext.getAttribute('from') >> from
-            1 * commandContext.getAttribute('into') >> 'document.links.appVersion'
+            1 * commandContext.from() >> from
+            1 * commandContext.into() >> 'document.links.appVersion'
             1 * commandContext.setAttribute('document.links.example', myEntity)
             1 * commandContext.setResponseCode(code)
         where:

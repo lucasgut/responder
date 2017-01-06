@@ -35,7 +35,7 @@ class CustomerInformation extends AbstractFlow {
             getExternalCustomer.execute(commandContext)
 
             // check result
-            Entity extnCustomer = (Entity) commandContext.getAttribute('finalResult')
+            Entity extnCustomer = commandContext.getAttribute('finalResult') as Entity
 
             //TODO: use an exception instead
             if (!commandContext.getResponseCode().equals(Response.Status.OK.statusCode as String)) {

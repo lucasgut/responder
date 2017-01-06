@@ -38,7 +38,7 @@ public class JsonProvider implements MessageBodyReader<Entity>, MessageBodyWrite
         while (entityStream.read(buff) != -1) {
             builder.append(new String(buff));
         }
-        return ApplicationContext.getInstance().getInjector(EntityProducer.class).deserialise(builder.toString());
+        return ApplicationContext.getInjector(EntityProducer.class).deserialise(builder.toString());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class JsonProvider implements MessageBodyReader<Entity>, MessageBodyWrite
     public void writeTo(Document document, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         Writer writer = new OutputStreamWriter(entityStream);
-        writer.write(ApplicationContext.getInstance().getInjector(DocumentProducer.class).serialise(document));
+        writer.write(ApplicationContext.getInjector(DocumentProducer.class).serialise(document));
         writer.flush();
     }
 

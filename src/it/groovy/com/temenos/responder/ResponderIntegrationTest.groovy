@@ -52,7 +52,7 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "GET request to /customer/#id in T24CustomerInformation mock command"(id, name, address) {
+    def "GET request to /customer/#id in ExternalCustomerInformation mock command"(id, name, address) {
         setup:
             def path = 'customer/' + id
         when:

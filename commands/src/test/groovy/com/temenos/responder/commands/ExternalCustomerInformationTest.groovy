@@ -9,7 +9,7 @@ import spock.lang.Unroll
 /**
  * Created by aburgos on 24/12/2016.
  */
-class T24CustomerInformationTest extends Specification {
+class ExternalCustomerInformationTest extends Specification {
 
     @Unroll
     def "T24 customer information command"(id, map) {

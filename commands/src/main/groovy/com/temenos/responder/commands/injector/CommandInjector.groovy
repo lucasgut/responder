@@ -15,7 +15,7 @@ import com.temenos.responder.producer.Producer;
 /**
  * Created by Douglas Groves on 04/01/2017.
  */
-public class CommandInjector extends AbstractModule {
+class CommandInjector extends AbstractModule {
 
     @Override
     protected void configure() {

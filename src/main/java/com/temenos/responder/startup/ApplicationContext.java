@@ -20,14 +20,15 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Douglas Groves on 15/12/2016.
  */
-public class ApplicationContext extends AbstractModule implements Context {
+public class ApplicationContext extends AbstractModule {
 
     private final ScriptEngine G_SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("groovy");
     private final ScriptLoader CP_SCRIPT_LOADER = new ClasspathScriptLoader(RESOURCE_ROOT);
-    private final Map<String, Object> attributes = new ConcurrentHashMap<>();
-    private Injector injector;
+    private static final Map<String, Object> attributes = new ConcurrentHashMap<>();
 
     private static ApplicationContext INSTANCE;
+    private static Injector INJECTOR;
+
     private static final String RESOURCE_ROOT = "resources";
 
     private ApplicationContext(){}
@@ -44,28 +45,20 @@ public class ApplicationContext extends AbstractModule implements Context {
         bind(DocumentProducer.class).to(DocumentJsonProducer.class);
     }
 
-    @Override
-    public Object getAttribute(String name) {
+    public static Object getAttribute(String name) {
         return attributes.get(name);
     }
 
-    @Override
-    public boolean setAttribute(String name, Object value) {
+    public static boolean setAttribute(String name, Object value) {
         attributes.put(name, value);
         return true;
     }
 
-    public <T> T getInjector(Class<T> clazz){
-        if(injector == null){
-            injector = Guice.createInjector(this);
-        }
-        return clazz.cast(injector.getInstance(clazz));
-    }
-
-    public static ApplicationContext getInstance(){
+    public static <T> T getInjector(Class<T> clazz){
         if(INSTANCE == null){
             INSTANCE = new ApplicationContext();
+            INJECTOR = Guice.createInjector(INSTANCE);
         }
-        return INSTANCE;
+        return clazz.cast(INJECTOR.getInstance(clazz));
     }
 }

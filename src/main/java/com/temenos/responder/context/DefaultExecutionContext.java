@@ -86,6 +86,7 @@ public class DefaultExecutionContext implements ExecutionContext {
         return requestBody;
     }
 
+    @Override
     public void setResponseCode(String responseCode) {
         this.responseCode = responseCode;
     }
@@ -93,5 +94,10 @@ public class DefaultExecutionContext implements ExecutionContext {
     @Override
     public Command getCommand(Class<Command> clazz) {
         return clazz.cast(commandInjector.getInstance(clazz));
+    }
+
+    @Override
+    public Object getFieldFromRequestBody(String fieldName) {
+        return requestBody.get(fieldName);
     }
 }

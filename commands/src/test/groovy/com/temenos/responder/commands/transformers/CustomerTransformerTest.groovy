@@ -16,8 +16,8 @@ class CustomerTransformerTest extends Specification {
         when:
             command.execute(commandContext)
         then:
-            1 * commandContext.getAttribute('from') >> ['ExtnCustomer']
-            1 * commandContext.getAttribute('into') >> 'finalResult'
+            1 * commandContext.from() >> ['ExtnCustomer']
+            1 * commandContext.into() >> 'finalResult'
             1 * commandContext.getAttribute('ExtnCustomer') >> extnCustomer
             1 * extnCustomer.get('CUSTOMER_ID') >> 100100
             1 * extnCustomer.get('CUSTOMER_NAME') >> 'John Smith'

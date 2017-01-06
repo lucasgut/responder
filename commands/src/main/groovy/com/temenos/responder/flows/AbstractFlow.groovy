@@ -27,8 +27,8 @@ abstract class AbstractFlow implements Flow {
         CommandContext ctx = new DefaultCommandContext()
 
         //set 'from' and 'into' attributes
-        ctx.setAttribute("from", ['self', context.getSelf()])
-        ctx.setAttribute("into", 'document.links.self')
+        ctx.from(['self', context.getSelf()])
+        ctx.into('document.links.self')
 
         //execute the command
         command.execute(ctx)

@@ -21,11 +21,9 @@ class VersionInformationFlow extends AbstractFlow {
         //create command-scoped context
         CommandContext ctx = new DefaultCommandContext()
 
-        //set 'from' attribute
-        ctx.setAttribute("from", ["versionInfo.json"])
-
-        //set 'into' attribute
-        ctx.setAttribute("into", "finalResult")
+        //set 'from' and 'into' attributes
+        ctx.from(["versionInfo.json"])
+        ctx.into("finalResult")
 
         //execute the command
         command.execute(ctx)

@@ -50,13 +50,13 @@ public class RequestHandler {
 
     private Response serviceRequest(String path, String method, Entity requestBody) {
         //locate a resource corresponding to the request path
-        PathHandler handler = ApplicationContext.getInstance().getInjector(PathHandler.class);
+        PathHandler handler = ApplicationContext.getInjector(PathHandler.class);
         Resource resolvedResource = handler.resolvePathSpecification(path, method);
         Parameters parameters = handler.resolvePathParameters(path, resolvedResource);
         LOGGER.info("Found: {} /{}", resolvedResource.getHttpMethod(), resolvedResource.getPathSpec());
 
         //validate the incoming request payload
-        if (!ApplicationContext.getInstance().getInjector(Validator.class)
+        if (!ApplicationContext.getInjector(Validator.class)
                 .isValid(requestBody, resolvedResource.getInputModelSpec())) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -73,7 +73,7 @@ public class RequestHandler {
         resolvedResource.getFlowSpec().execute(ctx);
 
         //validate the entity against the model definition
-        if (!ApplicationContext.getInstance().getInjector(Validator.class)
+        if (!ApplicationContext.getInjector(Validator.class)
                 .isValid((Entity) ctx.getAttribute("finalResult"), resolvedResource.getOutputModelSpec().get(ctx.getResponseCode()))) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ctx.getAttribute("finalResult")).build();
         }

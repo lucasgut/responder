@@ -12,8 +12,8 @@ class AddLink implements Command {
 
     @Override
     void execute(CommandContext context) {
-        def from = context.getAttribute('from') as List
-        def into = context.getAttribute('into') as String
+        def from = context.from() as List
+        def into = context.into() as String
         def id = from[0], uri = from[1], name = from[2], description = from[3]
         def myMap = [:]
         myMap[id] = ['href':uri]

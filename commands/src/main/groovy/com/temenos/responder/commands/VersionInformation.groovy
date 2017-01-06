@@ -31,9 +31,9 @@ class VersionInformation implements Command {
 
     void execute(CommandContext commandContext){
         try {
-            def fromDirective = commandContext.getAttribute("from")
-            def intoDirective = commandContext.getAttribute("into")
-            def fileContents = loader.load(fromDirective.first())
+            List<String> fromDirective = commandContext.from()
+            String intoDirective = commandContext.into()
+            String fileContents = loader.load(fromDirective[0])
             Entity deserialisedContents = (Entity)producer.deserialise(fileContents)
             commandContext.setResponseCode(Response.Status.OK.statusCode as String)
             commandContext.setAttribute(intoDirective, deserialisedContents)

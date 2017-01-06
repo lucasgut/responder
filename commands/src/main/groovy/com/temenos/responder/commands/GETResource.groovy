@@ -1,6 +1,7 @@
 package com.temenos.responder.commands
 
 import com.temenos.responder.context.CommandContext
+import com.temenos.responder.entity.runtime.Entity
 import groovyx.net.http.HTTPBuilder
 
 /**
@@ -20,9 +21,9 @@ class GETResource implements Command {
 
     @Override
     void execute(CommandContext context) {
-        def params = context.getAttribute("from")
-        def output = context.getAttribute("into")
-        def result = http.get(uri: params[0], queryString: params[1])
-        context.setAttribute(output, result)
+        List<String> params = context.from()
+        String output = context.into()
+        def result = http.get(uri: params[0], queryString: params[1]) as Map
+        context.setAttribute(output, new Entity(result))
     }
 }

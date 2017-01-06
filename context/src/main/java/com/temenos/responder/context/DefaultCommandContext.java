@@ -1,6 +1,8 @@
 package com.temenos.responder.context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,10 +11,13 @@ import java.util.Map;
 public class DefaultCommandContext implements CommandContext {
 
     private final Map<String, Object> attributes;
+    private List<String> fromParams;
+    private String intoParam;
     private String responseCode;
 
     public DefaultCommandContext(){
         this.attributes = new HashMap<>();
+        this.fromParams = new ArrayList<String>();
     }
 
     public DefaultCommandContext(Map<String, Object> attributes){
@@ -38,5 +43,25 @@ public class DefaultCommandContext implements CommandContext {
     @Override
     public void setResponseCode(String responseCode) {
         this.responseCode = responseCode;
+    }
+
+    @Override
+    public List<String> from() {
+        return fromParams;
+    }
+
+    @Override
+    public void from(List<String> params){
+        this.fromParams = params;
+    }
+
+    @Override
+    public String into() {
+        return intoParam;
+    }
+
+    @Override
+    public void into(String param){
+        intoParam = param;
     }
 }

@@ -17,19 +17,12 @@ class AdditionCommand implements Command {
 
     @Override
     void execute(CommandContext commandContext) {
-        try {
-            def from = commandContext.getAttribute("from")
-            def into = commandContext.getAttribute("into")
-            int sum = 0;
-            from.each { element ->
-                sum += element
-            }
-            commandContext.setResponseCode(Response.Status.OK.statusCode as String)
-            commandContext.setAttribute(into, new Entity([(ScaffoldAdditionOutput.RESULT):sum]))
-        } catch(IOException exception) {
-            commandContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
-            commandContext.setAttribute('exception', new ScriptExecutionException(exception))
+        int sum = 0
+        commandContext.from().each { element ->
+            sum += element
         }
+        commandContext.setResponseCode(Response.Status.OK.statusCode as String)
+        commandContext.setAttribute(commandContext.into(), new Entity([(ScaffoldAdditionOutput.RESULT):sum]))
     }
 
 }

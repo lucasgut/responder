@@ -30,8 +30,8 @@ class VersionInformationTest extends Specification {
         then:
             1 * scriptLoader.load(versionFile) >> dataAsJson
             1 * producer.deserialise(dataAsJson) >> pData
-            _ * context.getAttribute('from') >> [versionFile]
-            _ * context.getAttribute('into') >> 'finalResult'
+            _ * context.from() >> [versionFile]
+            _ * context.into() >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity(data))
             1 * context.setResponseCode('200')
         where:
@@ -50,8 +50,8 @@ class VersionInformationTest extends Specification {
         when:
             command.execute(context)
         then:
-            1 * context.getAttribute('from') >> fromField
-            1 * context.getAttribute('into') >> intoField
+            1 * context.from() >> fromField
+            1 * context.into() >> intoField
             expectedLoaderInvocations * scriptLoader.load(_) >> { throw new IOException() }
             0 * producer.deserialise(_)
             1 * context.setAttribute('exception', _)
