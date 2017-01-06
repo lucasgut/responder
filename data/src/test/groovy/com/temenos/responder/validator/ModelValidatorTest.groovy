@@ -1,54 +1,30 @@
 package com.temenos.responder.validator
 
-import com.temenos.responder.scaffold.Scaffold
-import com.temenos.responder.scaffold.ScaffoldVersion
-import com.temenos.responder.entity.runtime.Type
 import com.temenos.responder.entity.runtime.Entity
+import com.temenos.responder.scaffold.Scaffold
+import com.temenos.responder.scaffold.ScaffoldCustomer
 import spock.lang.Specification
 import spock.lang.Unroll
 
 /**
- * Created by Douglas Groves on 20/12/2016.
+ * Created by Douglas Groves on 06/01/2017.
  */
 class ModelValidatorTest extends Specification {
-    def "Validator returns true if the given entity matches its model definition"() {
-        given:
-            def validator = new ModelValidator()
-            Entity entity = Mock(Entity)
-            1 * entity.getEntityNames() >> ["versionNumber", "buildDate", "blameThisPerson"]
-            1 * entity.getEntityNamesAndTypes() >> ["versionNumber": Type.STRING, "buildDate": Type.STRING, "blameThisPerson": Type.STRING]
-        when:
-            def result = validator.isValid(entity, ScaffoldVersion)
-        then:
-            result
-    }
 
     @Unroll
-    def "Validator returns false if property '#property' is missing"(property, entityNames, entityNamesAndTypes) {
+    def "MyModelValidator #action #data as #condition"(value, action, data, condition, scaffold) {
         given:
             def validator = new ModelValidator()
-            Entity entity = Mock(Entity)
-            1 * entity.getEntityNames() >> entityNames
-            1 * entity.getEntityNamesAndTypes() >> entityNamesAndTypes
+            def entity = new Entity(data)
         when:
-            def result = validator.isValid(entity, ScaffoldVersion)
+            def result = validator.isValid(entity, scaffold)
         then:
-            !result
+            result == value
         where:
-            property        | entityNames                      | entityNamesAndTypes
-            'versionNumber' | ['buildDate', 'blameThisPerson'] | ["versionNumber": Type.STRING, "buildDate": Type.STRING, "blameThisPerson": Type.STRING]
-    }
-
-    def "Validator returns false if property types are invalid"() {
-        given:
-            def validator = new ModelValidator()
-            Entity entity = Mock(Entity)
-            1 * entity.getEntityNames() >> ["versionNumber", "buildDate", "blameThisPerson"]
-            1 * entity.getEntityNamesAndTypes() >> ["versionNumber": Type.NUMBER, "buildDate": Type.STRING, "blameThisPerson": Type.STRING]
-        when:
-            def result = validator.isValid(entity, ScaffoldVersion)
-        then:
-            !result
+            value | action        | data                                                                                  | condition                                   | scaffold
+            true  | 'validates'   | ['CustomerId': 12345, 'CustomerName': 'John Smith', 'CustomerAddress': 'Penny Lane']  | 'it is valid'                               | ScaffoldCustomer
+            false | 'invalidates' | ['CustomerId': 12345]                                                                 | 'it is missing required fields'             | ScaffoldCustomer
+            false | 'invalidates' | ['CustomerId': 'abcd', 'CustomerName': 'John Smith', 'CustomerAddress': 'Penny Lane'] | 'it contains a field whose type is invalid' | ScaffoldCustomer
     }
 
     def "Validator returns true if both entity and scaffold are null"(){

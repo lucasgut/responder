@@ -61,6 +61,8 @@ dependencies {
     compile 'com.google.inject:guice:4.1.0'
     compile project(':context')
     compile project(':data')
+    compile project(':commands')
+    compile project(':writer')
 
     //test compilation dependencies
     testCompile 'junit:junit:4.12'
