@@ -51,6 +51,10 @@ public class Entity {
         return this.properties;
     }
 
+    public void set(String name, Object properties) {
+        getEntityNamesAndTypes(properties, name);
+    }
+
     private void getEntityNamesAndTypes(Object properties, String baseKey){
         if(properties instanceof Map){
             if(!baseKey.isEmpty()) {
