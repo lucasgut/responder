@@ -65,7 +65,7 @@
         ],
         "directive": {
           "GET": {
-            "workflow": "com.temenos.responder.flows.CustomerInformationWithTransformer",
+            "workflow": "com.temenos.responder.flows.CustomerInformation",
             "responses": {
               "200": {
                 "item": "com.temenos.responder.scaffold.ScaffoldCustomer"

@@ -52,6 +52,7 @@ public class Entity {
     }
 
     public void set(String name, Object properties) {
+        values.put(name, properties);
         getEntityNamesAndTypes(properties, name);
     }
 
