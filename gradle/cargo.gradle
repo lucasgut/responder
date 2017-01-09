@@ -12,9 +12,16 @@ apply plugin: com.bmuschko.gradle.cargo.CargoPlugin
 cargo {
 	containerId = 'tomcat8x'
 	remote {
-		hostname = 'localhost'
-		port = 8080
-		username = 'tomcat'
-		password = 'tomcat'
+		hostname = System.getProperty('tomcat.hostname') ?: 'localhost'
+		port = System.getProperty('tomcat.port') ?: 8080
+		username = System.getProperty('tomcat.manager.username') ?: 'tomcat'
+		password = System.getProperty('tomcat.manager.password') ?: 'tomcat'
 	}
+  local {
+    installer {
+      installUrl = 'https://archive.apache.org/dist/tomcat/tomcat-8/v8.0.39/bin/apache-tomcat-8.0.39-windows-x86.zip'
+      downloadDir = file("$buildDir/tomcat")
+      extractDir = file("$buildDir/tomcat/runtime")
+    }
+  }
 }
