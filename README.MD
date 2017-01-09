@@ -40,9 +40,21 @@ By default, the Gradle Cargo plugin will attempt to deploy Responder POC to a To
 
 Responder POC is bundled with three core APIs defined in /src/main/resources/resources/core/core.json:
 
-  GET /version
+  GET /version - return contents of generated versionInfo.json file
   
-  POST /add
+  POST /add - add a list of numbers, e.g.
   
-  GET /customer{id}
+  ```
+  POST /responder/add HTTP/1.1
+  Host: localhost:8080
+  Accept: application/json
+  Content-Type: application/json
+  Cache-Control: no-cache
+
+  {
+    "operands": [1,1]
+  }
+  ```
+  
+  GET /customer/{id} - obtain data for a given customer
 
