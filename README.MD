@@ -16,26 +16,33 @@ Responder POC requires the Java 8 JDK.
 
 To run Responder POC with the default embedded Tomcat instance, run the following Gradle task from the command line:
 
+```
   gradlew build cargoRunLocal
-
+```
+  
 ### Deploying Responder POC to a remote Tomcat instance
 
 To deploy Responder POC to a Tomcat instance that has been installed on another system, run the cargoDeployRemote Gradle task from the command line with additional system properties pointing to where the remote server is located:
 
+```
   gradlew build cargoDeployRemote -Dtomcat.hostname=localhost -Dtomcat.port=8080 -Dtomcat.manager.username=tomcat -Dtomcat.manager.password=tomcat
-
+```
   
 ### Deploying Responder POC to a local Tomcat instance
 
 By default, the Gradle Cargo plugin will attempt to deploy Responder POC to a Tomcat instance located at localhost:8080, so the above task can be rewritten as follows:
 
+```
   gradlew build cargoDeployRemote
-
+```
+  
 ## Using Responder POC
 
 Responder POC is bundled with three core APIs defined in /src/main/resources/resources/core/core.json:
 
   GET /version
+  
   POST /add
+  
   GET /customer{id}
 
