@@ -7,9 +7,15 @@ import com.temenos.responder.exception.ResourceNotFoundException;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.mapper.ResourceMapper;
 import com.temenos.responder.producer.Producer;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 
 import javax.ws.rs.core.*;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +77,20 @@ public class ResourcePathHandler implements PathHandler {
             }
         }
 
+        return parameters;
+    }
+
+    @Override
+    public Parameters resolvePathQueryString(String path) {
+        Parameters parameters = new Parameters();
+        try {
+            List<NameValuePair> params = URLEncodedUtils.parse(new URI(path), "UTF-8");
+            for (NameValuePair param : params) {
+                parameters.setValue(param.getName(), param.getValue());
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         return parameters;
     }
 
