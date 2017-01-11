@@ -1,7 +1,9 @@
 package com.temenos.responder.entity.exception;
 
 /**
- * Created by Douglas Groves on 18/12/2016.
+ * This execption should be thrown if the given field name does not exist.
+ *
+ * @author Douglas Groves
  */
 public class PropertyNotFoundException extends EntityException {
     private String message;

@@ -9,9 +9,9 @@ import com.temenos.responder.scaffold.ScaffoldVersion
 import javax.ws.rs.core.Response
 
 /**
- * Add a list of numbers together.
+ * Sum a {@link java.util.List list} of numbers together and return the result of the operation.
  *
- * Created by Douglas Groves on 21/12/2016.
+ * @author Douglas Groves
  */
 class AdditionCommand implements Command {
 

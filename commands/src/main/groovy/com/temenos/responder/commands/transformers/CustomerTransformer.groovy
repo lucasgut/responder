@@ -9,9 +9,14 @@ import com.temenos.responder.scaffold.ScaffoldExternalCustomer
 import javax.ws.rs.core.Response
 
 /**
- * Created by Douglas Groves on 04/01/2017.
+ * Converts an entity whose data structure conforms to
+ * {@link ScaffoldExternalCustomer} into an {@link Entity entity}
+ * conforming to {@link com.temenos.responder.scaffold.ScaffoldCustomer}.
+ *
+ * @author Douglas Groves
+ * @date 10/01/2017
  */
-class CustomerTransformer implements Command {
+public class CustomerTransformer implements Command {
 
     @Override
     void execute(CommandContext context) {

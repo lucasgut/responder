@@ -2,7 +2,7 @@
 
 ## About Responder POC
 
-Responder POC is a simplified library allowing developers to create APIs using JSON and to implement their behaviour using a Java or Java-based language of their choice. It contains a basic JAX-RS application that is deployable to any servlet container conforming to version 3.0 of the Servlet API specification.
+Responder POC is a simplified library allowing developers to create APIs using JSON and to implement their behaviour using a Java or Java-based language of their choice. It contains a basic JAX-RS application deployable to any servlet container implementing version 3.0 of the Servlet API specification.
 
 ## Deploying Responder POC
 

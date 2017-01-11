@@ -3,7 +3,9 @@ package com.temenos.responder.conditions;
 import java.util.List;
 
 /**
- * Created by aburgos on 05/01/2017.
+ * This class composes an expression from multiple {@link Condition conditions}.
+ *
+ * @author Andres Burgos
  */
 public class ConditionComposite implements Condition {
 

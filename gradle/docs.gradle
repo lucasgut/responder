@@ -1,0 +1,45 @@
+task allJavadoc(type: Javadoc){
+  description = 'Generate Javadoc for all projects.'
+  group = 'Documentation'
+  destinationDir = file("${buildDir}/docs/javadoc")
+}
+
+task allGroovydoc(type: Groovydoc){
+  description = 'Generate Groovydoc for all projects.'
+  group = 'Documentation'
+  destinationDir = file("${buildDir}/docs/groovydoc")
+}
+
+
+task javadocJar(type: Jar, dependsOn: allJavadoc){
+  description = 'Create a JAR containing Javadoc that has been generated for all projects.'
+  group = 'Documentation'
+  from "${buildDir}/docs/javadoc"
+  classifier = 'javadoc'
+}
+
+task groovydocJar(type: Jar, dependsOn: allGroovydoc){
+  description = 'Create a JAR containing Groovydoc that has been generated for all projects.'
+  group = 'Documentation'
+  from "${buildDir}/docs/groovydoc"
+  classifier = 'groovydoc'
+}
+
+allprojects {
+  afterEvaluate {
+    if(plugins.hasPlugin(JavaPlugin)){
+      rootProject.tasks.allJavadoc {
+        source += files(sourceSets.collect { it.allJava })
+        classpath += files(sourceSets.main.compileClasspath)
+      }
+    }
+    if(plugins.hasPlugin(GroovyPlugin)){
+      rootProject.tasks.allGroovydoc {
+        classpath = files()
+        source += files(sourceSets.main.allGroovy)
+        classpath += files(sourceSets.main.compileClasspath)
+        groovyClasspath = project.sourceSets.main.compileClasspath
+      }
+    }
+  }
+}

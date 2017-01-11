@@ -1,0 +1,22 @@
+/**
+* eclipse.gradle
+* 
+* Setup Responder POC as an Eclipse project.
+* 
+* @author Douglas Groves
+* @date 09/01/2017
+*
+*/
+apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
+
+eclipse {
+    wtp {
+        facet = []
+        facet {
+            facet name: 'java', version: '1.8'
+            facet name: 'jst.web', version: '3.0'
+            facet name: 'wst.jsdt.web', version: '1.0'
+        }
+    }
+}

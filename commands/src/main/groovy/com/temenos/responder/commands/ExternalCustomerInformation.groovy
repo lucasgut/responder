@@ -7,7 +7,10 @@ import com.temenos.responder.exception.ScriptExecutionException
 import javax.ws.rs.core.Response
 
 /**
- * Created by aburgos on 23/12/2016.
+ * A stub of a resource that returns customer data as a
+ * {@link com.temenos.responder.scaffold.ScaffoldExternalCustomer scaffold of an external customer}.
+ *
+ * @author aburgos
  */
 class ExternalCustomerInformation implements Command {
 

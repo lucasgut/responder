@@ -3,7 +3,9 @@ package com.temenos.responder.scaffold;
 import com.temenos.responder.entity.runtime.Type;
 
 /**
- * Created by Douglas Groves on 06/01/2017.
+ * This Scaffold validates response payloads returned by the add API.
+ *
+ * @author Douglas Groves
  */
 public class ScaffoldAdditionOutput implements Scaffold {
     public static final String RESULT = "result";

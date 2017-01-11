@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Douglas Groves on 04/01/2017.
+ * Default implementation of {@link com.temenos.responder.context.CommandContext CommandContext}.
+ *
+ * @author Douglas Groves
  */
 public class DefaultCommandContext implements CommandContext {
 

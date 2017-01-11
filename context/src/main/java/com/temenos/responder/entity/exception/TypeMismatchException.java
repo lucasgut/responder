@@ -1,7 +1,11 @@
 package com.temenos.responder.entity.exception;
 
 /**
- * Created by Douglas Groves on 18/12/2016.
+ * This exception should be thrown if there is a type mismatch between two
+ * {@link com.temenos.responder.entity.runtime.Entity entities} or an
+ * {@link com.temenos.responder.entity.runtime.Entity entity} and a {@link com.temenos.responder.scaffold.Scaffold scaffold}.
+ *
+ * @author Douglas Groves
  */
 public class TypeMismatchException extends EntityException {
     private String message;

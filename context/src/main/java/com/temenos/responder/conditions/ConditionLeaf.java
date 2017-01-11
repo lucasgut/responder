@@ -1,7 +1,9 @@
 package com.temenos.responder.conditions;
 
 /**
- * Created by aburgos on 05/01/2017.
+ * A ConditionLeaf is a decision tree composed of multiple {@link Condition condition nodes}.
+ *
+ * @author Andres Burgos
  */
 public class ConditionLeaf<T> implements Condition {
 

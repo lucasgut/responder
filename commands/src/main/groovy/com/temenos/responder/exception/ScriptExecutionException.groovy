@@ -3,7 +3,9 @@ package com.temenos.responder.exception;
 import groovy.lang.Script;
 
 /**
- * Created by Douglas Groves on 07/12/2016.
+ * Thrown if an error occurs while executing a JSR-223 script.
+ *
+ * @author Douglas Groves
  */
 class ScriptExecutionException extends Exception {
     private String message;

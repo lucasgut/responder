@@ -7,7 +7,10 @@ import com.temenos.responder.context.DefaultCommandContext
 import com.temenos.responder.context.ExecutionContext
 
 /**
- * Created by Douglas Groves on 05/01/2017.
+ * An AbstractFlow executes a command and automatically adds a self link to the document.
+ * Extend this class if you want to implement your own {@link com.temenos.responder.flow.Flow flow}.
+ *
+ * @author Douglas Groves
  */
 abstract class AbstractFlow implements Flow {
 
@@ -17,6 +20,14 @@ abstract class AbstractFlow implements Flow {
         generateSelfLink(context)
     }
 
+    /**
+     * Perform one or more actions contributing towards a defined workflow and finalise by inserting a self
+     * link to the resource the flow was accessed with into the {@link ExecutionContext execution context} attribute
+     * 'document.links.self'.
+     *
+     * @param context An {@link ExecutionContext execution context} instance. All flow parameters should be passed in using
+     * {@link ExecutionContext#setAttribute(java.lang.String, java.lang.Object) the setAttribute method}.
+     */
     public abstract void doExecute(ExecutionContext context);
 
     protected void generateSelfLink(ExecutionContext context){

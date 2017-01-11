@@ -10,13 +10,12 @@ import com.temenos.responder.producer.Producer
 import javax.ws.rs.core.Response
 
 /**
- * This command injects the contents of a generated JSON file back into the command context for use by the calling
- * flow.
+ * Inject the contents of a generated JSON file back into the command context for use by the calling
+ * {@link com.temenos.responder.flows.Flow flow}. If an error occurs while loading the file, the response code will be
+ * HTTP 500 Internal Server Error and exception details will be added to the
+ * {@link com.temenos.responder.context.CommandContext command context}.
  *
- * If an error occurs while loading the file, the response code will be HTTP 500 Internal Server Error and an exception
- * will be passed back inside the command context.
- *
- * Created by Douglas Groves on 09/12/2016.
+ * @author Douglas Groves
  */
 class VersionInformation implements Command {
 
@@ -29,6 +28,7 @@ class VersionInformation implements Command {
         this.producer = producer
     }
 
+    @Override
     void execute(CommandContext commandContext){
         try {
             List<String> fromDirective = commandContext.from()

@@ -1,0 +1,38 @@
+/**
+* integrationTest.gradle
+* 
+* Run Responder POC integration tests.
+* 
+* @author Douglas Groves
+* @date 09/01/2017
+*
+*/
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+    integrationTest {
+        resources.srcDir file('src/it/resources')
+        groovy {
+            srcDirs = ['src/it/groovy']
+        }
+        compileClasspath = main.output + configurations.testCompile + configurations.integrationTestCompile
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+dependencies {
+    //integration test compilation dependencies
+    integrationTestCompile 'org.glassfish.jersey.test-framework:jersey-test-framework-core:2.24.1'
+    integrationTestCompile 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-simple:2.24.1'
+}
+
+task integrationTest(type: Test){
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    reports.html.destination = file("$buildDir/reports/integrationTests")
+}
+
+test.finalizedBy integrationTest

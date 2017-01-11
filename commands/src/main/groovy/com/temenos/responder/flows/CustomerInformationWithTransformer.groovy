@@ -12,6 +12,8 @@ import com.temenos.responder.exception.ScriptExecutionException
 import javax.ws.rs.core.Response
 
 /**
+ * This flow retrieves a customer record from an external resource and
+ * maps its fields to a consumer model representation using {@link CustomerTransformer a transformer}.
  *
  * Created by aburgos on 23/12/2016.
  */

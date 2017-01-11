@@ -1,7 +1,10 @@
 package com.temenos.responder.entity.exception;
 
 /**
- * Created by Douglas Groves on 18/12/2016.
+ * Subclasses of this {@link java.lang.RuntimeException exception} should be thrown if a problem occurs when
+ * handling an {@link com.temenos.responder.entity.runtime.Entity entity object}.
+ *
+ * @author Douglas Groves
  */
 public class EntityException extends RuntimeException {
     private String message;

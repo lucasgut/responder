@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Douglas Groves on 04/01/2017.
+ * A document aggregates three {@link Entity entities} - links, embedded content and a body
+ * containing data corresponding to a {@link com.temenos.responder.scaffold.Scaffold scaffold definition}.
+ *
+ * @author Douglas Groves
  */
 public class Document {
     private static final String LINKS_ELEM = "_links";

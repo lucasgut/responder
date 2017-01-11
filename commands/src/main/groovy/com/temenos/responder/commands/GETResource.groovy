@@ -5,7 +5,9 @@ import com.temenos.responder.entity.runtime.Entity
 import groovyx.net.http.HTTPBuilder
 
 /**
- * Created by Douglas Groves on 03/01/2017.
+ * Request an external resource over HTTP and store the result into the {@link CommandContext context attribute}.
+ *
+ * @author Douglas Groves
  */
 class GETResource implements Command {
 

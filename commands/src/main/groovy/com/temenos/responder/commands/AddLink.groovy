@@ -6,7 +6,9 @@ import com.temenos.responder.entity.runtime.Entity
 import javax.ws.rs.core.Response
 
 /**
- * Created by Douglas Groves on 04/01/2017.
+ * Add a link to a given {@link com.temenos.responder.context.CommandContext command context} context attribute.
+ *
+ * @author Douglas Groves
  */
 class AddLink implements Command {
 

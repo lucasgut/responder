@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Douglas Groves on 20/12/2016.
+ * This class is used to attach or determine type information
+ * to or from fields inside an {@link Entity entity}.
+ *
+ * @author Douglas Groves
  */
 public enum Type implements IType {
     INTEGER("integer", Integer.class),
@@ -18,22 +21,31 @@ public enum Type implements IType {
     final String type;
     final Class<?> staticType;
 
-    Type(final String type, final Class<?> staticType){
+    Type(final String type, final Class<?> staticType) {
         this.type = type;
         this.staticType = staticType;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public Class<?> getStaticType() {
         return staticType;
     }
 
-    public static Type fromStaticType(Class<?> staticType){
-        for(Type type : Type.values()){
-            if(type.staticType.isAssignableFrom(staticType)){
+    /**
+     * Obtain a Type enumeration using a static {@link Class type}.
+     *
+     * @param staticType A declared type.
+     * @return A Type enumeration corresponding to the
+     * declared type that was used or null if a type cannot be determined.
+     */
+    public static Type fromStaticType(Class<?> staticType) {
+        for (Type type : Type.values()) {
+            if (type.staticType.isAssignableFrom(staticType)) {
                 return type;
             }
         }

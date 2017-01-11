@@ -8,7 +8,10 @@ import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.scaffold.ScaffoldAdditionInput
 
 /**
- * Created by Douglas Groves on 04/01/2017.
+ * This flow sums a list of operands and inserts the calculated result into the
+ * {@link com.temenos.responder.context.ExecutionContext execution context}.
+ *
+ * @author Douglas Groves
  */
 class AdditionFlow extends AbstractFlow {
 

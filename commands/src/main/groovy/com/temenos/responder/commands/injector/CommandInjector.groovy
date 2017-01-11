@@ -13,9 +13,12 @@ import com.temenos.responder.producer.EntityJsonProducer;
 import com.temenos.responder.producer.Producer;
 
 /**
- * Created by Douglas Groves on 04/01/2017.
+ * CommandInjector is a {@link com.google.inject.Module module} responsible for creating
+ * {@link com.temenos.responder.commands.Command Command} singletons.
+ *
+ * @author Douglas Groves
  */
-class CommandInjector extends AbstractModule {
+public class CommandInjector extends AbstractModule {
 
     @Override
     protected void configure() {

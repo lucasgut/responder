@@ -1,7 +1,9 @@
 package com.temenos.responder.conditions;
 
 /**
- * Created by aburgos on 05/01/2017.
+ * The EqualOperator class tests two arguments for equality.
+ *
+ * @author Andres Burgos
  */
 public class EqualOperator<T> implements BooleanBinaryOperator<T> {
     @Override

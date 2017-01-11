@@ -1,0 +1,34 @@
+/**
+* createVersionInfoFile.gradle
+* 
+* Generate a JSON file containing a version number, a build date and an author.
+* 
+* @author Douglas Groves
+* @date 09/01/2017
+*
+*/
+apply plugin: 'war'
+
+import groovy.json.JsonBuilder
+
+war {
+    from "${buildDir}/versionInfo.json", {
+        into 'WEB-INF/classes'
+    }
+    archiveName = "${project.name}.war"
+}
+
+task createVersionInfoFile() {
+    outputs.upToDateWhen { false }
+    doLast {
+        def jsonFile = new File("${buildDir}/versionInfo.json")
+        jsonFile.createNewFile()
+        jsonFile.write(new JsonBuilder(
+                ["versionNumber"  : version,
+                 "buildDate"      : new Date().toString(),
+                 "blameThisPerson": System.getProperty("builtBy") ?: 'Anonymous']
+        ).toString())
+    }
+}
+
+war.dependsOn tasks['createVersionInfoFile']

@@ -13,8 +13,10 @@ import com.temenos.responder.scaffold.ScaffoldExternalCustomer
 import javax.ws.rs.core.Response
 
 /**
+ * This flow retrieves a customer record from an external resource and
+ * maps its fields to a consumer model representation.
  *
- * Created by aburgos on 23/12/2016.
+ * @author Andres Burgos
  */
 class CustomerInformation extends AbstractFlow {
 

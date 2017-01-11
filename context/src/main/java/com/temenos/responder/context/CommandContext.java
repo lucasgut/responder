@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Douglas Groves on 04/01/2017.
+ * A CommandContext is a {@link Context context} that contains a map of attributes and two parameters used
+ * during {@link com.temenos.responder.commands.Command command} processing.
+ *
+ * @author Douglas Groves
  */
 public interface CommandContext extends Context{
     List<String> from();

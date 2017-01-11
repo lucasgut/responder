@@ -1,0 +1,3 @@
+def versionMajorMinor = 0.1
+def versionBuild = System.properties['buildNumber'] ? ".${System.properties['buildNumber']}" : '-SNAPSHOT'
+project.version = "${versionMajorMinor}${versionBuild}"
