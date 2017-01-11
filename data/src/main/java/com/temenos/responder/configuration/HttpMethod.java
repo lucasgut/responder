@@ -5,7 +5,7 @@ package com.temenos.responder.configuration;
  *
  * @author Douglas Groves
  */
-public enum HttpMethods {
+public enum HttpMethod {
     /**
      * HTTP GET method.
      */
@@ -29,7 +29,7 @@ public enum HttpMethods {
 
     private final String value;
 
-    HttpMethods(final String value){
+    HttpMethod(final String value){
         this.value = value;
     }
 

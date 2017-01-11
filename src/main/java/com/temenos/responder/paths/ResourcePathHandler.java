@@ -7,16 +7,13 @@ import com.temenos.responder.exception.ResourceNotFoundException;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.mapper.ResourceMapper;
 import com.temenos.responder.producer.EntityProducer;
-import com.temenos.responder.producer.Producer;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
 import javax.ws.rs.core.*;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +51,10 @@ public class ResourcePathHandler implements PathHandler {
         }
     }
 
-
     @Override
     public Resource resolvePathSpecification(String path, String method) throws ResourceNotFoundException {
         for(Resource r : resources){
-            if((r.getPathSpec().equals(path) || pathMatchesSpec(path, r.getPathSpec())) && r.getHttpMethod().equals(method)){
+            if((r.getPath().equals(path) || pathMatchesSpec(path, r.getPath())) && r.getMethods().get(0).getMethod().equals(method)){
                 return r;
             }
         }
@@ -69,7 +65,7 @@ public class ResourcePathHandler implements PathHandler {
     @Override
     public Parameters resolvePathParameters(String path, Resource resource) {
         Parameters parameters = new Parameters();
-        String[] pathSegments = path.split("/"), specSegments = resource.getPathSpec().split("/");
+        String[] pathSegments = path.split("/"), specSegments = resource.getPath().split("/");
         for(int i = 0; i < pathSegments.length; i++) {
             if (specSegments[i].matches("\\{.+?\\}")) {
                 // remove brackets

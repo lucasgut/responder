@@ -1,59 +1,57 @@
 package com.temenos.responder.configuration;
 
-import com.temenos.responder.commands.Command;
-import com.temenos.responder.flows.Flow;
-import com.temenos.responder.scaffold.Scaffold;
-
-import java.util.Map;
+import java.util.List;
 
 /**
- * Created by Douglas Groves on 09/12/2016.
+ * Created by aburgos on 11/01/2017.
  */
 public class Resource {
-    private final String pathSpec;
-    private final String nameSpec;
-    private final String httpMethod;
-    private final Class<Scaffold> inputModelSpec;
-    private final Map<String,Class<Scaffold>> outputModelSpec;
-    private final Flow flowSpec;
-    private final String scope;
+    private final String name;
+    private String friendlyName;
+    private String description;
+    private final String path;
+    private List<String> tags;
+    private final List<Method> methods;
 
-    public Resource(String pathSpec, String nameSpec, String httpMethod, Class<Scaffold> inputModelSpec,
-                    Map<String,Class<Scaffold>> outputModelSpec, Flow flowSpec, String scope){
-        this.pathSpec = pathSpec;
-        this.nameSpec = nameSpec;
-        this.httpMethod = httpMethod;
-        this.inputModelSpec = inputModelSpec;
-        this.outputModelSpec = outputModelSpec;
-        this.flowSpec = flowSpec;
-        this.scope = scope;
+    public Resource(String name, String path, List<Method> methods) {
+        this.name = name;
+        this.path = path;
+        this.methods = methods;
     }
 
-    public String getPathSpec() {
-        return pathSpec;
+    public String getName() {
+        return name;
     }
 
-    public String getNameSpec() {
-        return nameSpec;
+    public String getPath() {
+        return path;
     }
 
-    public Class<Scaffold> getInputModelSpec(){
-        return inputModelSpec;
+    public List<Method> getMethods() {
+        return methods;
     }
 
-    public Map<String, Class<Scaffold>> getOutputModelSpec() {
-        return outputModelSpec;
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
     }
 
-    public Flow getFlowSpec() {
-        return flowSpec;
+    public String getFriendlyName() {
+        return friendlyName;
     }
 
-    public String getScope() {
-        return scope;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getHttpMethod() {
-        return httpMethod;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public List<String> tags() {
+        return tags;
     }
 }

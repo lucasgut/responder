@@ -1,9 +1,8 @@
 package com.temenos.responder.mapper
 
-import com.temenos.responder.commands.Command
 import com.temenos.responder.flows.Flow
 import com.temenos.responder.scaffold.Scaffold
-import com.temenos.responder.configuration.HttpMethods
+import com.temenos.responder.configuration.HttpMethod
 import com.temenos.responder.configuration.Resource
 
 /**
@@ -15,7 +14,7 @@ class ResourceMapper {
         def resourceList = []
         resourceDef.resources.each { resource ->
             resource.each { name, defn ->
-                HttpMethods.enumConstants.each { httpMethod ->
+                HttpMethod.enumConstants.each { httpMethod ->
                     if(httpMethod.value in defn.directive){
                         resourceList.add(new Resource(
                                 defn.path,
