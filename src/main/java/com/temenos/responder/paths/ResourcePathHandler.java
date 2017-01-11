@@ -6,6 +6,7 @@ import com.temenos.responder.context.Parameters;
 import com.temenos.responder.exception.ResourceNotFoundException;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.mapper.ResourceMapper;
+import com.temenos.responder.producer.EntityProducer;
 import com.temenos.responder.producer.Producer;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -27,7 +28,7 @@ public class ResourcePathHandler implements PathHandler {
     private static final String NOT_FOUND_MSG = "No resource could be resolved for path: %s";
 
     @Inject
-    public ResourcePathHandler(ScriptLoader loader, Producer producer, ResourceMapper mapper){
+    public ResourcePathHandler(ScriptLoader loader, EntityProducer producer, ResourceMapper mapper){
         this.resources = loadCoreResources(loader, producer, mapper);
     }
 
@@ -35,7 +36,7 @@ public class ResourcePathHandler implements PathHandler {
         this.resources = resources;
     }
 
-    private List<Resource> loadCoreResources(ScriptLoader loader, Producer producer, ResourceMapper mapper) {
+    private List<Resource> loadCoreResources(ScriptLoader loader, EntityProducer producer, ResourceMapper mapper) {
         try {
             List<String> resources = new ArrayList<>(loader.loadAll().values());
             List<Object> deserialisedJson = new ArrayList<>();

@@ -2,11 +2,8 @@ package com.temenos.responder.entity.runtime;
 
 import com.temenos.responder.entity.exception.EntityException;
 import com.temenos.responder.entity.exception.PropertyNotFoundException;
-import com.temenos.responder.entity.exception.TypeMismatchException;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * An entity is a data structure whose elements are accessible using dot and/or bracket notation.
@@ -106,6 +103,7 @@ public class Entity {
      *            <b>Registered</b> returns {@link Type#BOOLEAN}<br>
      *            <b>Hostnames</b> returns {@link Type#ARRAY}<br>
      *            <b>Addresses</b> returns {@link Type#OBJECT}<br>
+     *            <b>Addresses.Primary</b> returns {@link Type#STRING}<br>
      * @return The {@link Type data type} of the entity field being accessed.
      */
     public Type getType(String key) {

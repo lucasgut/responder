@@ -8,7 +8,10 @@ import com.temenos.responder.scaffold.Scaffold;
 import java.lang.reflect.Field;
 
 /**
- * Created by Douglas Groves on 06/01/2017.
+ *
+ *
+ * @author Douglas Groves
+ * @author Andres Burgos
  */
 public class ModelValidator implements Validator {
 

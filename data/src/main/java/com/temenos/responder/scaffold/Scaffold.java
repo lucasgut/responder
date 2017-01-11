@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Scaffold is a simple representation of a data model, its fields and type information.
+ * A Scaffold is a simple representation of a data model containing fields and type information.
  *
  * @author Douglas Groves
  */

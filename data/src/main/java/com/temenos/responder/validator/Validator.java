@@ -4,7 +4,7 @@ import com.temenos.responder.scaffold.Scaffold;
 import com.temenos.responder.entity.runtime.Entity;
 
 /**
- * Created by Douglas Groves on 18/12/2016.
+ * @author Douglas Groves
  */
 public interface Validator {
     boolean isValid(Entity entity, Class<Scaffold> scaffold);
