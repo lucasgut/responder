@@ -16,6 +16,6 @@ class EntityJsonProducer implements EntityProducer{
 
     @Override
     String serialise(Entity model) {
-        return new JsonBuilder(model.getProperties()).toString()
+        return new JsonBuilder(model.getValues()).toString()
     }
 }

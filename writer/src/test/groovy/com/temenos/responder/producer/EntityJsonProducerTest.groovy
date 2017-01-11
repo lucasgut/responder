@@ -31,7 +31,7 @@ class EntityJsonProducerTest extends Specification {
         when:
             def result = producer.deserialise(data)
         then:
-            result.properties == output
+            result.values == output
         where:
             data                                     | output
             '{"Greeting":"Hello","Subject":"World"}' | ["Greeting": "Hello", "Subject": 'World']

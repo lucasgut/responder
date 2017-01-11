@@ -14,22 +14,22 @@ import java.util.*;
  */
 public class Entity {
     private final Map<String, Object> values;
-    private final Map<String, Object> properties;
-    private final Map<String, Type> fqPropertyNameAndType;
+    private final Map<String, Object> accessors;
+    private final Map<String, Type> fqAccessorNameAndType;
     private static final String PROPERTY_NOT_FOUND_MSG = "Property %s doesn't exist";
     private static final String INVALID_TYPE_MSG = "Expected: %s but found: %s";
 
     public Entity() {
         values = new LinkedHashMap<>();
-        properties = new LinkedHashMap<>();
-        fqPropertyNameAndType = new LinkedHashMap<>();
+        accessors = new LinkedHashMap<>();
+        fqAccessorNameAndType = new LinkedHashMap<>();
     }
 
-    public Entity(Map<String, Object> properties) {
-        this.values = new LinkedHashMap<>(properties);
-        this.properties = new LinkedHashMap<>();
-        this.fqPropertyNameAndType = new LinkedHashMap<>();
-        getEntityNamesAndTypes(properties, "");
+    public Entity(Map<String, Object> values) {
+        this.values = new LinkedHashMap<>(values);
+        this.accessors = new LinkedHashMap<>();
+        this.fqAccessorNameAndType = new LinkedHashMap<>();
+        getEntityNamesAndTypes(values, "");
     }
 
     /**
@@ -64,10 +64,10 @@ public class Entity {
      * @throws EntityException If no matching field can be found for the given accessor.
      */
     public Object get(String key) throws EntityException {
-        if (!properties.containsKey(key)) {
+        if (!accessors.containsKey(key)) {
             throw new PropertyNotFoundException(String.format(PROPERTY_NOT_FOUND_MSG, key));
         }
-        return properties.get(key);
+        return accessors.get(key);
     }
 
     /**
@@ -154,34 +154,34 @@ public class Entity {
      * @return The {@link Type data type} of the entity field being accessed.
      */
     public Type getType(String key) {
-        return fqPropertyNameAndType.get(key);
+        return fqAccessorNameAndType.get(key);
     }
 
     public Set<String> getEntityNames() {
-        return properties.keySet();
+        return accessors.keySet();
     }
 
     public Map<String, Type> getEntityNamesAndTypes() {
-        return fqPropertyNameAndType;
+        return fqAccessorNameAndType;
     }
 
-    public Map<String, Object> getProperties() {
-        return this.properties;
+    public Map<String, Object> getAccessors() {
+        return accessors;
     }
 
     private void getEntityNamesAndTypes(Object properties, String baseKey) {
         if (properties instanceof Map) {
             if (!baseKey.isEmpty()) {
-                this.properties.put(baseKey, properties);
-                fqPropertyNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
+                accessors.put(baseKey, properties);
+                fqAccessorNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
             }
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) properties).entrySet()) {
                 String key = ((String) entry.getKey()).replace(".", "\\.");
                 getEntityNamesAndTypes(entry.getValue(), baseKey.isEmpty() ? key : baseKey + "." + key);
             }
         } else if (properties instanceof List) {
-            this.properties.put(baseKey, properties);
-            fqPropertyNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
+            accessors.put(baseKey, properties);
+            fqAccessorNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
             int index = 0;
             for (Object o : (List<?>) properties) {
                 getEntityNamesAndTypes(o, baseKey + "[" + index + "]");
@@ -189,8 +189,8 @@ public class Entity {
             }
         } else {
             if (!baseKey.isEmpty()) {
-                this.properties.put(baseKey, properties);
-                fqPropertyNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
+                accessors.put(baseKey, properties);
+                fqAccessorNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
             }
         }
     }
