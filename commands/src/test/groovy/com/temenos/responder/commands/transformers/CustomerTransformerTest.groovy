@@ -19,9 +19,9 @@ class CustomerTransformerTest extends Specification {
             1 * commandContext.from() >> ['ExtnCustomer']
             1 * commandContext.into() >> 'finalResult'
             1 * commandContext.getAttribute('ExtnCustomer') >> extnCustomer
-            1 * extnCustomer.get('CUSTOMER_ID') >> 100100
-            1 * extnCustomer.get('CUSTOMER_NAME') >> 'John Smith'
-            1 * extnCustomer.get('CUSTOMER_ADDRESS') >> 'No Name Street'
+            1 * extnCustomer.get('CUSTOMER\\.ID') >> 100100
+            1 * extnCustomer.get('CUSTOMER\\.NAME') >> 'John Smith'
+            1 * extnCustomer.get('CUSTOMER\\.ADDRESS') >> 'No Name Street'
             1 * commandContext.setAttribute('finalResult',
                     new Entity(['CustomerId':100100,'CustomerName':'John Smith','CustomerAddress':'No Name Street']))
     }

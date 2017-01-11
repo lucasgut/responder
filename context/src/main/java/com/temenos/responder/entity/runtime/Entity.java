@@ -2,6 +2,7 @@ package com.temenos.responder.entity.runtime;
 
 import com.temenos.responder.entity.exception.EntityException;
 import com.temenos.responder.entity.exception.PropertyNotFoundException;
+import com.temenos.responder.entity.exception.TypeMismatchException;
 
 import java.util.*;
 
@@ -16,6 +17,7 @@ public class Entity {
     private final Map<String, Object> properties;
     private final Map<String, Type> fqPropertyNameAndType;
     private static final String PROPERTY_NOT_FOUND_MSG = "Property %s doesn't exist";
+    private static final String INVALID_TYPE_MSG = "Expected: %s but found: %s";
 
     public Entity() {
         values = new LinkedHashMap<>();
@@ -69,9 +71,54 @@ public class Entity {
     }
 
     /**
+     * Obtain an element from the entity instance using dot and/or bracket notation and cast it to the given class.
+     * Consider the following data structure (written in JSON for simplicity):
+     * <pre>
+     * {
+     *   "orchestra": {
+     *       "name": "Chamber Trio",
+     *       "instruments": [
+     *        {
+     *           "name": "Violin"
+     *       },
+     *       {
+     *           "name": "Viola"
+     *       },
+     *       {
+     *           "name: "Cello"
+     *       }
+     *       ],
+     *       "attendence": [10,15,3]
+     *   }
+     * }
+     * </pre>
+     *
+     * @param key      An accessor. For the above example, the following accessors are supported:<br>
+     *                 <b>orchestra.name</b> returns <i>"Chamber Quartet"</i><br>
+     *                 <b>orchestra.instruments</b> returns <i>[["name":"Violin"],["name":"Viola"],["name":"Cello"]]</i><br>
+     *                 <b>orchestra.instruments[0]</b> returns <i>["name":"Violin"]</i><br>
+     *                 <b>orchestra.instruments[0].name</b> returns <i>"Violin"</i><br>
+     * @param expected The expected type of the element.
+     * @param <T>      The class to which the element will be cast.
+     * @return An element cast to the expected type.
+     * @throws EntityException If no matching field can be found for the given accessor or if there is a mismatch between
+     *                         declared and actual types.
+     */
+    public <T> T get(String key, Class<T> expected) throws EntityException {
+        Object value = get(key);
+        Class<?> valueType = value.getClass();
+        if (!expected.isAssignableFrom(valueType)) {
+            throw new TypeMismatchException(String.format(INVALID_TYPE_MSG,
+                    expected.getSimpleName(), valueType.getSimpleName()));
+        } else {
+            return expected.cast(value);
+        }
+    }
+
+    /**
      * Update or add another field to the entity definition and regenerate the map of valid accessors.
      *
-     * @param name The name of the field being added or updated.
+     * @param name       The name of the field being added or updated.
      * @param properties The [new] value that the field will be set to.
      */
     public void set(String name, Object properties) {
@@ -129,7 +176,8 @@ public class Entity {
                 fqPropertyNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
             }
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) properties).entrySet()) {
-                getEntityNamesAndTypes(entry.getValue(), baseKey.isEmpty() ? (String) entry.getKey() : baseKey + "." + entry.getKey());
+                String key = ((String) entry.getKey()).replace(".", "\\.");
+                getEntityNamesAndTypes(entry.getValue(), baseKey.isEmpty() ? key : baseKey + "." + key);
             }
         } else if (properties instanceof List) {
             this.properties.put(baseKey, properties);

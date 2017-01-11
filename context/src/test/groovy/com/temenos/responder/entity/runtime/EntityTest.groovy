@@ -5,9 +5,6 @@ import com.temenos.responder.entity.exception.TypeMismatchException
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
 /**
  * Created by Douglas Groves on 16/12/2016.
  */
@@ -35,6 +32,36 @@ class EntityTest extends Specification {
             'Greeting.Subject[1][1]'          | ["Greeting": ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]]                   | '2'
             'Greeting.Subject[2][2]'          | ["Greeting": ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]]                   | 'C'
             'Greeting.Subject[0][1].LastName' | ["Greeting": ["Subject": [[["LastName": "Ferrari"], ["LastName": "Lamborghini"], ["LastName": "Escort"]]]]] | "Lamborghini"
+            'Greeting.Subject'                | ["Greeting": ["Subject": "Everybody"], "Greeting.Subject": "World"]                                         | "Everybody"
+            'Greeting\\.Subject'              | ["Greeting": ["Subject": "Everybody"], "Greeting.Subject": "World"]                                         | "World"
+    }
+
+    @Unroll
+    def "Type-aware getter obtains #expectedValue as a #expectedType mapped to #key"(key, map, expectedValue, expectedType) {
+        setup:
+            def entity = new Entity(map)
+        when:
+            def result = entity.get(key, expectedType)
+        then:
+            result == expectedValue
+            expectedType.isAssignableFrom(result.getClass())
+        where:
+            key                               | map                                                                                                         | expectedValue                             | expectedType
+            'Greeting'                        | ['Greeting': 'Hello World!']                                                                                | 'Hello World!'                            | String.class
+            'Greeting'                        | ['Subject': 'World', 'Greeting': 'Hello']                                                                   | 'Hello'                                   | String.class
+            'Greeting.Subject'                | ['Greeting': ['Subject': 'World']]                                                                          | 'World'                                   | String.class
+            'Greeting.Subject'                | ['Greeting': ['Subject': ['FirstName': 'Jim', 'LastName': 'Smith']]]                                        | ['FirstName': 'Jim', 'LastName': 'Smith'] | Map.class
+            'Greeting.Subject.LastName'       | ['Greeting': ['Subject': ['FirstName': 'Jim', 'LastName': 'Smith']]]                                        | 'Smith'                                   | String.class
+            'Greeting.Subject'                | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]]                                             | ['Village', 'Town', 'City', 'World']      | List.class
+            'Greeting.Subject[0]'             | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]]                                             | 'Village'                                 | String.class
+            'Greeting.Subject[1]'             | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]]                                             | 'Town'                                    | String.class
+            'Greeting.Subject[0].LastName'    | ["Greeting": ["Subject": [['LastName': 'Village'], [['LastName': 'Town']]]]]                                | 'Village'                                 | String.class
+            'Subject[0][1]'                   | ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]                                 | 'Beta'                                    | String.class
+            'Greeting.Subject[1][1]'          | ["Greeting": ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]]                   | '2'                                       | String.class
+            'Greeting.Subject[2][2]'          | ["Greeting": ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]]                   | 'C'                                       | String.class
+            'Greeting.Subject[0][1].LastName' | ["Greeting": ["Subject": [[["LastName": "Ferrari"], ["LastName": "Lamborghini"], ["LastName": "Escort"]]]]] | "Lamborghini"                             | String.class
+            'Greeting.Subject'                | ["Greeting": ["Subject": "Everybody"], "Greeting.Subject": "World"]                                         | "Everybody"                               | String.class
+            'Greeting\\.Subject'              | ["Greeting": ["Subject": "Everybody"], "Greeting.Subject": "World"]                                         | "World"                                   | String.class
     }
 
     @Unroll
@@ -49,6 +76,21 @@ class EntityTest extends Specification {
         where:
             key                | map                          | exception                 | message                                    | cause
             'Greeting.Missing' | ["Greeting": "Hello World!"] | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching property doesn\'t exist'
+    }
+
+    @Unroll
+    def "Type-aware getter throws #exception.simpleName with message: \'#message\' if #cause"(key, map, expectedType, exception, message, cause) {
+        setup:
+            def entity = new Entity(map)
+        when:
+            def result = entity.get(key, expectedType)
+        then:
+            def expectedException = thrown(exception)
+            expectedException.message == message
+        where:
+            key                | map                          | expectedType | exception                 | message                                    | cause
+            'Greeting.Missing' | ["Greeting": "Hello World!"] | String.class | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching property doesn\'t exist'
+            'Greeting'         | ["Greeting": "Hello World!"] | List.class   | TypeMismatchException     | 'Expected: List but found: String'         | 'an incorrect type qualifier has been used'
     }
 
     @Unroll

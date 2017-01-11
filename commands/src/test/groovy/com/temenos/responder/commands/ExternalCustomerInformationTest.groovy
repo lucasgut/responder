@@ -25,8 +25,8 @@ class ExternalCustomerInformationTest extends Specification {
             1 * context.setResponseCode('200')
         where:
             id     | map
-            100100 | ['CUSTOMER_ID': 100100, 'CUSTOMER_NAME': 'John Smith', 'CUSTOMER_ADDRESS': 'No Name Street']
-            100200 | ['CUSTOMER_ID': 100200, 'CUSTOMER_NAME': 'Iris Law', 'CUSTOMER_ADDRESS': '2 Lansdowne Rd']
+            100100 | ['CUSTOMER.ID': 100100, 'CUSTOMER.NAME': 'John Smith', 'CUSTOMER.ADDRESS': 'No Name Street']
+            100200 | ['CUSTOMER.ID': 100200, 'CUSTOMER.NAME': 'Iris Law', 'CUSTOMER.ADDRESS': '2 Lansdowne Rd']
     }
 
 

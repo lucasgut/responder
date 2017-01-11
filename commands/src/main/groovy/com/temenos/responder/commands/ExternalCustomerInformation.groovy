@@ -3,6 +3,7 @@ package com.temenos.responder.commands
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.exception.ScriptExecutionException
+import com.temenos.responder.scaffold.ScaffoldExternalCustomer
 
 import javax.ws.rs.core.Response
 
@@ -22,15 +23,15 @@ class ExternalCustomerInformation implements Command {
 
             String customerId = executionContext.getAttribute(fromDirective[0])
             // mock T24 customer information
-            Map<String, String> map = new HashMap<>()
+            Map<String, Object> map = new HashMap<>()
             if(customerId == "100100") {
-                map.put("CUSTOMER_ID", 100100)
-                map.put("CUSTOMER_NAME", "John Smith")
-                map.put("CUSTOMER_ADDRESS", "No Name Street")
+                map.put("CUSTOMER.ID", 100100)
+                map.put("CUSTOMER.NAME", "John Smith")
+                map.put("CUSTOMER.ADDRESS", "No Name Street")
             } else if(customerId == "100200") {
-                map.put("CUSTOMER_ID", 100200)
-                map.put("CUSTOMER_NAME", "Iris Law")
-                map.put("CUSTOMER_ADDRESS", "2 Lansdowne Rd")
+                map.put("CUSTOMER.ID", 100200)
+                map.put("CUSTOMER.NAME", "Iris Law")
+                map.put("CUSTOMER.ADDRESS", "2 Lansdowne Rd")
             } else {
                 executionContext.setResponseCode(Response.Status.NOT_FOUND.statusCode as String)
                 executionContext.setAttribute(intoDirective, new Entity())
