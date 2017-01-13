@@ -40,24 +40,23 @@ class ResourcePathHandlerTest extends Specification {
     }
 
     @Unroll
-    def "Resolve #spec if path #path is requested"(path, spec, method) {
+    def "Resolve #spec if path #path is requested"(path, spec) {
         setup:
             def pathHandler = new ResourcePathHandler(resources)
         when:
-            def result = pathHandler.resolvePathSpecification(path, method)
+            def result = pathHandler.resolvePathSpecification(path)
         then:
             result.path == spec
-            result.directives[0].method.value == method
         where:
-            path                 | spec                                 | method
-            'tests'              | 'tests'                              | 'GET'
-            'tests/'             | 'tests'                              | 'GET'
-            'tests/1'            | 'tests/{id}'                         | 'GET'
-            'tests/1/'           | 'tests/{id}'                         | 'GET'
-            'tests/1'            | 'tests/{id}'                         | 'POST'
-            'tests/1/'           | 'tests/{id}'                         | 'POST'
-            'tests/1/history/2'  | 'tests/{TestId}/history/{HistoryId}' | 'GET'
-            'tests/1/history/2/' | 'tests/{TestId}/history/{HistoryId}' | 'GET'
+            path                 | spec
+            'tests'              | 'tests'
+            'tests/'             | 'tests'
+            'tests/1'            | 'tests/{id}'
+            'tests/1/'           | 'tests/{id}'
+            'tests/1'            | 'tests/{id}'
+            'tests/1/'           | 'tests/{id}'
+            'tests/1/history/2'  | 'tests/{TestId}/history/{HistoryId}'
+            'tests/1/history/2/' | 'tests/{TestId}/history/{HistoryId}'
     }
 
     @Unroll
@@ -65,14 +64,13 @@ class ResourcePathHandlerTest extends Specification {
         setup:
             def pathHandler = new ResourcePathHandler(resources)
         when:
-            pathHandler.resolvePathSpecification(path, "GET")
+            pathHandler.resolvePathSpecification(path)
         then:
             def thrownException = thrown(exception)
             thrownException.message == message
         where:
             exception                 | condition                                    | path                 | message
             ResourceNotFoundException | 'no specification exists for the given path' | 'tests/doesnt/exist' | "No resource could be resolved for path: tests/doesnt/exist"
-
     }
 
     @Unroll

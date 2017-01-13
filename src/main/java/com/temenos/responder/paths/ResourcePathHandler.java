@@ -57,10 +57,9 @@ public class ResourcePathHandler implements PathHandler {
     }
 
     @Override
-    public Resource resolvePathSpecification(String path, String method) throws ResourceNotFoundException {
+    public Resource resolvePathSpecification(String path) throws ResourceNotFoundException {
         for(Resource r : resources){
-            Method firstMethod = r.getDirectives().get(0);
-            if((r.getPath().equals(path) || pathMatchesSpec(path, r.getPath())) && firstMethod.getMethod().name().equals(method)){
+            if((r.getPath().equals(path) || pathMatchesSpec(path, r.getPath()))){
                 return r;
             }
         }
