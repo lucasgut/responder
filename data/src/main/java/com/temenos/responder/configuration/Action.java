@@ -8,8 +8,6 @@ public class Action {
     private final Multiplicity multiplicity;
     private final String model;
 
-    public static final String DESCRIPTION = "description";
-
     public Action(String description, Multiplicity multiplicity, String model) {
         this.description = description;
         this.multiplicity = multiplicity;

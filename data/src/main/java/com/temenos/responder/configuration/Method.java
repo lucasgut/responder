@@ -12,11 +12,6 @@ public class Method {
     private String routeOn;
     private final List<Version> routeTo;
 
-    public static final String CACHE_SECONDS = "cacheSeconds";
-    public static final String CACHE_REASON = "cacheReason";
-    public static final String ROUTE_ON = "routeOn";
-    public static final String ROUTE_TO = "routeTo";
-
     public Method(HttpMethod method, List<Version> versions) {
         this.method = method;
         this.routeTo = versions;

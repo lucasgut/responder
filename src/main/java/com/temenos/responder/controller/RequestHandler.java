@@ -55,10 +55,10 @@ public class RequestHandler {
         PathHandler handler = ApplicationContext.getInjector(PathHandler.class);
         Resource resolvedResource = handler.resolvePathSpecification(path, method);
         Parameters parameters = handler.resolvePathParameters(path, resolvedResource);
-        LOGGER.info("Found: {} /{}", resolvedResource.getDirectives().get(0).getMethod(), resolvedResource.getPath());
 
         // TODO: handle methods and versions
         Method firstMethod = resolvedResource.getDirectives().get(0);
+        LOGGER.info("Found: {} /{}", firstMethod.getMethod(), resolvedResource.getPath());
         Version firstVersion = firstMethod.getVersions().get(0);
 
         String requestModel = null;

@@ -15,14 +15,6 @@ public class Version {
     private Status status;
     private String lifeCycle;
 
-    public static final String FLOW = "flow";
-    public static final String DESCRIPTION = "description";
-    public static final String REQUEST = "request";
-    public static final String RESPONSE = "response";
-    public static final String ERROR = "error";
-    public static final String STATUS = "status";
-    public static final String LIFE_CYCLE = "lifeCycle";
-
     public Version(String name, Flow flow) {
         this.name = name;
         this.flow = flow;

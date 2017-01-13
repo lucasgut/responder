@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.temenos.responder.configuration.Method
 import com.temenos.responder.configuration.Resource
+import com.temenos.responder.configuration.ResourceSpec
 import com.temenos.responder.configuration.Version
 import spock.lang.Specification
 
@@ -18,10 +19,10 @@ class ResourceBuilderTest extends Specification {
             def parser = new ResourceBuilder()
             def nodeFactory = JsonNodeFactory.instance;
             def childNode = nodeFactory.objectNode();
-            childNode.put(Resource.PATH, path)
+            childNode.put(ResourceSpec.PATH, path)
             ObjectMapper mapper = new ObjectMapper()
             JsonNode methodsNode = mapper.valueToTree(methods)
-            childNode.put(Resource.DIRECTIVES, methodsNode)
+            childNode.put(ResourceSpec.DIRECTIVES, methodsNode)
             def node = nodeFactory.objectNode();
             node.put(name, childNode)
         when:
@@ -32,14 +33,14 @@ class ResourceBuilderTest extends Specification {
             resource.getDirectives().forEach { resourceMethod ->
                 def methodName = resourceMethod.method.name()
                 assert methods[methodName] != null
-                def versions = methods[methodName][Method.ROUTE_TO]
+                def versions = methods[methodName][ResourceSpec.ROUTE_TO]
                 assert versions != null
                 def resourceVersions = resourceMethod.getVersions()
                 resourceVersions.forEach ({ resourceVersion ->
                     def versionName = resourceVersion.getName()
                     assert versions[versionName] != null
                     def version = versions[versionName]
-                    resourceVersion.getFlow().getClass().name == version[Version.FLOW]
+                    resourceVersion.getFlow().getClass().name == version[ResourceSpec.FLOW]
                 })
             }
         where:

@@ -13,12 +13,6 @@ public class Resource {
     private List<String> tags;
     private final List<Method> directives;
 
-    public static final String FRIENDLY_NAME = "friendlyName";
-    public static final String DESCRIPTION = "description";
-    public static final String PATH = "path";
-    public static final String TAGS = "tags";
-    public static final String DIRECTIVES = "directive";
-
     public Resource() {
         this.name = null;
         this.path = null;

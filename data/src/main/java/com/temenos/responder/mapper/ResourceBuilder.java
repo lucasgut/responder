@@ -17,7 +17,7 @@ public class ResourceBuilder {
 
     public List<Resource> getResources(JsonNode mainNode) {
         List<Resource> resources = new ArrayList<>();
-        ArrayNode resourcesNode = (ArrayNode) mainNode.get("resources");
+        ArrayNode resourcesNode = (ArrayNode) mainNode.get(ResourceSpec.RESOURCES);
         for(JsonNode resourceNode : resourcesNode) {
             Resource resource = getResource(resourceNode);
             resources.add(resource);
@@ -26,19 +26,16 @@ public class ResourceBuilder {
     }
 
     public Resource getResource(JsonNode resourceNode) {
-        String name = null;
-        for (Iterator<String> it = resourceNode.fieldNames(); it.hasNext(); ) {
-            name = it.next();
-        }
+        String name = resourceNode.fieldNames().next();
         JsonNode childNode = resourceNode.get(name);
-        String path = childNode.get(Resource.PATH).asText();
+        String path = childNode.get(ResourceSpec.PATH).asText();
         List<Method> methods = getMethods(childNode);
         Resource resource = new Resource(name, path, methods);
-        if(childNode.has(Resource.FRIENDLY_NAME))
-            resource.setFriendlyName(childNode.get(Resource.FRIENDLY_NAME).asText());
-        if(childNode.has(Resource.DESCRIPTION))
-            resource.setDescription(childNode.get(Resource.DESCRIPTION).asText());
-        if(childNode.has(Resource.TAGS)) {
+        if(childNode.has(ResourceSpec.FRIENDLY_NAME))
+            resource.setFriendlyName(childNode.get(ResourceSpec.FRIENDLY_NAME).asText());
+        if(childNode.has(ResourceSpec.RESOURCE_DESCRIPTION))
+            resource.setDescription(childNode.get(ResourceSpec.RESOURCE_DESCRIPTION).asText());
+        if(childNode.has(ResourceSpec.TAGS)) {
             resource.setTags(getTags(childNode));
         }
         return resource;
@@ -54,7 +51,7 @@ public class ResourceBuilder {
     }
 
     private List<Method> getMethods(JsonNode jsonNode) {
-        JsonNode directivesNode = jsonNode.get(Resource.DIRECTIVES);
+        JsonNode directivesNode = jsonNode.get(ResourceSpec.DIRECTIVES);
         if(directivesNode == null) {
             throw new ResourceParsingException();
         }
@@ -70,15 +67,15 @@ public class ResourceBuilder {
     }
 
     private Method getMethod(HttpMethod httpMethod, JsonNode methodNode) {
-        JsonNode versionsNode = methodNode.get(Method.ROUTE_TO);
+        JsonNode versionsNode = methodNode.get(ResourceSpec.ROUTE_TO);
         List<Version> versions = getVersions(versionsNode);
         Method method = new Method(httpMethod, versions);
-        if(methodNode.has(Method.CACHE_SECONDS))
-            method.setCacheSeconds(methodNode.get(Method.CACHE_SECONDS).asInt());
-        if(methodNode.has(Method.CACHE_REASON))
-            method.setCacheReason(methodNode.get(Method.CACHE_REASON).asText());
-        if(methodNode.has(Method.ROUTE_ON))
-            method.setRouteOn(methodNode.get(Method.ROUTE_ON).asText());
+        if(methodNode.has(ResourceSpec.CACHE_SECONDS))
+            method.setCacheSeconds(methodNode.get(ResourceSpec.CACHE_SECONDS).asInt());
+        if(methodNode.has(ResourceSpec.CACHE_REASON))
+            method.setCacheReason(methodNode.get(ResourceSpec.CACHE_REASON).asText());
+        if(methodNode.has(ResourceSpec.ROUTE_ON))
+            method.setRouteOn(methodNode.get(ResourceSpec.ROUTE_ON).asText());
         return method;
     }
 
@@ -96,36 +93,36 @@ public class ResourceBuilder {
     private Version getVersion(String versionName, JsonNode versionNode) {
         Flow flow = getFlow(versionNode);
         Version version = new Version(versionName, flow);
-        if(versionNode.has(Version.DESCRIPTION))
-            version.setDescription(versionNode.get(Version.DESCRIPTION).asText());
-        if(versionNode.has(Version.REQUEST)) {
-            JsonNode reqActionNode = versionNode.get(Version.REQUEST);
+        if(versionNode.has(ResourceSpec.VERSION_DESCRIPTION))
+            version.setDescription(versionNode.get(ResourceSpec.VERSION_DESCRIPTION).asText());
+        if(versionNode.has(ResourceSpec.REQUEST)) {
+            JsonNode reqActionNode = versionNode.get(ResourceSpec.REQUEST);
             Action request = getAction(reqActionNode);
             version.setRequest(request);
         }
-        if(versionNode.has(Version.RESPONSE)) {
-            JsonNode resActionNode = versionNode.get(Version.RESPONSE);
+        if(versionNode.has(ResourceSpec.RESPONSE)) {
+            JsonNode resActionNode = versionNode.get(ResourceSpec.RESPONSE);
             Action response = getAction(resActionNode);
             version.setResponse(response);
         }
-        if(versionNode.has(Version.ERROR)) {
-            JsonNode errActionNode = versionNode.get(Version.ERROR);
+        if(versionNode.has(ResourceSpec.ERROR)) {
+            JsonNode errActionNode = versionNode.get(ResourceSpec.ERROR);
             Action error = getAction(errActionNode);
             version.setError(error);
         }
-        if(versionNode.has(Version.STATUS)) {
-            Status status = Status.valueOf(versionNode.get(Version.STATUS).asText());
+        if(versionNode.has(ResourceSpec.STATUS)) {
+            Status status = Status.valueOf(versionNode.get(ResourceSpec.STATUS).asText());
             version.setStatus(status);
         }
-        if(versionNode.has(Version.LIFE_CYCLE))
-            version.setLifeCycle(versionNode.get(Version.LIFE_CYCLE).asText());
+        if(versionNode.has(ResourceSpec.LIFE_CYCLE))
+            version.setLifeCycle(versionNode.get(ResourceSpec.LIFE_CYCLE).asText());
         return version;
     }
 
     private Flow getFlow(JsonNode versionNode) {
         Class<Flow> flowClass = null;
         try {
-            flowClass = (Class<Flow>) Class.forName(versionNode.get(Version.FLOW).asText());
+            flowClass = (Class<Flow>) Class.forName(versionNode.get(ResourceSpec.FLOW).asText());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -141,7 +138,7 @@ public class ResourceBuilder {
     }
 
     private Action getAction(JsonNode actionNode) {
-        String description = actionNode.get(Action.DESCRIPTION).asText();
+        String description = actionNode.get(ResourceSpec.ACTION_DESCRIPTION).asText();
         Multiplicity multiplicity = Multiplicity.valueOf(Multiplicity.ITEM.name());;
         if(actionNode.has(Multiplicity.COLLECTION.getValue())) {
             multiplicity = Multiplicity.valueOf(Multiplicity.COLLECTION.name());
