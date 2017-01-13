@@ -6,6 +6,7 @@ import com.temenos.responder.flows.Flow;
  * Created by aburgos on 11/01/2017.
  */
 public class Version {
+    private final String name;
     private final Flow flow;
     private String description;
     private Action request;
@@ -14,8 +15,21 @@ public class Version {
     private Status status;
     private String lifeCycle;
 
-    public Version(Flow flow) {
+    public static final String FLOW = "flow";
+    public static final String DESCRIPTION = "description";
+    public static final String REQUEST = "request";
+    public static final String RESPONSE = "response";
+    public static final String ERROR = "error";
+    public static final String STATUS = "status";
+    public static final String LIFE_CYCLE = "lifeCycle";
+
+    public Version(String name, Flow flow) {
+        this.name = name;
         this.flow = flow;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Flow getFlow() {
@@ -52,5 +66,21 @@ public class Version {
 
     public Action getError() {
         return error;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setLifeCycle(String lifeCycle) {
+        this.lifeCycle = lifeCycle;
+    }
+
+    public String getLifeCycle() {
+        return lifeCycle;
     }
 }

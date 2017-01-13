@@ -38,7 +38,8 @@ class ResponderIntegrationTest extends Specification {
     @Unroll
     def "POST request to /add returns 200 OK and returns the sum of #operands as #sum"(data, sum, operands) {
         when:
-            def result = target('add').request().post(Entity.json(new JsonBuilder(data).toString()))
+            def entity = Entity.json(new JsonBuilder(data).toString())
+            def result = target('add').request().post(entity)
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
             result.status == Response.Status.OK.statusCode

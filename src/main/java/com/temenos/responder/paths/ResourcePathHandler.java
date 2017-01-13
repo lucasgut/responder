@@ -1,12 +1,16 @@
 package com.temenos.responder.paths;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
+import com.temenos.responder.configuration.Method;
 import com.temenos.responder.configuration.Resource;
 import com.temenos.responder.context.Parameters;
 import com.temenos.responder.exception.ResourceNotFoundException;
 import com.temenos.responder.loader.ScriptLoader;
+import com.temenos.responder.mapper.ResourceBuilder;
 import com.temenos.responder.mapper.ResourceMapper;
 import com.temenos.responder.producer.EntityProducer;
+import com.temenos.responder.producer.Producer;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
@@ -25,7 +29,7 @@ public class ResourcePathHandler implements PathHandler {
     private static final String NOT_FOUND_MSG = "No resource could be resolved for path: %s";
 
     @Inject
-    public ResourcePathHandler(ScriptLoader loader, EntityProducer producer, ResourceMapper mapper){
+    public ResourcePathHandler(ScriptLoader loader, Producer producer, ResourceMapper mapper){
         this.resources = loadCoreResources(loader, producer, mapper);
     }
 
@@ -33,19 +37,20 @@ public class ResourcePathHandler implements PathHandler {
         this.resources = resources;
     }
 
-    private List<Resource> loadCoreResources(ScriptLoader loader, EntityProducer producer, ResourceMapper mapper) {
+    private List<Resource> loadCoreResources(ScriptLoader loader, Producer producer, ResourceMapper mapper) {
         try {
-            List<String> resources = new ArrayList<>(loader.loadAll().values());
+            List<String> jsonResources = new ArrayList<>(loader.loadAll().values());
             List<Object> deserialisedJson = new ArrayList<>();
-            for(String json : resources){
+            for(String json : jsonResources){
                 deserialisedJson.add(producer.deserialise(json));
             }
-            List<?> mappedResources = (List<?>) mapper.mapAll(deserialisedJson);
-            List<Resource> cleanResources = new ArrayList<>();
-            for (Object o : mappedResources) {
-                cleanResources.add(Resource.class.cast(o));
+            ResourceBuilder builder = new ResourceBuilder();
+            List<Resource> mappedResources = new ArrayList<>();
+            for(Object jsonObject : deserialisedJson) {
+                JsonNode jsonNode = (JsonNode) jsonObject;
+                mappedResources.addAll(builder.getResources(jsonNode));
             }
-            return cleanResources;
+            return mappedResources;
         } catch (IOException ioe) {
             throw new RuntimeException("Unable to load resources", ioe);
         }
@@ -54,7 +59,8 @@ public class ResourcePathHandler implements PathHandler {
     @Override
     public Resource resolvePathSpecification(String path, String method) throws ResourceNotFoundException {
         for(Resource r : resources){
-            if((r.getPath().equals(path) || pathMatchesSpec(path, r.getPath())) && r.getMethods().get(0).getMethod().equals(method)){
+            Method firstMethod = r.getDirectives().get(0);
+            if((r.getPath().equals(path) || pathMatchesSpec(path, r.getPath())) && firstMethod.getMethod().name().equals(method)){
                 return r;
             }
         }

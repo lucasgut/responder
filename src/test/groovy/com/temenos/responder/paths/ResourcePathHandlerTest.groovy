@@ -1,6 +1,9 @@
 package com.temenos.responder.paths
 
+import com.temenos.responder.configuration.HttpMethod
+import com.temenos.responder.configuration.Method
 import com.temenos.responder.configuration.Resource
+import com.temenos.responder.configuration.Version
 import com.temenos.responder.exception.ResourceNotFoundException
 import com.temenos.responder.loader.ScriptLoader
 import spock.lang.Specification
@@ -19,14 +22,20 @@ class ResourcePathHandlerTest extends Specification {
             mockAnotherItemResource = Mock(Resource),
             mockItemWithItemResource = Mock(Resource)
         def mockScriptLoader = Mock(ScriptLoader)
-        _ * mockCollectionResource.getPathSpec() >> 'tests'
-        _ * mockCollectionResource.getHttpMethod() >> "GET"
-        _ * mockItemResource.getPathSpec() >> 'tests/{id}'
-        _ * mockItemResource.getHttpMethod() >> "GET"
-        _ * mockAnotherItemResource.getPathSpec() >> 'tests/{id}'
-        _ * mockAnotherItemResource.getHttpMethod() >> "POST"
-        _ * mockItemWithItemResource.getPathSpec() >> 'tests/{TestId}/history/{HistoryId}'
-        _ * mockItemWithItemResource.getHttpMethod() >> "GET"
+        def getMethod = new Method(HttpMethod.valueOf("GET"), new ArrayList<Version>())
+        def postMethod = new Method(HttpMethod.valueOf("POST"), new ArrayList<Version>())
+        def getList = new ArrayList<Method>()
+        getList.add(getMethod)
+        def postList = new ArrayList<Method>()
+        postList.add(postMethod)
+        _ * mockCollectionResource.getPath() >> 'tests'
+        _ * mockCollectionResource.getDirectives() >> getList;
+        _ * mockItemResource.getPath() >> 'tests/{id}'
+        _ * mockItemResource.getDirectives() >> getList;
+        _ * mockAnotherItemResource.getPath() >> 'tests/{id}'
+        _ * mockAnotherItemResource.getDirectives() >> postList;
+        _ * mockItemWithItemResource.getPath() >> 'tests/{TestId}/history/{HistoryId}'
+        _ * mockItemWithItemResource.getDirectives() >> getList;
         resources = [mockCollectionResource, mockItemResource, mockAnotherItemResource, mockItemWithItemResource]
     }
 
@@ -37,8 +46,8 @@ class ResourcePathHandlerTest extends Specification {
         when:
             def result = pathHandler.resolvePathSpecification(path, method)
         then:
-            result.pathSpec == spec
-            result.httpMethod == method
+            result.path == spec
+            result.directives[0].method.value == method
         where:
             path                 | spec                                 | method
             'tests'              | 'tests'                              | 'GET'
@@ -70,7 +79,7 @@ class ResourcePathHandlerTest extends Specification {
     def "Resolve #parameters from #spec if path #path is requested"(path, spec, parameters) {
         setup:
             def resource = Mock(Resource)
-            _ * resource.getPathSpec() >> spec
+            _ * resource.getPath() >> spec
             def pathHandler = new ResourcePathHandler(_)
         when:
             def result = pathHandler.resolvePathParameters(path, resource)

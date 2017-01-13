@@ -6,7 +6,7 @@ import groovy.json.JsonSlurper
 /**
  * Created by Douglas Groves on 09/12/2016.
  */
-class JsonProducer implements Producer<Object, String> {
+class JsonSlurperProducer implements Producer<Object, String> {
     def deserialise(String json) {
         return new JsonSlurper().parseText(json)
     }

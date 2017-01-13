@@ -1,7 +1,6 @@
 package com.temenos.responder.startup;
 
 import com.google.inject.*;
-import com.temenos.responder.context.Context;
 import com.temenos.responder.loader.ClasspathScriptLoader;
 import com.temenos.responder.loader.ScriptLoader;
 import com.temenos.responder.paths.PathHandler;
@@ -38,7 +37,7 @@ public class ApplicationContext extends AbstractModule {
         bind(ScriptLoader.class).toInstance(CP_SCRIPT_LOADER);
         bind(PathHandler.class).to(ResourcePathHandler.class);
         bind(ScriptingEngine.class).to(GroovyScriptingEngine.class);
-        bind(Producer.class).to(JsonProducer.class);
+        bind(Producer.class).to(JsonNodeProducer.class);
         bind(ScriptEngine.class).toInstance(G_SCRIPT_ENGINE);
         bind(Validator.class).to(ModelValidator.class);
         bind(EntityProducer.class).to(EntityJsonProducer.class);

@@ -2,31 +2,32 @@
   "rimVersion": "2.0",
   "packageId": "core",
   "resources": [
+  {
+    "appVersion":
     {
-      "appVersion": {
-        "scope": "public",
-        "resourceType": "resource",
-        "cleanName": "Application version number",
-        "description": "This static resource returns the version number of the deployed API-D instance",
-        "path": "version",
-        "version": "0.0.1",
-        "tags": [
-          "Core",
-          "Version"
-        ],
-        "directive": {
-          "GET": {
-            "workflow": "com.temenos.responder.flows.VersionInformationFlow",
-            "responses": {
-              "200": {
+      "scope": "public",
+      "resourceType": "resource",
+      "cleanName": "Application version number",
+      "description": "This static resource returns the version number of the deployed API-D instance",
+      "path": "version",
+      "version": "0.0.1",
+      "tags": ["Core", "Version"],
+      "directive": {
+        "GET": {
+          "routeTo": {
+            "default": {
+              "flow": "com.temenos.responder.flows.VersionInformationFlow",
+              "response": {
+                "description": "A scaffold version version",
                 "item": "com.temenos.responder.scaffold.ScaffoldVersion"
               }
             }
           }
         }
       }
-    },
-    {
+    }
+  },
+  {
       "add": {
         "scope": "public",
         "resource": "resource",
@@ -40,11 +41,17 @@
         ],
         "directive": {
           "POST": {
-            "item": "com.temenos.responder.scaffold.ScaffoldAdditionInput",
-            "workflow": "com.temenos.responder.flows.AdditionFlow",
-            "responses": {
-              "200": {
-                "item": "com.temenos.responder.scaffold.ScaffoldAdditionOutput"
+            "routeTo": {
+              "default": {
+                "flow": "com.temenos.responder.flows.AdditionFlow",
+                "request": {
+                  "description": "Scaffold addition input",
+                  "item": "com.temenos.responder.scaffold.ScaffoldAdditionInput"
+                },
+                "responses": {
+                  "description": "Scaffold addition output",
+                  "item": "com.temenos.responder.scaffold.ScaffoldAdditionOutput"
+                }
               }
             }
           }
@@ -65,10 +72,13 @@
         ],
         "directive": {
           "GET": {
-            "workflow": "com.temenos.responder.flows.CustomerInformation",
-            "responses": {
-              "200": {
-                "item": "com.temenos.responder.scaffold.ScaffoldCustomer"
+            "routeTo": {
+              "default": {
+                "flow": "com.temenos.responder.flows.CustomerInformation",
+                "response": {
+                  "description": "Scaffold customer",
+                  "item": "com.temenos.responder.scaffold.ScaffoldCustomer"
+                }
               }
             }
           }

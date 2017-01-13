@@ -1,16 +1,12 @@
 package com.temenos.responder.commands
 
 import com.temenos.responder.context.CommandContext
-import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.exception.ScriptExecutionException
 import com.temenos.responder.loader.ScriptLoader
-import com.temenos.responder.producer.JsonProducer
 import com.temenos.responder.producer.Producer
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import javax.ws.rs.core.Response
 
 /**
  * Created by Douglas Groves on 09/12/2016.

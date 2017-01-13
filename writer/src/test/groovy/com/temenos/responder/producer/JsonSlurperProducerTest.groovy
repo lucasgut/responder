@@ -6,12 +6,12 @@ import spock.lang.Unroll
 /**
  * Created by Douglas Groves on 09/12/2016.
  */
-class JsonProducerTest extends Specification {
+class JsonSlurperProducerTest extends Specification {
 
     @Unroll
     def "Serialise #data as #output"(data, output) {
         when:
-            def result = new JsonProducer().serialise(data)
+            def result = new JsonSlurperProducer().serialise(data)
         then:
             result == output
         where:
@@ -22,7 +22,7 @@ class JsonProducerTest extends Specification {
     @Unroll
     def "Deserialise #data as #output"(data, output) {
         when:
-            def result = new JsonProducer().deserialise(data)
+            def result = new JsonSlurperProducer().deserialise(data)
         then:
             result == output
         where:

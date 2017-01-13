@@ -11,12 +11,24 @@ public class Resource {
     private String description;
     private final String path;
     private List<String> tags;
-    private final List<Method> methods;
+    private final List<Method> directives;
 
-    public Resource(String name, String path, List<Method> methods) {
+    public static final String FRIENDLY_NAME = "friendlyName";
+    public static final String DESCRIPTION = "description";
+    public static final String PATH = "path";
+    public static final String TAGS = "tags";
+    public static final String DIRECTIVES = "directive";
+
+    public Resource() {
+        this.name = null;
+        this.path = null;
+        this.directives = null;
+    }
+
+    public Resource(String name, String path, List<Method> directives) {
         this.name = name;
         this.path = path;
-        this.methods = methods;
+        this.directives = directives;
     }
 
     public String getName() {
@@ -27,8 +39,8 @@ public class Resource {
         return path;
     }
 
-    public List<Method> getMethods() {
-        return methods;
+    public List<Method> getDirectives() {
+        return directives;
     }
 
     public void setFriendlyName(String friendlyName) {
@@ -51,7 +63,7 @@ public class Resource {
         this.tags = tags;
     }
 
-    public List<String> tags() {
+    public List<String> getTags() {
         return tags;
     }
 }
