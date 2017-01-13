@@ -23,6 +23,6 @@ public class JsonNodeProducer implements Producer<JsonNode, String> {
 
     @Override
     public String serialise(JsonNode input) {
-        return null;
+        return input.toString();
     }
 }
