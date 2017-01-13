@@ -92,4 +92,31 @@ class ResponderIntegrationTest extends Specification {
             json.Message == 'Not Found'
             result.headers.get('Content-Type').first() as String == 'application/json'
     }
+
+    def "GET request to nonexistent version resource returns 404 Not Found with response body 'Not Found'"() {
+        when:
+            def request = target('version').request()
+            request.header("accept-version", "nonexistent")
+            def result = request.get()
+            def json = new JsonSlurper().parseText(result.readEntity(String.class));
+        then:
+            result.status == Response.Status.NOT_FOUND.statusCode
+            json.Message == 'Not Found'
+            result.headers.get('Content-Type').first() as String == 'application/json'
+    }
+
+    def "GET request to /version version 2.0 returns 200 OK and returns contents of versionInfo.json"() {
+        when:
+            def request = target('version').request()
+            request.header("accept-version", "2.0")
+            def result = request.get()
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
+        then:
+            result.status == Response.Status.OK.statusCode
+            body['appVersion']['versionNumber'] == "0.1-SNAPSHOT"
+            body['appVersion']['buildDate'] == '2016-12-09T16:00:00Z'
+            body['appVersion']['blameThisPerson'] == 'Jenkins'
+            body['_links']['self']['href'] == 'http://localhost:9998/version'
+            body['_embedded'] != null
+        }
 }

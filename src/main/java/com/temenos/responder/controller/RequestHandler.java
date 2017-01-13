@@ -4,24 +4,20 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import com.temenos.responder.configuration.*;
-import com.temenos.responder.configuration.HttpMethod;
 import com.temenos.responder.context.DefaultExecutionContext;
 import com.temenos.responder.context.ExecutionContext;
 import com.temenos.responder.context.Parameters;
 import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
-import com.temenos.responder.flows.Flow;
+import com.temenos.responder.exception.ResourceNotFoundException;
 import com.temenos.responder.paths.PathHandler;
-import com.temenos.responder.paths.ResourcePathHandler;
 import com.temenos.responder.scaffold.Scaffold;
 import com.temenos.responder.startup.ApplicationContext;
 import com.temenos.responder.validator.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Path("/{path: .*}")
 public class RequestHandler {
@@ -35,53 +31,34 @@ public class RequestHandler {
     private UriInfo info;
 
     @GET
-    public Response get() {
-        return serviceRequest(info.getPath(), "GET", null);
+    public Response get(@HeaderParam("accept-version") String versionName) {
+        return serviceRequest(info.getPath(), "GET", versionName, null);
     }
 
     @POST
-    public Response post(Entity request) {
-        return serviceRequest(info.getPath(), "POST", request);
+    public Response post(Entity request, @HeaderParam("accept-version") String versionName) {
+        return serviceRequest(info.getPath(), "POST", versionName, request);
     }
 
     @PUT
-    public Response put(Entity request) {
-        return serviceRequest(info.getPath(), "PUT", request);
+    public Response put(Entity request, @HeaderParam("accept-version") String versionName) {
+        return serviceRequest(info.getPath(), "PUT", versionName, request);
     }
 
     @DELETE
-    public Response delete(Entity request) {
-        return serviceRequest(info.getPath(), "DELETE", request);
+    public Response delete(Entity request, @HeaderParam("accept-version") String versionName) {
+        return serviceRequest(info.getPath(), "DELETE", versionName, request);
     }
 
-    private Method getMethod(Resource resource, String methodName) {
-        List<Method> methods = resource.getDirectives();
-        for(Method method : methods) {
-            if(methodName.equals(method.getMethod().getValue()))
-                return method;
-        }
-        return null;
-    }
-
-    private Version getVersion(Resource resource, String methodName, String versionName) {
-        Method method = getMethod(resource, methodName);
-        List<Version> versions = method.getVersions();
-        for(Version version : versions) {
-            if(versionName.equals(version.getName()))
-                return version;
-        }
-        return null;
-    }
-
-    private Response serviceRequest(String path, String method, Entity requestBody) {
+    private Response serviceRequest(String path, String methodName, String versionName, Entity requestBody) {
         //locate a resource corresponding to the request path
         PathHandler handler = ApplicationContext.getInjector(PathHandler.class);
         Resource resource = handler.resolvePathSpecification(path);
         Parameters parameters = handler.resolvePathParameters(path, resource);
-        LOGGER.info("Found: {} / {}", method, resource.getPath());
+        LOGGER.info("Found: {} / {}", methodName, resource.getPath());
 
-        // TODO: get version name from http headers
-        Version version = getVersion(resource, method, "default");
+        ResourceHandler resourceHandler = new ResourceHandler();
+        Version version = resourceHandler.getVersion(resource, methodName, versionName);
 
         String requestModel = null;
         if(version.getRequest() != null) {
