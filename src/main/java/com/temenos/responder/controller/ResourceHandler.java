@@ -21,7 +21,7 @@ public class ResourceHandler {
     private static final String VERSION_NOT_FOUND_MSG = "No version %s found for resource %s";
     private static final String METHOD_NOT_FOUND_MSG = "No method %s found for resource %s";
 
-    public Method getMethod(Resource resource, String methodName) {
+    public Method getMethod(Resource resource, String methodName) throws MethodNotFoundException {
         List<Method> methods = resource.getDirectives();
         for(Method method : methods) {
             if(methodName.equals(method.getMethod().getValue()))
@@ -32,7 +32,7 @@ public class ResourceHandler {
                 Response.status(Response.Status.NOT_FOUND).entity("{\"Message\":\"Not Found\", \"code\": 404}").header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).build());
     }
 
-    public Version getVersion(Resource resource, String methodName, String versionName) throws ResourceNotFoundException {
+    public Version getVersion(Resource resource, String methodName, String versionName) throws VersionNotFoundException {
         Method method = getMethod(resource, methodName);
         List<Version> versions = method.getVersions();
         if(versionName == null)
@@ -41,7 +41,7 @@ public class ResourceHandler {
             return doGetVersion(resource, versions, versionName);
     }
 
-    private Version doGetVersion(Resource resource, List<Version> versions, String versionName) throws ResourceNotFoundException {
+    private Version doGetVersion(Resource resource, List<Version> versions, String versionName) throws VersionNotFoundException {
         for(Version version : versions) {
             if(versionName.equals(version.getName()))
                 return version;

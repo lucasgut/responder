@@ -113,8 +113,8 @@ class ResponderIntegrationTest extends Specification {
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
             result.status == Response.Status.OK.statusCode
-            body['appVersion']['versionNumber'] == "0.1-SNAPSHOT"
-            body['appVersion']['buildDate'] == '2016-12-09T16:00:00Z'
+            body['appVersion']['versionNumber'] == "0.2-SNAPSHOT"
+            body['appVersion']['buildDate'] == '2017-01-16T10:53:00Z'
             body['appVersion']['blameThisPerson'] == 'Jenkins'
             body['_links']['self']['href'] == 'http://localhost:9998/version'
             body['_embedded'] != null
