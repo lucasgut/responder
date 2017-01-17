@@ -122,7 +122,7 @@ public class Entity {
      * @param properties The [new] value that the field will be set to.
      */
     public void set(String name, Object properties) {
-        values.put(name, properties);
+        values.put(name.replace("\\.", "."), properties);
         getEntityNamesAndTypes(properties, name);
     }
 

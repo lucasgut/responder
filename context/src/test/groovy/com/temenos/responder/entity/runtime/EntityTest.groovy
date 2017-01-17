@@ -134,5 +134,7 @@ class EntityTest extends Specification {
             'Greeting.Subject[1][1]'          | ["Greeting": ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]]                   | '2'
             'Greeting.Subject[2][2]'          | ["Greeting": ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]]                   | 'C'
             'Greeting.Subject[0][1].LastName' | ["Greeting": ["Subject": [[["LastName": "Ferrari"], ["LastName": "Lamborghini"], ["LastName": "Escort"]]]]] | "Lamborghini"
+            'Greeting.Subject'                | ["Greeting": ["Subject": "Everybody"], "Greeting\\.Subject": "World"]                                       | "Everybody"
+            'Greeting\\.Subject'              | ["Greeting": ["Subject": "Everybody"], "Greeting\\.Subject": "World"]                                       | "World"
     }
 }
