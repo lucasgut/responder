@@ -13,7 +13,12 @@ class EntityXMLProducer implements EntityProducer {
     @Override
     Entity deserialise(String input) {
         def xml = new XmlSlurper().parseText(input)
-        return new Entity(traverse(xml));
+        def document = [:]
+        xml.attributes().each { key, val ->
+            document["${xml.name()}.${key}"] = val
+        }
+        document[(xml.name())] = traverse(xml)
+        return new Entity(document);
     }
 
     private traverse(GPathResult parent){
