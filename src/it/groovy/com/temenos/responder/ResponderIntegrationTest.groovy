@@ -1,5 +1,6 @@
 package com.temenos.responder
 
+import com.temenos.responder.controller.RequestHandler
 import com.temenos.responder.startup.ResponderApplication
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
@@ -96,7 +97,7 @@ class ResponderIntegrationTest extends Specification {
     def "GET request to nonexistent version resource returns 404 Not Found with response body 'Not Found'"() {
         when:
             def request = target('version').request()
-            request.header("accept-version", "nonexistent")
+            request.header(RequestHandler.DEFAULT_ROUTE_ON, "nonexistent")
             def result = request.get()
             def json = new JsonSlurper().parseText(result.readEntity(String.class));
         then:
@@ -108,7 +109,7 @@ class ResponderIntegrationTest extends Specification {
     def "GET request to /version version 2.0 returns 200 OK and returns contents of versionInfo.json"() {
         when:
             def request = target('version').request()
-            request.header("accept-version", "2.0")
+            request.header(RequestHandler.DEFAULT_ROUTE_ON, "2.0")
             def result = request.get()
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
@@ -118,5 +119,45 @@ class ResponderIntegrationTest extends Specification {
             body['appVersion']['blameThisPerson'] == 'Jenkins'
             body['_links']['self']['href'] == 'http://localhost:9998/version'
             body['_embedded'] != null
-        }
+    }
+
+    @Unroll
+    def "GET request to /dashboard/#id in CustomerDashboard version 1.0 mock command"(id, name, homeAddress, workAddress) {
+        setup:
+            def path = 'dashboard/' + id
+            def request = target(path).request()
+            request.header(RequestHandler.DEFAULT_ROUTE_ON, "1.0")
+        when:
+            def result = request.get()
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
+        then:
+            result.status == Response.Status.OK.statusCode
+            body['CustomerDashboard']['customerName'] == name
+            body['CustomerDashboard']['homeAddress'] == homeAddress
+            body['CustomerDashboard']['workAddress'] == workAddress
+            body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
+            body['_embedded'] != null
+        where:
+            id     | name         | homeAddress       | workAddress
+            100100 | 'John Smith' | 'No Name Street'  | '85 Albert Embankment'
+            100200 | 'Iris Law'   | '2 Lansdowne Rd'  | '9 Argyll Street'
+    }
+
+    @Unroll
+    def "GET request to /dashboard/#id nonexistent in CustomerDashboard version 1.0 mock command"(id) {
+        setup:
+            def path = 'dashboard/' + id
+            def request = target(path).request()
+            request.header(RequestHandler.DEFAULT_ROUTE_ON, "1.0")
+        when:
+            def result = request.get()
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
+        then:
+            result.status == Response.Status.OK.statusCode
+            body['CustomerDashboard'] == [:]
+            body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
+            body['_embedded'] != null
+        where:
+            id << [66666, 99999]
+    }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 public class RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
+    public static final String DEFAULT_ROUTE_ON = "Accept-Version";
 
     @Context
     private Configuration configuration;
@@ -31,22 +32,22 @@ public class RequestHandler {
     private UriInfo info;
 
     @GET
-    public Response get(@HeaderParam("accept-version") String versionName) {
+    public Response get(@HeaderParam(DEFAULT_ROUTE_ON) String versionName) {
         return serviceRequest(info.getPath(), "GET", versionName, null);
     }
 
     @POST
-    public Response post(Entity request, @HeaderParam("accept-version") String versionName) {
+    public Response post(Entity request, @HeaderParam(DEFAULT_ROUTE_ON) String versionName) {
         return serviceRequest(info.getPath(), "POST", versionName, request);
     }
 
     @PUT
-    public Response put(Entity request, @HeaderParam("accept-version") String versionName) {
+    public Response put(Entity request, @HeaderParam(DEFAULT_ROUTE_ON) String versionName) {
         return serviceRequest(info.getPath(), "PUT", versionName, request);
     }
 
     @DELETE
-    public Response delete(Entity request, @HeaderParam("accept-version") String versionName) {
+    public Response delete(Entity request, @HeaderParam(DEFAULT_ROUTE_ON) String versionName) {
         return serviceRequest(info.getPath(), "DELETE", versionName, request);
     }
 
@@ -55,7 +56,7 @@ public class RequestHandler {
         PathHandler handler = ApplicationContext.getInjector(PathHandler.class);
         Resource resource = handler.resolvePathSpecification(path);
         Parameters parameters = handler.resolvePathParameters(path, resource);
-        LOGGER.info("Found: {} / {}", methodName, resource.getPath());
+        LOGGER.info("Found: {} /{}", methodName, resource.getPath());
 
         ResourceHandler resourceHandler = new ResourceHandler();
         Version version = resourceHandler.getVersion(resource, methodName, versionName);
@@ -89,20 +90,24 @@ public class RequestHandler {
         version.getFlow().execute(ctx);
 
         String responseModel = null;
-        if(version.getResponse() != null) {
-            responseModel = version.getResponse().getModel();
-            Class<Scaffold> response = null;
-            try {
-                response = (Class<Scaffold>) Class.forName(responseModel);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
 
-            //validate the entity against the model definition
-            if (!ApplicationContext.getInjector(Validator.class)
-                    .isValid((Entity) ctx.getAttribute("finalResult"), response)) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ctx.getAttribute("finalResult")).build();
-            }
+        if(ctx.getResponseCode().equals(Response.Status.INTERNAL_SERVER_ERROR.name())) {
+            responseModel = version.getError().getModel();
+        } else if (version.getResponse() != null) {
+            responseModel = version.getResponse().getModel();
+        }
+
+        Class<Scaffold> response = null;
+        try {
+            response = (Class<Scaffold>) Class.forName(responseModel);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //validate the entity against the model definition
+        if (!ApplicationContext.getInjector(Validator.class)
+                .isValid((Entity) ctx.getAttribute("finalResult"), response)) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ctx.getAttribute("finalResult")).build();
         }
 
         //construct a response

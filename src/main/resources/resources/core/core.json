@@ -55,7 +55,7 @@
                   "description": "Scaffold addition input",
                   "item": "com.temenos.responder.scaffold.ScaffoldAdditionInput"
                 },
-                "responses": {
+                "response": {
                   "description": "Scaffold addition output",
                   "item": "com.temenos.responder.scaffold.ScaffoldAdditionOutput"
                 }
@@ -85,6 +85,49 @@
                 "response": {
                   "description": "Scaffold customer",
                   "item": "com.temenos.responder.scaffold.ScaffoldCustomer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "CustomerDashboard": {
+        "friendlyName": "Customer Dashboard",
+        "description": "This is a Customer Dashboard",
+        "path": "dashboard/{customerId}",
+        "tags": [
+          "Customer",
+          "Account",
+          "Dashboard"
+        ],
+        "directive": {
+          "GET": {
+            "routeOn": "rim.request.header.Accept-Version",
+            "routeTo": {
+              "1.0": {
+                "flow": "com.temenos.responder.flows.CustomerDashboardGetMainFlow_1_0",
+                "description": "This is the main flow for version 1.0",
+                "response": {
+                  "description": "Account dashboard C-Model 1.0",
+                  "item": "com.temenos.responder.scaffold.ScaffoldCustomerDashboard_1"
+                },
+                "error": {
+                  "description": "Error model",
+                  "item": "com.temenos.responder.scaffold.ScaffoldErrorMessage"
+                }
+              },
+              "2.0": {
+                "flow": "com.temenos.responder.flows.CustomerDashboardGetMainFlow_2_0",
+                "description": "This is the main flow for version 2.0",
+                "response": {
+                  "description": "Account dashboard C-Model 2.0",
+                  "item": "com.temenos.responder.scaffold.ScaffoldCustomerDashboard_2"
+                },
+                "error": {
+                  "description": "Error model",
+                  "item": "com.temenos.responder.scaffold.ScaffoldErrorMessage"
                 }
               }
             }

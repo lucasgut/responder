@@ -26,6 +26,12 @@ public class DefaultCommandContext implements CommandContext {
         this.attributes = attributes;
     }
 
+    public DefaultCommandContext(List<String> fromParams, String intoParam) {
+        this.attributes = new HashMap<>();
+        this.fromParams = fromParams;
+        this.intoParam = intoParam;
+    }
+
     @Override
     public Object getAttribute(String name) {
         return attributes.get(name);
