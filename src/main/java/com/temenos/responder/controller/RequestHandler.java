@@ -2,14 +2,14 @@ package com.temenos.responder.controller;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
 
 import com.temenos.responder.configuration.*;
-import com.temenos.responder.context.DefaultExecutionContext;
-import com.temenos.responder.context.ExecutionContext;
-import com.temenos.responder.context.Parameters;
+import com.temenos.responder.context.*;
+import com.temenos.responder.dispatcher.Dispatcher;
+import com.temenos.responder.dispatcher.FlowDispatcher;
 import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
-import com.temenos.responder.exception.ResourceNotFoundException;
 import com.temenos.responder.paths.PathHandler;
 import com.temenos.responder.scaffold.Scaffold;
 import com.temenos.responder.startup.ApplicationContext;
@@ -18,12 +18,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Path("/{path: .*}")
 public class RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
     public static final String DEFAULT_ROUTE_ON = "Accept-Version";
+    private static final int NO_OF_EXECUTORS = 5;
 
     @Context
     private Configuration configuration;
@@ -56,7 +58,8 @@ public class RequestHandler {
         PathHandler handler = ApplicationContext.getInjector(PathHandler.class);
         Resource resource = handler.resolvePathSpecification(path);
         Parameters parameters = handler.resolvePathParameters(path, resource);
-        LOGGER.info("Found: {} /{}", methodName, resource.getPath());
+        String origin = info.getBaseUri().toString() + path;
+        LOGGER.info("Found: {} / {}", methodName, resource.getPath());
 
         ResourceHandler resourceHandler = new ResourceHandler();
         Version version = resourceHandler.getVersion(resource, methodName, versionName);
@@ -77,43 +80,25 @@ public class RequestHandler {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
         }
+        RequestContext requestContext = new DefaultRequestContext(resource, parameters, requestBody, origin);
+        Dispatcher dispatcher = new FlowDispatcher(NO_OF_EXECUTORS, requestContext);
 
-        //construct execution context
-        ExecutionContext ctx = new DefaultExecutionContext(
-                info.getBaseUri().toString() + path,
-                resource.getName(),
-                parameters,
-                requestBody
-        );
-
-        //execute the resource's workflow
-        version.getFlow().execute(ctx);
-
-        String responseModel = null;
-
-        if(ctx.getResponseCode().equals(Response.Status.INTERNAL_SERVER_ERROR.name())) {
-            responseModel = version.getError().getModel();
-        } else if (version.getResponse() != null) {
-            responseModel = version.getResponse().getModel();
-        }
-
+        //execute the version's flow
+        Document result = dispatcher.notify(version.getFlow());
+        String responseModel = version.getResponse().getModel();
         Class<Scaffold> response = null;
         try {
             response = (Class<Scaffold>) Class.forName(responseModel);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         //validate the entity against the model definition
         if (!ApplicationContext.getInjector(Validator.class)
-                .isValid((Entity) ctx.getAttribute("finalResult"), response)) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ctx.getAttribute("finalResult")).build();
+                .isValid(result.getBody(), response)) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
         }
 
         //construct a response
-        return Response.ok().entity(new Document((Entity)ctx.getAttribute("document.links.self"),
-                new Entity(),
-                (Entity)ctx.getAttribute("finalResult"),
-                resource.getName())).build();
+        return Response.ok().entity(result).build();
     }
 }

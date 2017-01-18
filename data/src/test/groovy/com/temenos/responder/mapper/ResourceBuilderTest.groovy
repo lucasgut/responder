@@ -40,7 +40,7 @@ class ResourceBuilderTest extends Specification {
                     def versionName = resourceVersion.getName()
                     assert versions[versionName] != null
                     def version = versions[versionName]
-                    resourceVersion.getFlow().getClass().name == version[ResourceSpec.FLOW]
+                    resourceVersion.getFlow().name == version[ResourceSpec.FLOW]
                 })
             }
         where:

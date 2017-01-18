@@ -7,7 +7,7 @@ import com.temenos.responder.flows.Flow;
  */
 public class Version {
     private final String name;
-    private final Flow flow;
+    private final Class<Flow> flow;
     private String description;
     private Action request;
     private Action response;
@@ -15,7 +15,7 @@ public class Version {
     private Status status;
     private String lifeCycle;
 
-    public Version(String name, Flow flow) {
+    public Version(String name, Class<Flow> flow) {
         this.name = name;
         this.flow = flow;
     }
@@ -24,7 +24,7 @@ public class Version {
         return name;
     }
 
-    public Flow getFlow() {
+    public Class<Flow> getFlow() {
         return flow;
     }
 

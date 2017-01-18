@@ -1,7 +1,11 @@
 package com.temenos.responder.context;
 
 import com.temenos.responder.commands.Command;
+import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
+import com.temenos.responder.flows.Flow;
+
+import java.util.List;
 
 /**
  * An ExecutionContext is a {@link Context context} that contains a map of attributes, request details and
@@ -71,4 +75,21 @@ public interface ExecutionContext extends Context {
      * @return A string representation of the response code.
      */
     String getResponseCode();
+
+    /**
+     * Notify a dispatcher that a flow is available to use.
+     *
+     * @param flow A flow reference that will be attached to the notification event.
+     * @return A boolean value indicating whether the notification was triggered successfully or not.
+     */
+    Document notifyDispatchers(Class<Flow> flow);
+
+    /**
+     * Notify a dispatcher that multiple flows are available to execute in parallel.
+     *
+     * @param flow A flow reference that will be attached to the notification event.
+     * @return A boolean value indicating whether the notification was triggered successfully or not.
+     */
+    List<Document> notifyDispatchers(List<Class<Flow>> flow);
+
 }

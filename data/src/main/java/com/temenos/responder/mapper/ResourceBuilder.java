@@ -91,7 +91,7 @@ public class ResourceBuilder {
     }
 
     private Version getVersion(String versionName, JsonNode versionNode) {
-        Flow flow = getFlow(versionNode);
+        Class<Flow> flow = getFlow(versionNode);
         Version version = new Version(versionName, flow);
         if(versionNode.has(ResourceSpec.VERSION_DESCRIPTION))
             version.setDescription(versionNode.get(ResourceSpec.VERSION_DESCRIPTION).asText());
@@ -119,22 +119,14 @@ public class ResourceBuilder {
         return version;
     }
 
-    private Flow getFlow(JsonNode versionNode) {
+    private Class<Flow> getFlow(JsonNode versionNode) {
         Class<Flow> flowClass = null;
         try {
             flowClass = (Class<Flow>) Class.forName(versionNode.get(ResourceSpec.FLOW).asText());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        Flow flow = null;
-        try {
-            flow = flowClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return flow;
+        return flowClass;
     }
 
     private Action getAction(JsonNode actionNode) {
