@@ -25,6 +25,7 @@ class ModelValidatorTest extends Specification {
             true  | 'validates'   | ['CustomerId': 12345, 'CustomerName': 'John Smith', 'CustomerAddress': 'Penny Lane']  | 'it is valid'                               | ScaffoldCustomer
             false | 'invalidates' | ['CustomerId': 12345]                                                                 | 'it is missing required fields'             | ScaffoldCustomer
             false | 'invalidates' | ['CustomerId': 'abcd', 'CustomerName': 'John Smith', 'CustomerAddress': 'Penny Lane'] | 'it contains a field whose type is invalid' | ScaffoldCustomer
+            true  | 'validates'   | [] as Map<String, Object>                                                             | 'empty entity'                              | ScaffoldCustomer
     }
 
     def "Validator returns true if both entity and scaffold are null"(){

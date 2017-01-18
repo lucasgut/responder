@@ -17,7 +17,7 @@ public class ModelValidator implements Validator {
 
     @Override
     public boolean isValid(Entity entity, Class<Scaffold> scaffold){
-        if(entity == null && scaffold == null){
+        if(entity == null && scaffold == null || entity.getEntityNames().isEmpty()) {
             return true;
         }
         try {
