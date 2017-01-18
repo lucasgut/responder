@@ -175,9 +175,14 @@ public class Entity {
                 accessors.put(baseKey, properties);
                 fqAccessorNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
             }
-            for (Map.Entry<?, ?> entry : ((Map<?, ?>) properties).entrySet()) {
-                String key = ((String) entry.getKey()).replace(".", "\\.");
-                getEntityNamesAndTypes(entry.getValue(), baseKey.isEmpty() ? key : baseKey + "." + key);
+            Map<?, ?> propertiesMap = (Map<?, ?>) properties;
+            if(propertiesMap.isEmpty()) {
+                return;
+            } else {
+                for (Map.Entry<?, ?> entry : ((Map<?, ?>) properties).entrySet()) {
+                    String key = ((String) entry.getKey()).replace(".", "\\.");
+                    getEntityNamesAndTypes(entry.getValue(), baseKey.isEmpty() ? key : baseKey + "." + key);
+                }
             }
         } else if (properties instanceof List) {
             accessors.put(baseKey, properties);

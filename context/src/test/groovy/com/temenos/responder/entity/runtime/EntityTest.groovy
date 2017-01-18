@@ -69,12 +69,13 @@ class EntityTest extends Specification {
         setup:
             def entity = new Entity(map)
         when:
-            def result = entity.get(key)
+            entity.get(key)
         then:
             def expectedException = thrown(exception)
             expectedException.message == message
         where:
             key                | map                          | exception                 | message                                    | cause
+            'Greeting'         | [] as Map                    | PropertyNotFoundException | 'Property Greeting doesn\'t exist'         | 'a matching property doesn\'t exist'
             'Greeting.Missing' | ["Greeting": "Hello World!"] | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching property doesn\'t exist'
     }
 
