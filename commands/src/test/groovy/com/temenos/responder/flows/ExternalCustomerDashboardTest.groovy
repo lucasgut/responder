@@ -29,7 +29,7 @@ class ExternalCustomerDashboardTest extends Specification {
     }
 
     @Unroll
-    def "T24 customer information command for nonexistent customers"(id, error) {
+    def "T24 customer information command for nonexistent customers"(id) {
         setup:
             def command = new ExternalCustomerDashboard()
             def context = Mock(CommandContext)
@@ -38,11 +38,9 @@ class ExternalCustomerDashboardTest extends Specification {
         then:
             _ * context.getAttribute('customerId') >> id
             _ * context.getAttribute('into') >> 'finalResult'
-            1 * context.setAttribute('finalResult', new Entity(error))
-            1 * context.setResponseCode('404')
+            1 * context.setAttribute('finalResult', new Entity())
+            1 * context.setResponseCode('200')
         where:
-            id     | error
-            666666 | ['ERROR.CODE': 404, 'ERROR.TEXT': 'No customer found', 'ERROR.INFO': 'Unknown customer']
-            999999 | ['ERROR.CODE': 404, 'ERROR.TEXT': 'No customer found', 'ERROR.INFO': 'Unknown customer']
+            id << [666666, 999999]
     }
 }
