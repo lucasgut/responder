@@ -134,6 +134,38 @@
           }
         }
       }
+    },
+    {
+      "parallelTest": {
+        "scope": "public",
+        "resource": "resource",
+        "cleanName": "Parallel flow execution test resource",
+        "description": "This static resource sums a list of operands and returns the result and the app version number",
+        "path": "parallelTest",
+        "version": "0.0.1",
+        "tags": [
+          "Parallel",
+          "Flow",
+          "Test"
+        ],
+        "directive": {
+          "POST": {
+            "routeTo": {
+              "default": {
+                "flow": "com.temenos.responder.flows.ParallelTestFlow",
+                "request": {
+                  "description": "Scaffold addition input",
+                  "item": "com.temenos.responder.scaffold.ScaffoldAdditionInput"
+                },
+                "response": {
+                  "description": "Scaffold addition output",
+                  "item": "com.temenos.responder.scaffold.ScaffoldParallelTestOutput"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

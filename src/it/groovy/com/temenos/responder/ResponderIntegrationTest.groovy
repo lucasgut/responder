@@ -38,8 +38,9 @@ class ResponderIntegrationTest extends Specification {
 
     @Unroll
     def "POST request to /add returns 200 OK and returns the sum of #operands as #sum"(data, sum, operands) {
-        when:
+        given:
             def entity = Entity.json(new JsonBuilder(data).toString())
+        when:
             def result = target('add').request().post(entity)
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
@@ -138,9 +139,9 @@ class ResponderIntegrationTest extends Specification {
             body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
             body['_embedded'] != null
         where:
-            id     | name         | homeAddress       | workAddress
-            100100 | 'John Smith' | 'No Name Street'  | '85 Albert Embankment'
-            100200 | 'Iris Law'   | '2 Lansdowne Rd'  | '9 Argyll Street'
+            id     | name         | homeAddress      | workAddress
+            100100 | 'John Smith' | 'No Name Street' | '85 Albert Embankment'
+            100200 | 'Iris Law'   | '2 Lansdowne Rd' | '9 Argyll Street'
     }
 
     @Unroll
@@ -159,5 +160,26 @@ class ResponderIntegrationTest extends Specification {
             body['_embedded'] != null
         where:
             id << [66666, 99999]
+    }
+
+    @Unroll
+    def "POST request to /parallelTest with request body #data returns 200 OK"(data, sum, version) {
+        given:
+            def entity = Entity.json(new JsonBuilder(data).toString())
+        when:
+            def request = target('parallelTest').request().post(entity)
+            def body = new JsonSlurper().parseText(request.readEntity(String.class))
+        then:
+            request.status == Response.Status.OK.statusCode
+            body['parallelTest']['AdditionResult'] == sum
+            body['parallelTest']['VersionNumber'] == version
+            body['parallelTest']['operands'] == null
+            body['parallelTest']['blameThisPerson'] == null
+            body['_links']['self']['href'] == 'http://localhost:9998/parallelTest'
+            body['_embedded'] != null
+        where:
+            data                 | sum | version
+            ["operands": [1, 1]] | 2   | '0.1-SNAPSHOT'
+
     }
 }

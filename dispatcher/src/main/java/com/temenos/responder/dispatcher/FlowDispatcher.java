@@ -58,12 +58,18 @@ public class FlowDispatcher implements Dispatcher {
     }
 
     @Override
-    public List<Document> notify(List<Class<Flow>> flows) {
-        List<Document> result = new ArrayList<>();
+    public Map<String, List<Document>> notify(List<Class<Flow>> flows) {
+        Map<String,List<Document>> result = new ConcurrentHashMap<>();
         try {
             runner.invokeAll(getCallables(flows)).forEach(flowResult -> {
                 try {
-                    result.add(flowResult.get());
+                    Document flowResponse = flowResult.get();
+                    List<Document> documents = result.get(flowResponse.getFlowName());
+                    if(documents == null){
+                        documents = new ArrayList<>();
+                        result.put(flowResponse.getFlowName(), documents);
+                    }
+                    documents.add(flowResponse);
                 } catch (InterruptedException | ExecutionException ie) {
                     throw new RuntimeException(ie);
                 }
@@ -86,7 +92,8 @@ public class FlowDispatcher implements Dispatcher {
             return new Document((Entity) ctx.getAttribute("document.links.self"),
                     new Entity(),
                     (Entity) ctx.getAttribute("finalResult"),
-                    context.getResourceName());
+                    context.getResourceName(),
+                    flow.getSimpleName());
         };
     }
 
@@ -110,6 +117,7 @@ public class FlowDispatcher implements Dispatcher {
                 .resourceName(context.getResourceName())
                 .requestParameters(context.getRequestParameters())
                 .requestBody(context.getRequestBody())
+                .dispatcher(this)
                 .build();
     }
 

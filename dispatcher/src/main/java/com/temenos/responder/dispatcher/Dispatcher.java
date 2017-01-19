@@ -5,6 +5,7 @@ import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.flows.Flow;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
@@ -20,5 +21,5 @@ public interface Dispatcher {
      */
     Document notify(Class<Flow> flow);
 
-    List<Document> notify(List<Class<Flow>> flow);
+    Map<String, List<Document>> notify(List<Class<Flow>> flow);
 }

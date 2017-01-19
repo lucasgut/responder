@@ -1,7 +1,5 @@
 package com.temenos.responder.dispatcher
 
-import com.temenos.responder.configuration.Resource
-import com.temenos.responder.context.DefaultRequestContext
 import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.context.Parameters
 import com.temenos.responder.context.RequestContext
@@ -16,16 +14,13 @@ import com.temenos.responder.context.ExecutionContextBuilder
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
-
 /**
  * Created by dgroves on 17/01/2017.
  */
 class FlowDispatcherTest extends Specification {
 
     @Unroll
-    def "Invoking notify with #flowClass.simpleName creates a Flow instance and executes it using an executor"(Class flowClass) {
+    def "Invoking notify with #flowClass.simpleName creates a Flow instance and executes it"(Class flowClass) {
         given:
             def mockExecutor = Mock(FlowExecutor)
             def requestContext = Mock(RequestContext)
@@ -58,7 +53,7 @@ class FlowDispatcherTest extends Specification {
     }
 
     @Unroll
-    def "Invoking notify with #flowClasses.simpleName instantiates objects for each class and calls the executor"(List flowClasses) {
+    def "Invoking notify with #flowClasses.simpleName instantiates flows for each class and executes them"(List flowClasses) {
         given:
             def mockExecutor = []
             (flowClasses.size()).times { mockExecutor.add(Mock(FlowExecutor)) }
@@ -86,7 +81,7 @@ class FlowDispatcherTest extends Specification {
             body.getValues() >> ["Greeting":"Hello","Subject":"World"]
             requestContext.getRequestParameters() >> parameters
             requestContext.getResourceName() >> "helloWorld"
-            result.size() == flowClasses.size()
+            flowClasses.collect { Class flowClass -> result.collect { key, val -> key == flowClass.simpleName } }.size() == flowClasses.size()
         where:
             flowClasses << [
                 [AdditionFlow, AdditionFlow, AdditionFlow],

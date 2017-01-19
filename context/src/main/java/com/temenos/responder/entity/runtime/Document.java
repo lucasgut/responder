@@ -20,13 +20,15 @@ public class Document {
     private final Entity body;
     private final Entity document;
     private final String modelName;
+    private final String flowName;
 
-    public Document(Entity links, Entity embedded, Entity body, String modelName){
+    public Document(Entity links, Entity embedded, Entity body, String modelName, String flowName){
         this.links = links;
         this.embedded = embedded;
         this.body = body;
         this.modelName = modelName;
         this.document = render();
+        this.flowName = flowName;
     }
 
     private Entity render(){
@@ -51,5 +53,13 @@ public class Document {
 
     public Entity getDocument() {
         return document;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public String getFlowName() {
+        return flowName;
     }
 }

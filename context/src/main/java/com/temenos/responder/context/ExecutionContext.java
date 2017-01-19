@@ -6,6 +6,7 @@ import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.flows.Flow;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * An ExecutionContext is a {@link Context context} that contains a map of attributes, request details and
@@ -85,11 +86,29 @@ public interface ExecutionContext extends Context {
     Document notifyDispatchers(Class<Flow> flow);
 
     /**
+     * Notify a dispatcher that a flow is available to use and map the result of the operation to the given
+     * context attribute name.
+     *
+     * @param flow
+     * @param name
+     */
+    void notifyDispatchers(Class<Flow> flow, String name);
+
+    /**
      * Notify a dispatcher that multiple flows are available to execute in parallel.
      *
      * @param flow A flow reference that will be attached to the notification event.
      * @return A boolean value indicating whether the notification was triggered successfully or not.
      */
-    List<Document> notifyDispatchers(List<Class<Flow>> flow);
+    Map<String,List<Document>> notifyDispatchers(List<Class<Flow>> flow);
+
+    /**
+     * Notify a dispatcher that multiple flows are available to use and map the results of the operations to the given
+     * context attribute name.
+     *
+     * @param flow
+     * @param name
+     */
+    void notifyDispatchers(List<Class<Flow>> flow, String name);
 
 }

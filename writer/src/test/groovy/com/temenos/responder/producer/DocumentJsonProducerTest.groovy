@@ -13,7 +13,7 @@ class DocumentJsonProducerTest extends Specification {
     def "Serialise #data as #output"(data, links, embedded, output) {
         given:
             def producer = new DocumentJsonProducer()
-            def document = new Document(new Entity(links), new Entity(embedded), new Entity(data), 'hello')
+            def document = new Document(new Entity(links), new Entity(embedded), new Entity(data), 'hello', 'helloFlow')
         when:
             def result = producer.serialise(document)
         then:

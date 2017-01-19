@@ -12,6 +12,8 @@ import com.temenos.responder.flows.Flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -128,7 +130,17 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public List<Document> notifyDispatchers(List<Class<Flow>> flows) {
+    public void notifyDispatchers(Class<Flow> flow, String name) {
+        this.contextAttributes.put(name, this.dispatcher.notify(flow));
+    }
+
+    @Override
+    public Map<String, List<Document>> notifyDispatchers(List<Class<Flow>> flows) {
         return this.dispatcher.notify(flows);
+    }
+
+    @Override
+    public void notifyDispatchers(List<Class<Flow>> flows, String name) {
+        contextAttributes.put(name, this.dispatcher.notify(flows));
     }
 }
