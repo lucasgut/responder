@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response
 
 /**
  * A stub of a resource that returns account data as a
- * {@link com.temenos.responder.scaffold.dashboard.T24AccountDetails scaffold of a T24 account}.
+ * {@link com.temenos.responder.scaffold.dashboard.T24AccountInformation scaffold of a T24 account}.
  *
  * @author aburgos
  */
