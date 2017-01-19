@@ -1,3 +1,4 @@
+evaluationDependsOnChildren()
 task allJavadoc(type: Javadoc){
   description = 'Generate Javadoc for all projects.'
   group = 'Documentation'
@@ -24,6 +25,14 @@ task groovydocJar(type: Jar, dependsOn: allGroovydoc){
   from "${buildDir}/docs/groovydoc"
   classifier = 'groovydoc'
 }
+
+task generateFullProjectTestReport(type: TestReport){
+  dependsOn allprojects.build
+  destinationDir = file("${buildDir}/aggregate-reports")
+  reportOn allprojects.test,integrationTest
+}
+
+build.finalizedBy generateFullProjectTestReport
 
 allprojects {
   afterEvaluate {
