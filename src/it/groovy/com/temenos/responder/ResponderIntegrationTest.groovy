@@ -198,4 +198,19 @@ class ResponderIntegrationTest extends Specification {
             100100     | 2         | "John Smith" | [["HouseNumber": 30, "Road": "Snake Pass"]]
             100200     | 2         | "Iris Law"   | [["HouseNumber": 30, "Road": "Snake Pass"]]
     }
+
+    @Unroll
+    def "GET request to /address/#addressId returns 200 OK"(addressId, data) {
+        when:
+            def result = target("address/${addressId}").request().get()
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
+        then:
+            result.status == Response.Status.OK.statusCode
+            body['address']['AddressId'] == addressId
+            body['address'] == data
+        where:
+            addressId | data
+            1         | ["AddressId": 1, "Addresses": [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]]
+            2         | ["AddressId": 2, "Addresses": [["HouseNumber": 30, "Road": "Snake Pass"]]]
+    }
 }

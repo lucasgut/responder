@@ -13,7 +13,7 @@ public class ScaffoldAddress {
     public static final String ADDRESSES_ITEM = "Addresses[%d]";
     public static final Type ADDRESSES_ITEM_TYPE = Type.OBJECT;
     public static final String ADDRESSES_ITEM_HOUSE_NUMBER = "Addresses[%d].HouseNumber";
-    public static final Type ADDRESSES_ITEM_HOUSE_NUMBER_TYPE = Type.STRING;
+    public static final Type ADDRESSES_ITEM_HOUSE_NUMBER_TYPE = Type.INTEGER;
     public static final String ADDRESSES_ITEM_ROAD = "Addresses[%d].Road";
     public static final Type ADDRESSES_ITEM_ROAD_TYPE = Type.STRING;
 }

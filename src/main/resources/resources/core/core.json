@@ -2,39 +2,41 @@
   "rimVersion": "2.0",
   "packageId": "core",
   "resources": [
-  {
-    "appVersion":
     {
-      "scope": "public",
-      "resourceType": "resource",
-      "cleanName": "Application version number",
-      "description": "This static resource returns the version number of the deployed API-D instance",
-      "path": "version",
-      "version": "0.0.1",
-      "tags": ["Core", "Version"],
-      "directive": {
-        "GET": {
-          "routeTo": {
-            "default": {
-              "flow": "com.temenos.responder.flows.VersionInformationFlow",
-              "response": {
-                "description": "A scaffold version version",
-                "item": "com.temenos.responder.scaffold.ScaffoldVersion"
-              }
-            },
-            "2.0": {
-              "flow": "com.temenos.responder.flows.VersionInformation2Flow",
-              "response": {
-                "description": "Scaffold version version 2.0",
-                "item": "com.temenos.responder.scaffold.ScaffoldVersion"
+      "appVersion": {
+        "scope": "public",
+        "resourceType": "resource",
+        "cleanName": "Application version number",
+        "description": "This static resource returns the version number of the deployed API-D instance",
+        "path": "version",
+        "version": "0.0.1",
+        "tags": [
+          "Core",
+          "Version"
+        ],
+        "directive": {
+          "GET": {
+            "routeTo": {
+              "default": {
+                "flow": "com.temenos.responder.flows.VersionInformationFlow",
+                "response": {
+                  "description": "A scaffold version version",
+                  "item": "com.temenos.responder.scaffold.ScaffoldVersion"
+                }
+              },
+              "2.0": {
+                "flow": "com.temenos.responder.flows.VersionInformation2Flow",
+                "response": {
+                  "description": "Scaffold version version 2.0",
+                  "item": "com.temenos.responder.scaffold.ScaffoldVersion"
+                }
               }
             }
           }
         }
       }
-    }
-  },
-  {
+    },
+    {
       "add": {
         "scope": "public",
         "resource": "resource",
@@ -176,7 +178,7 @@
         "path": "complexCustomer/customer/{id}/address/{AddressId}",
         "version": "0.0.1",
         "tags": [
-          "Core",
+          "Complex",
           "Customer"
         ],
         "directive": {
@@ -187,6 +189,33 @@
                 "response": {
                   "description": "Scaffold complex customer",
                   "item": "com.temenos.responder.scaffold.ScaffoldComplexCustomer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "address": {
+        "scope": "public",
+        "resourceType": "resource",
+        "cleanName": "Customer information",
+        "description": "This static resource returns information about a customer",
+        "path": "address/{AddressId}",
+        "version": "0.0.1",
+        "tags": [
+          "Core",
+          "Address"
+        ],
+        "directive": {
+          "GET": {
+            "routeTo": {
+              "default": {
+                "flow": "com.temenos.responder.flows.CustomerAddressFlow",
+                "response": {
+                  "description": "Scaffold customer address",
+                  "item": "com.temenos.responder.scaffold.ScaffoldAddress"
                 }
               }
             }
