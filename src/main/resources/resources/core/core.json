@@ -222,6 +222,34 @@
           }
         }
       }
+    },
+    {
+      "customerAddressEmbed": {
+        "scope": "public",
+        "resourceType": "resource",
+        "cleanName": "Customer with embedded address",
+        "description": "This static resource returns information about a customer",
+        "path": "customerAddressEmbed/customer/{id}/address/{AddressId}",
+        "version": "0.0.1",
+        "tags": [
+          "Customer",
+          "Address",
+          "Embedded"
+        ],
+        "directive": {
+          "GET": {
+            "routeTo": {
+              "default": {
+                "flow": "com.temenos.responder.flows.CustomerAddressEmbed",
+                "response": {
+                  "description": "Scaffold complex customer",
+                  "item": "com.temenos.responder.scaffold.ScaffoldCustomer"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

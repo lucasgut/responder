@@ -213,4 +213,22 @@ class ResponderIntegrationTest extends Specification {
             1         | ["AddressId": 1, "Addresses": [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]]
             2         | ["AddressId": 2, "Addresses": [["HouseNumber": 30, "Road": "Snake Pass"]]]
     }
+
+    @Unroll
+    def "GET request to /customerAddressEmbed/customer/#customerId/address/#addressId returns 200 OK"(customerId, addressId, addressData, customerData) {
+        when:
+            def result = target("customerAddressEmbed/customer/${customerId}/address/${addressId}").request().get()
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
+        then:
+            result.status == Response.Status.OK.statusCode
+            body['_embedded']['CustomerAddresses'] == addressData
+            body['customerAddressEmbed'] == customerData
+        where:
+            customerId | addressId | addressData                                                                                                               | customerData
+            100100     | 1         | ["AddressId": 1, "Addresses": [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]] | ['CustomerId': 100100, 'CustomerName': 'John Smith', 'CustomerAddress': 'No Name Street']
+            100200     | 1         | ["AddressId": 1, "Addresses": [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]] | ['CustomerId': 100200, 'CustomerName': 'Iris Law', 'CustomerAddress': '2 Lansdowne Rd']
+            100100     | 2         | ["AddressId": 2, "Addresses": [["HouseNumber": 30, "Road": "Snake Pass"]]]                                                | ['CustomerId': 100100, 'CustomerName': 'John Smith', 'CustomerAddress': 'No Name Street']
+            100200     | 2         | ["AddressId": 2, "Addresses": [["HouseNumber": 30, "Road": "Snake Pass"]]]                                                | ['CustomerId': 100200, 'CustomerName': 'Iris Law', 'CustomerAddress': '2 Lansdowne Rd']
+
+    }
 }

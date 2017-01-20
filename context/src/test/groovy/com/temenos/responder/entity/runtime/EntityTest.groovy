@@ -2,6 +2,7 @@ package com.temenos.responder.entity.runtime
 
 import com.temenos.responder.entity.exception.PropertyNotFoundException
 import com.temenos.responder.entity.exception.TypeMismatchException
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -110,32 +111,20 @@ class EntityTest extends Specification {
     }
 
     @Unroll
-    def "Getter obtains value #expectedValue mapped to #key when using entity setter"(key, map, expectedValue) {
+    @Ignore
+    def "Setter sets #key to #value and alters map structure #originalStructure to #newStructure"(key, value, originalStructure, newStructure) {
         setup:
-            def entity = new Entity();
-            map.each { name, value ->
-                entity.set(name, value)
-            }
+            def entity = new Entity(originalStructure)
         when:
-            def result = entity.get(key);
+            entity.set(key, value)
         then:
-            result == expectedValue
+            entity.getValues() == newStructure
+            entity.get(key) == value
         where:
-            key                               | map                                                                                                         | expectedValue
-            'Greeting'                        | ['Greeting': 'Hello World!']                                                                                | 'Hello World!'
-            'Greeting'                        | ['Subject': 'World', 'Greeting': 'Hello']                                                                   | 'Hello'
-            'Greeting.Subject'                | ['Greeting': ['Subject': 'World']]                                                                          | 'World'
-            'Greeting.Subject'                | ['Greeting': ['Subject': ['FirstName': 'Jim', 'LastName': 'Smith']]]                                        | ['FirstName': 'Jim', 'LastName': 'Smith']
-            'Greeting.Subject.LastName'       | ['Greeting': ['Subject': ['FirstName': 'Jim', 'LastName': 'Smith']]]                                        | 'Smith'
-            'Greeting.Subject'                | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]]                                             | ['Village', 'Town', 'City', 'World']
-            'Greeting.Subject[0]'             | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]]                                             | 'Village'
-            'Greeting.Subject[1]'             | ["Greeting": ["Subject": ['Village', 'Town', 'City', 'World']]]                                             | 'Town'
-            'Greeting.Subject[0].LastName'    | ["Greeting": ["Subject": [['LastName': 'Village'], [['LastName': 'Town']]]]]                                | 'Village'
-            'Subject[0][1]'                   | ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]                                 | 'Beta'
-            'Greeting.Subject[1][1]'          | ["Greeting": ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]]                   | '2'
-            'Greeting.Subject[2][2]'          | ["Greeting": ["Subject": [["Alpha", "Beta", "Gamma"], ["1", "2", "3"], ["A", "B", "C"]]]]                   | 'C'
-            'Greeting.Subject[0][1].LastName' | ["Greeting": ["Subject": [[["LastName": "Ferrari"], ["LastName": "Lamborghini"], ["LastName": "Escort"]]]]] | "Lamborghini"
-            'Greeting.Subject'                | ["Greeting": ["Subject": "Everybody"], "Greeting\\.Subject": "World"]                                       | "Everybody"
-            'Greeting\\.Subject'              | ["Greeting": ["Subject": "Everybody"], "Greeting\\.Subject": "World"]                                       | "World"
+            key                | value   | originalStructure     | newStructure
+            'Greeting'         | 'Hello' | [:]                   | ["Greeting": "Hello"]
+            'Greeting.Subject' | 'Hello' | ['Greeting': 'Hello'] | ["Greeting": ["Subject": "Hello"]]
+
     }
+
 }

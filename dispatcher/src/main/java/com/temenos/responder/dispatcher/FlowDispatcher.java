@@ -89,8 +89,12 @@ public class FlowDispatcher implements Dispatcher {
             } catch (IllegalAccessException | InstantiationException ie) {
                 LOGGER.error("Unable to execute Flow: {}", flow, ie);
             }
+            Object embeddedContents = ctx.getAttribute("document.embedded");
+            if(embeddedContents == null){
+                embeddedContents = new Entity();
+            }
             return new Document((Entity) ctx.getAttribute("document.links.self"),
-                    new Entity(),
+                    (Entity)embeddedContents,
                     (Entity) ctx.getAttribute("finalResult"),
                     context.getResourceName(),
                     flow.getSimpleName());

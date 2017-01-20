@@ -2,7 +2,8 @@ package com.temenos.responder.commands.injector;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import com.temenos.responder.commands.AdditionCommand;
+import com.temenos.responder.commands.AdditionCommand
+import com.temenos.responder.commands.Embed;
 import com.temenos.responder.commands.GETResource;
 import com.temenos.responder.commands.VersionInformation;
 import com.temenos.responder.commands.transformers.CustomerTransformer;
@@ -33,5 +34,6 @@ public class CommandInjector extends AbstractModule {
         bind(CustomerInformationWithTransformer.class).in(Singleton.class);
         bind(VersionInformation.class).in(Singleton.class);
         bind(CustomerTransformer.class).in(Singleton.class);
+        bind(Embed.class).in(Singleton.class);
     }
 }

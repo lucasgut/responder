@@ -14,7 +14,6 @@ import javax.ws.rs.core.Response
  * conforming to {@link com.temenos.responder.scaffold.ScaffoldCustomer}.
  *
  * @author Douglas Groves
- * @date 10/01/2017
  */
 public class CustomerTransformer implements Command {
 

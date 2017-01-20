@@ -15,7 +15,6 @@ import javax.ws.rs.core.Response
  * conforming to {@link com.temenos.responder.scaffold.ScaffoldCustomerDashboard_1}.
  *
  * @author Andres Burgos
- * @date 17/01/2017
  */
 public class CustomerDashboardTransformer implements Command {
 
