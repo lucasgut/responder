@@ -180,6 +180,22 @@ class ResponderIntegrationTest extends Specification {
         where:
             data                 | sum | version
             ["operands": [1, 1]] | 2   | '0.1-SNAPSHOT'
+    }
 
+    @Unroll
+    def "GET request to /complexCustomer/customer/#customerId/address/#addressId returns 200 OK"(customerId, addressId, customerName, addresses) {
+        when:
+            def result = target("complexCustomer/customer/${customerId}/address/${addressId}").request().get()
+            def body = new JsonSlurper().parseText(result.readEntity(String.class))
+        then:
+            result.status == Response.Status.OK.statusCode
+            body['complexCustomer']['CustomerName'] == customerName
+            body['complexCustomer']['Addresses'] == addresses
+        where:
+            customerId | addressId | customerName | addresses
+            100100     | 1         | "John Smith" | [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]
+            100200     | 1         | "Iris Law"   | [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]
+            100100     | 2         | "John Smith" | [["HouseNumber": 30, "Road": "Snake Pass"]]
+            100200     | 2         | "Iris Law"   | [["HouseNumber": 30, "Road": "Snake Pass"]]
     }
 }
