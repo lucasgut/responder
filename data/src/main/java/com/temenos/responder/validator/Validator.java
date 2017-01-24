@@ -9,4 +9,5 @@ import com.temenos.responder.entity.runtime.Entity;
 public interface Validator {
     boolean isValid(Entity entity, Class<Scaffold> scaffold);
     boolean isValid(Entity entity, Entity model);
+    boolean isValid(Entity entity, String jsonSchema);
 }

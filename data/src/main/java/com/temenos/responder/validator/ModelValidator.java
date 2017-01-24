@@ -1,10 +1,19 @@
 package com.temenos.responder.validator;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.examples.Utils;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.temenos.responder.entity.exception.PropertyNotFoundException;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.entity.runtime.Type;
 import com.temenos.responder.scaffold.Scaffold;
+import groovy.json.JsonBuilder;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 /**
@@ -42,5 +51,31 @@ public class ModelValidator implements Validator {
     @Override
     public boolean isValid(Entity entity, Entity model) {
         return false;
+    }
+
+    @Override
+    public boolean isValid(Entity entity, String jsonSchema) {
+        ObjectMapper mapper = new ObjectMapper();
+        String entityString = new JsonBuilder(entity.getValues()).toString();
+
+        boolean isValid = false;
+
+        try {
+            JsonNode entityNode = mapper.readValue(entityString, JsonNode.class);
+            JsonNode schemaNode = mapper.readValue(jsonSchema, JsonNode.class);
+
+            final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+            JsonSchema schema = factory.getJsonSchema(schemaNode);
+
+            final ProcessingReport report = schema.validate(entityNode);
+            isValid = report.isSuccess();
+
+        } catch (ProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return isValid;
     }
 }
