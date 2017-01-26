@@ -115,6 +115,15 @@ public class Entity {
         }
     }
 
+    private int lastIndexOfDisregardEscapedDots(String str){
+        for(int index = str.length() - 1; index > 0; index--){
+            if(str.charAt(index) == '.' && str.charAt(index - 1) != '\\'){
+                return index;
+            }
+        }
+        return -1;
+    }
+
     /**
      * Update or add another field to the entity definition and regenerate the map of valid accessors.
      * <p>
@@ -127,15 +136,18 @@ public class Entity {
     public void set(String name, Object value) {
         //if an accessor already exists
         if (exists(name)) {
-            int lastDotAccessor = name.lastIndexOf(".");
+            int lastDotAccessor = lastIndexOfDisregardEscapedDots(name);
+            int bracketAccessor = name.indexOf("[");
             //ascend to its container
-            if (lastDotAccessor == -1) {
-                String arrayAccessor = name.substring(0, name.indexOf("["));
-                String arrayIndex = name.substring(name.indexOf("[") + 1, name.indexOf("]"));
+            if (lastDotAccessor == -1 && bracketAccessor == -1) {
+                this.values.put(name.replace("\\.","."), value);
+            }else if(lastDotAccessor == -1){
+                String arrayAccessor = name.substring(0, bracketAccessor);
+                String arrayIndex = name.substring(bracketAccessor + 1, name.indexOf("]"));
                 //replace existing value with the new value
                 ((List<Object>) ((Map<?, ?>) accessors).get(arrayAccessor)).set(Integer.parseInt(arrayIndex), value);
             } else {
-                String parentContainer = name.substring(0, name.lastIndexOf("."));
+                String parentContainer = name.substring(0, lastIndexOfDisregardEscapedDots(name));
                 String fieldName = name.substring(name.lastIndexOf(".") + 1, name.length());
                 //replace existing value with the new value
                 ((Map<String, Object>) accessors.get(parentContainer)).put(fieldName, value);
