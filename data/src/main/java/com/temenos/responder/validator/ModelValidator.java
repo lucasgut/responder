@@ -15,6 +15,7 @@ import groovy.json.JsonBuilder;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
 
 /**
  *
@@ -61,18 +62,39 @@ public class ModelValidator implements Validator {
         boolean isValid = false;
 
         try {
-            JsonNode entityNode = mapper.readValue(entityString, JsonNode.class);
-            JsonNode schemaNode = mapper.readValue(jsonSchema, JsonNode.class);
+            final JsonNode entityNode = mapper.readValue(entityString, JsonNode.class);
+            final JsonNode schemaNode = mapper.readValue(jsonSchema, JsonNode.class);
 
             final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-            JsonSchema schema = factory.getJsonSchema(schemaNode);
+            final JsonSchema schema = factory.getJsonSchema(schemaNode);
 
             final ProcessingReport report = schema.validate(entityNode);
             isValid = report.isSuccess();
 
-        } catch (ProcessingException e) {
+        } catch (ProcessingException | IOException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+
+        return isValid;
+    }
+
+    @Override
+    public boolean isValid(Entity entity, URI schemaURI) {
+        ObjectMapper mapper = new ObjectMapper();
+        String entityString = new JsonBuilder(entity.getValues()).toString();
+
+        boolean isValid = false;
+
+        try {
+            final JsonNode entityNode = mapper.readValue(entityString, JsonNode.class);
+
+            final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+            final JsonSchema schema = factory.getJsonSchema(schemaURI.toString());
+
+            final ProcessingReport report = schema.validate(entityNode);
+            isValid = report.isSuccess();
+
+        } catch (ProcessingException | IOException e) {
             e.printStackTrace();
         }
 

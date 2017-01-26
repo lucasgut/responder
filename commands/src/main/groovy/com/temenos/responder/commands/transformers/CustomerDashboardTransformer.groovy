@@ -7,10 +7,8 @@ import com.temenos.responder.scaffold.dashboard.ScaffoldCustomerDashboard_1
 import com.temenos.responder.scaffold.dashboard.ScaffoldT24AccountInformation
 import com.temenos.responder.scaffold.dashboard.ScaffoldT24CustomerInformation
 import com.temenos.responder.scaffold.dashboard.ScaffoldT24StandingOrder
-import org.apache.commons.collections.map.HashedMap
 
 import javax.ws.rs.core.Response
-import java.lang.reflect.Array
 
 /**
  * Converts an entity whose data structure conforms to

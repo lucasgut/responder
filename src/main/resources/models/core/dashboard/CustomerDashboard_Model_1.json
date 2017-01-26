@@ -1,6 +1,6 @@
 {
     "$schema"     : "http://www.rimdsl.org/contract/model/2.0/schema#",
-    "id"          : "file:/D:/Temenos/responder/src/main/resources/models/core/dashboard/CustomerDashboard_Model_1.json",
+    "id"          : "CustomerDashboard_Model_1.json",
     "description" : "This is an account dashboard C-Model",
     "primaryKey"  : [ "accountNumber" ],
     "type"        : "object",

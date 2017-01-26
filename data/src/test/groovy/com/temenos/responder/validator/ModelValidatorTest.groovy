@@ -1,5 +1,6 @@
 package com.temenos.responder.validator
 
+import com.sun.jndi.toolkit.url.Uri
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.scaffold.Scaffold
 import com.temenos.responder.scaffold.ScaffoldComplexCustomer

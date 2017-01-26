@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 @Path("/{path: .*}")
@@ -105,22 +106,20 @@ public class RequestHandler {
             }
         } catch (ClassNotFoundException e) {
 
+            String responseModelFilename = version.getResponse().getModel().replace('.','/') + ".json";
+            responseModelFilename = responseModelFilename.replaceFirst("resources/", "");
+            URL url = getClass().getClassLoader().getResource(responseModelFilename);
+
+            URI uri = null;
             try {
-                String responseModelFilename = '\\' + version.getResponse().getModel().replace('.','\\') + ".json";
-                String workingDirectory = System.getProperty("user.dir");
-                String filename = workingDirectory + "\\src\\main" + responseModelFilename;
+                uri = url.toURI();
+            } catch (URISyntaxException e1) {
+                e1.printStackTrace();
+            }
 
-                byte[] schemaBytes = Files.readAllBytes(Paths.get(filename));
-                String schema = new String(schemaBytes);
-
-                //validate the entity against the schema model definition
-                if (!ApplicationContext.getInjector(Validator.class)
-                        .isValid(result.getBody(), schema)) {
-                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
-                }
-            } catch (IOException ioe) {
-                e.printStackTrace();
-                ioe.printStackTrace();
+            //validate the entity against the schema model definition
+            if (!ApplicationContext.getInjector(Validator.class)
+                    .isValid(result.getBody(), uri)) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
             }
         }
