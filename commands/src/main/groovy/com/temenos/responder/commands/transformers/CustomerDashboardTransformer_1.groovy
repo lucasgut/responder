@@ -30,47 +30,47 @@ public class CustomerDashboardTransformer_1 implements Command {
         // transform external customer model into internal customer model
         Entity responseBody = new Entity()
 
-        responseBody.set(ScaffoldCustomerDashboard_1.ID, entity.get(ScaffoldT24CustomerInformation.ID))
-        responseBody.set(ScaffoldCustomerDashboard_1.NAME, entity.get(ScaffoldT24CustomerInformation.NAME))
+        responseBody.set(ScaffoldCustomerDashboard_1.ID, entity.get(ScaffoldT24CustomerInformation.T24_ID))
+        responseBody.set(ScaffoldCustomerDashboard_1.NAME, entity.get(ScaffoldT24CustomerInformation.T24_NAME))
 
         Map<?, ?> homeAddress = new HashMap<>()
-        Map<?, ?> t24HomeAddress = entity.get(ScaffoldT24CustomerInformation.HOME_ADDRESS)
-        homeAddress.put(ScaffoldCustomerDashboard_1.HOME_ADDRESS_LINE_1, t24HomeAddress.get(ScaffoldT24CustomerInformation.HOME_ADDRESS_LINE_1))
-        homeAddress.put(ScaffoldCustomerDashboard_1.HOME_ADDRESS_LINE_2, t24HomeAddress.get(ScaffoldT24CustomerInformation.HOME_ADDRESS_LINE_2))
-        homeAddress.put(ScaffoldCustomerDashboard_1.HOME_ADDRESS_POST_CODE, t24HomeAddress.get(ScaffoldT24CustomerInformation.HOME_ADDRESS_POST_CODE))
+        Map<?, ?> t24HomeAddress = entity.get(ScaffoldT24CustomerInformation.T24_HOME_ADDRESS)
+        homeAddress.put(ScaffoldCustomerDashboard_1.HOME_ADDRESS_LINE_1, t24HomeAddress.get(ScaffoldT24CustomerInformation.T24_HOME_ADDRESS_LINE_1))
+        homeAddress.put(ScaffoldCustomerDashboard_1.HOME_ADDRESS_LINE_2, t24HomeAddress.get(ScaffoldT24CustomerInformation.T24_HOME_ADDRESS_LINE_2))
+        homeAddress.put(ScaffoldCustomerDashboard_1.HOME_ADDRESS_POST_CODE, t24HomeAddress.get(ScaffoldT24CustomerInformation.T24_HOME_ADDRESS_POST_CODE))
         responseBody.set(ScaffoldCustomerDashboard_1.HOME_ADDRESS, homeAddress)
 
         Map<?, ?> workAddress = new HashMap<>()
-        Map<?, ?> t24WorkAddress = entity.get(ScaffoldT24CustomerInformation.WORK_ADDRESS)
-        workAddress.put(ScaffoldCustomerDashboard_1.WORK_ADDRESS_LINE_1, t24WorkAddress.get(ScaffoldT24CustomerInformation.WORK_ADDRESS_LINE_1))
-        workAddress.put(ScaffoldCustomerDashboard_1.WORK_ADDRESS_LINE_2, t24WorkAddress.get(ScaffoldT24CustomerInformation.WORK_ADDRESS_LINE_2))
-        workAddress.put(ScaffoldCustomerDashboard_1.WORK_ADDRESS_POST_CODE, t24WorkAddress.get(ScaffoldT24CustomerInformation.WORK_ADDRESS_POST_CODE))
+        Map<?, ?> t24WorkAddress = entity.get(ScaffoldT24CustomerInformation.T24_WORK_ADDRESS)
+        workAddress.put(ScaffoldCustomerDashboard_1.WORK_ADDRESS_LINE_1, t24WorkAddress.get(ScaffoldT24CustomerInformation.T24_WORK_ADDRESS_LINE_1))
+        workAddress.put(ScaffoldCustomerDashboard_1.WORK_ADDRESS_LINE_2, t24WorkAddress.get(ScaffoldT24CustomerInformation.T24_WORK_ADDRESS_LINE_2))
+        workAddress.put(ScaffoldCustomerDashboard_1.WORK_ADDRESS_POST_CODE, t24WorkAddress.get(ScaffoldT24CustomerInformation.T24_WORK_ADDRESS_POST_CODE))
         responseBody.set(ScaffoldCustomerDashboard_1.WORK_ADDRESS, workAddress)
 
         List<?> relatives = new ArrayList<>()
-        List<?> t24AccRelatives = entity.get(ScaffoldT24CustomerInformation.RELATIVES, List.class)
+        List<?> t24AccRelatives = entity.get(ScaffoldT24CustomerInformation.T24_RELATIVES, List.class)
         for(Map<?, ?> t24AccRelative : t24AccRelatives) {
             Map<?, ?> relative = new HashMap<>()
-            relative.put(ScaffoldCustomerDashboard_1.RELATIVES_NAME, t24AccRelative.get(ScaffoldT24CustomerInformation.RELATIVES_NAME))
-            relative.put(ScaffoldCustomerDashboard_1.RELATIVES_RELATIONSHIP, t24AccRelative.get(ScaffoldT24CustomerInformation.RELATIVES_RELATIONSHIP))
+            relative.put(ScaffoldCustomerDashboard_1.RELATIVES_NAME, t24AccRelative.get(ScaffoldT24CustomerInformation.T24_RELATIVES_NAME))
+            relative.put(ScaffoldCustomerDashboard_1.RELATIVES_RELATIONSHIP, t24AccRelative.get(ScaffoldT24CustomerInformation.T24_RELATIVES_RELATIONSHIP))
             relatives.add(relative)
         }
         responseBody.set(ScaffoldCustomerDashboard_1.RELATIVES, relatives)
 
         List<?> accounts = new ArrayList<>()
-        List<?> t24Accounts = entity.get(ScaffoldT24CustomerInformation.ACCOUNTS, List.class)
+        List<?> t24Accounts = entity.get(ScaffoldT24CustomerInformation.T24_ACCOUNTS, List.class)
         for(Entity t24Account : t24Accounts) {
             Map<?, ?> account = new HashMap<>()
-            account.put(ScaffoldCustomerDashboard_1.ACCOUNTS_LABEL, t24Account.get(ScaffoldT24AccountInformation.LABEL))
-            account.put(ScaffoldCustomerDashboard_1.ACCOUNTS_NUMBER, t24Account.get(ScaffoldT24AccountInformation.NUMBER))
-            account.put(ScaffoldCustomerDashboard_1.ACCOUNTS_BALANCE, t24Account.get(ScaffoldT24AccountInformation.BALANCE))
+            account.put(ScaffoldCustomerDashboard_1.ACCOUNTS_LABEL, t24Account.get(ScaffoldT24AccountInformation.T24_LABEL))
+            account.put(ScaffoldCustomerDashboard_1.ACCOUNTS_NUMBER, t24Account.get(ScaffoldT24AccountInformation.T24_NUMBER))
+            account.put(ScaffoldCustomerDashboard_1.ACCOUNTS_BALANCE, t24Account.get(ScaffoldT24AccountInformation.T24_BALANCE))
 
             List<?> orders = new ArrayList<>()
-            List<?> t24StdOrders = t24Account.get(ScaffoldT24AccountInformation.STANDING_ORDERS, List.class)
+            List<?> t24StdOrders = t24Account.get(ScaffoldT24AccountInformation.T24_STANDING_ORDERS, List.class)
             for(Entity t24StdOrder : t24StdOrders) {
                 Map<?, ?> order = new HashMap<>()
-                order.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS_TARGET, t24StdOrder.get(ScaffoldT24StandingOrder.TARGET_ACCOUNT))
-                order.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS_AMOUNT, t24StdOrder.get(ScaffoldT24StandingOrder.AMOUNT))
+                order.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS_TARGET, t24StdOrder.get(ScaffoldT24StandingOrder.T24_TARGET_ACCOUNT))
+                order.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS_AMOUNT, t24StdOrder.get(ScaffoldT24StandingOrder.T24_AMOUNT))
                 orders.add(order)
             }
             account.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS, orders);

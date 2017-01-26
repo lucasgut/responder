@@ -51,7 +51,7 @@ class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
         }
 
         List<?> accounts = new ArrayList<>();
-        List<String> customerAccountIds = (List<String>) t24Customer.get(ScaffoldT24CustomerInformation.ACCOUNTS);
+        List<String> customerAccountIds = (List<String>) t24Customer.get(ScaffoldT24CustomerInformation.T24_ACCOUNTS);
         for(String customerAccountId : customerAccountIds) {
             // get external customer information
             Command accInfoCmd = new T24AccountInformation();
@@ -75,7 +75,7 @@ class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
             }
 
             List<?> orders = new ArrayList<>();
-            List<String> accountStandingOrderIds = (List<String>) t24Account.get(ScaffoldT24AccountInformation.STANDING_ORDERS);
+            List<String> accountStandingOrderIds = (List<String>) t24Account.get(ScaffoldT24AccountInformation.T24_STANDING_ORDERS);
             for(String accountStandingOrderId : accountStandingOrderIds) {
                 // get external customer information
                 Command stoCmd = new T24StandingOrder();
@@ -100,10 +100,10 @@ class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
 
                 orders.add(t24StandingOrder)
             }
-            t24Account.set(ScaffoldT24AccountInformation.STANDING_ORDERS, orders);
+            t24Account.set(ScaffoldT24AccountInformation.T24_STANDING_ORDERS, orders);
             accounts.add(t24Account);
         }
-        t24Customer.set(ScaffoldT24CustomerInformation.ACCOUNTS, accounts);
+        t24Customer.set(ScaffoldT24CustomerInformation.T24_ACCOUNTS, accounts);
 
         // transform external customer model into internal customer model
         Command transformer = new CustomerDashboardTransformer_1();

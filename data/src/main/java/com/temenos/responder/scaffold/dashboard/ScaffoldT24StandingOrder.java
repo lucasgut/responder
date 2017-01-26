@@ -15,16 +15,16 @@ public class ScaffoldT24StandingOrder implements Scaffold {
     /**
      * The standing order's target account.
      */
-    public static final String TARGET_ACCOUNT = "TARGET\\.ACCOUNT";
-    public static final Type TARGET_ACCOUNT_TYPE = Type.NUMBER;
+    public static final String T24_TARGET_ACCOUNT = "TARGET\\.ACCOUNT";
+    public static final Type T24_TARGET_ACCOUNT_TYPE = Type.NUMBER;
     /**
      * The standing order's amount.
      */
-    public static final String AMOUNT = "AMOUNT";
-    public static final Type AMOUNT_TYPE = Type.NUMBER;
+    public static final String T24_AMOUNT = "AMOUNT";
+    public static final Type T24_AMOUNT_TYPE = Type.NUMBER;
     /**
      * The standing order's transaction date.
      */
-    public static final String TRANSACTION_DATE = "TRANSACTION\\.DATE";
-    public static final Type TRANSACTION_DATE_TYPE = Type.STRING;
+    public static final String T24_TRANSACTION_DATE = "TRANSACTION\\.DATE";
+    public static final Type T24_TRANSACTION_DATE_TYPE = Type.STRING;
 }

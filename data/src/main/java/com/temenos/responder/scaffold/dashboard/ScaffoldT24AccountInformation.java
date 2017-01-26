@@ -10,26 +10,26 @@ public class ScaffoldT24AccountInformation implements Scaffold {
     /**
      * An integer to uniquely identify an account.
      */
-    public static final String ID = "ID";
-    public static final Type ID_TYPE = Type.INTEGER;
+    public static final String T24_ID = "ID";
+    public static final Type T24_ID_TYPE = Type.INTEGER;
     /**
      * The account's label.
      */
-    public static final String LABEL = "LABEL";
-    public static final Type LABEL_TYPE = Type.STRING;
+    public static final String T24_LABEL = "LABEL";
+    public static final Type T24_LABEL_TYPE = Type.STRING;
     /**
      * The account's number.
      */
-    public static final String NUMBER = "NUMBER";
-    public static final Type NUMBER_TYPE = Type.STRING;
+    public static final String T24_NUMBER = "NUMBER";
+    public static final Type T24_NUMBER_TYPE = Type.STRING;
     /**
      * The account's balance.
      */
-    public static final String BALANCE = "BALANCE";
-    public static final Type BALANCE_TYPE = Type.NUMBER;
+    public static final String T24_BALANCE = "BALANCE";
+    public static final Type T24_BALANCE_TYPE = Type.NUMBER;
     /**
      * The account's standing orders.
      */
-    public static final String STANDING_ORDERS = "STANDING\\.ORDERS";
-    public static final Type STANDING_ORDERS_TYPE = Type.ARRAY;
+    public static final String T24_STANDING_ORDERS = "STANDING\\.ORDERS";
+    public static final Type T24_STANDING_ORDERS_TYPE = Type.ARRAY;
 }
