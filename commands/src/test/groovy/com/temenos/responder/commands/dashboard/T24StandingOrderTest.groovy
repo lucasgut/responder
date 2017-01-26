@@ -11,7 +11,7 @@ import spock.lang.Unroll
 class T24StandingOrderTest extends Specification {
 
     @Unroll
-    def "T24 customer information command"(id, map) {
+    def "Set 'finalResult' attribute to #map if standing order with ID #id is requested"(id, map) {
         setup:
             def command = new T24StandingOrder()
             def context = Mock(CommandContext)
@@ -31,7 +31,7 @@ class T24StandingOrderTest extends Specification {
     }
 
     @Unroll
-    def "T24 customer information command for nonexistent customers"(id) {
+    def "Set 'finalResult' attribute to an empty entity if a nonexistent standing order ID #id is requested"(id) {
         setup:
             def command = new T24StandingOrder()
             def context = Mock(CommandContext)

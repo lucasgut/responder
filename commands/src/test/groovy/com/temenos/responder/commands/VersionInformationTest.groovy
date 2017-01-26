@@ -14,8 +14,7 @@ import spock.lang.Unroll
 class VersionInformationTest extends Specification {
 
     @Unroll
-    def "Version information command injects deserialised \
-        contents of #versionFile into execution context"(versionFile, dataAsJson, data, pData) {
+    def "Fetch contents of '#versionFile' and set 'finalResult' to #data"(versionFile, dataAsJson, data, pData) {
         given:
             def context = Mock(CommandContext)
             def scriptLoader = Mock(ScriptLoader)
@@ -36,8 +35,7 @@ class VersionInformationTest extends Specification {
     }
 
     @Unroll
-    def "Version information command adds #exception.simpleName \
-        to execution context if #condition"(exception, condition, fromField, intoField, expectedLoaderInvocations) {
+    def "Set 'exception' context attribute to #exception.simpleName if #condition"(exception, condition, fromField, intoField, expectedLoaderInvocations) {
         given:
             def context = Mock(CommandContext)
             def scriptLoader = Mock(ScriptLoader)
@@ -53,7 +51,7 @@ class VersionInformationTest extends Specification {
             1 * context.setAttribute('exception', _)
             1 * context.setResponseCode('500')
         where:
-            exception                | condition                                  | fromField        | intoField     | expectedLoaderInvocations
-            ScriptExecutionException | 'version information file cannot be found' | ['missing.json'] | 'finalResult' | 1
+            exception                | condition                                    | fromField        | intoField     | expectedLoaderInvocations
+            ScriptExecutionException | 'a version information file cannot be found' | ['missing.json'] | 'finalResult' | 1
     }
 }

@@ -13,7 +13,7 @@ import spock.lang.Unroll
 class GETResourceTest extends Specification {
 
     @Unroll
-    def "GET resource command fetches data from #uri"(uri, data) {
+    def "Fetch data from '#uri?#queryParams' and set context attribute 'finalResult' to returned data"(uri, queryParams, data) {
         given:
             def http = Spy(HTTPBuilder)
             def command = new GETResource(http)
@@ -21,12 +21,12 @@ class GETResourceTest extends Specification {
         when:
             def result = command.execute(ctx)
         then:
-            1 * ctx.from() >> [uri, 'a=1&b=2']
+            1 * ctx.from() >> [uri, queryParams]
             1 * ctx.into() >> "finalResult"
             1 * ctx.setAttribute("finalResult", new Entity(data))
             1 * http.get(_) >> data
         where:
-            uri                      | data
-            'http://0.0.0.0/example' | ["Greeting": "Hello", "Subject": "World"]
+            uri                      | queryParams | data
+            'http://0.0.0.0/example' | 'a=1&b=2'   | ["Greeting": "Hello", "Subject": "World"]
     }
 }

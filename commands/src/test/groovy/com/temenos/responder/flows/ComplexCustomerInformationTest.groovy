@@ -11,20 +11,15 @@ import com.temenos.responder.scaffold.ScaffoldCustomer
 import com.temenos.responder.scaffold.ScaffoldExternalAddress
 import com.temenos.responder.scaffold.ScaffoldExternalCustomer
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * Created by dgroves on 19/01/2017.
  */
 class ComplexCustomerInformationTest extends Specification {
-    /**
-     * TODO: Use CustomerName field in consumer model
-     * @param flows
-     * @param data
-     * @param producerModels
-     * @param consumerModel
-     * @return
-     */
-    def "Complex customer information flow invokes #flows in parallel and maps #data from #producerModels to #consumerModel"(List flows, data, producerModels, consumerModel) {
+
+    @Unroll
+    def "Invoke #flowNames in parallel, map data from #producerModelNames to #consumerModelName and set 'finalResult' to #data"(flowNames, List flows, data, producerModelNames, producerModels, consumerModelName, consumerModel) {
         given:
             def executionContext = Mock(ExecutionContext)
             def flow = new ComplexCustomerInformation()
@@ -41,7 +36,7 @@ class ComplexCustomerInformationTest extends Specification {
             customerInfoDoc.getBody() >> new Entity(["CustomerId": 1, "CustomerName": "John Smith", "CustomerAddress": "Not Known"])
             1 * customerAddressDoc.getBody() >> new Entity(["AddressId": 1, "Addresses": data['Addresses']])
         where:
-            flows                                      | data                                                                                                                                    | producerModels                      | consumerModel
-            [CustomerInformation, CustomerAddressFlow] | ["CustomerName": "John Smith", "Addresses": [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]] | [ScaffoldCustomer, ScaffoldAddress] | ScaffoldComplexCustomer
+            flowNames                                      | flows                                      | data                                                                                                                                    | producerModelNames                      | producerModels                      | consumerModelName         | consumerModel
+            ['CustomerInformation', 'CustomerAddressFlow'] | [CustomerInformation, CustomerAddressFlow] | ["CustomerName": "John Smith", "Addresses": [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]] | ['ScaffoldCustomer', 'ScaffoldAddress'] | [ScaffoldCustomer, ScaffoldAddress] | 'ScaffoldComplexCustomer' | ScaffoldComplexCustomer
     }
 }

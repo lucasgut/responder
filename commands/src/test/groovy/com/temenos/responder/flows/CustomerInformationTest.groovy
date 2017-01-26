@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response
 class CustomerInformationTest extends Specification {
 
     @Unroll
-    def "Customer information command"(id, map, extnMap) {
+    def "Fetch and transform #extnMap, set 'finalResult' context attribute to #map and return status code '200' if customer ID #id is requested"(id, map, extnMap) {
         setup:
             def flow = new CustomerInformationWithTransformer()
             def context = Mock(ExecutionContext)
@@ -44,13 +44,13 @@ class CustomerInformationTest extends Specification {
                 ctx.setResponseCode('200')
             }
         where:
-            id     | map                                                                                         | extnMap
+            id     | map                                                                                       | extnMap
             100100 | ['CustomerId': 100100, 'CustomerName': 'John Smith', 'CustomerAddress': 'No Name Street'] | ["CUSTOMER.ID": 100100, "CUSTOMER.NAME": "John Smith", "CUSTOMER.ADDRESS": "No Name Street"]
             100200 | ['CustomerId': 100200, 'CustomerName': 'Iris Law', 'CustomerAddress': '2 Lansdowne Rd']   | ["CUSTOMER.ID": 100200, "CUSTOMER.NAME": "Iris Law", "CUSTOMER.ADDRESS": "2 Lansdowne Rd"]
     }
 
     @Unroll
-    def "Customer information command for inexistent customers"(id) {
+    def "Set 'finalResult' context attribute to an empty entity and return status code '404' if nonexistent customer ID #id is requested"(id) {
         setup:
             def flow = new CustomerInformationWithTransformer()
             def context = Mock(ExecutionContext)

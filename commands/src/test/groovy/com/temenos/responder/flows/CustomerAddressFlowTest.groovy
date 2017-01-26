@@ -16,7 +16,7 @@ import spock.lang.Unroll
 class CustomerAddressFlowTest extends Specification {
 
     @Unroll
-    def "Return #responseCode and add #data to execution context"(responseCode, data) {
+    def "Set 'finalResult' to #data and set response code to '#responseCode'"(responseCode, data) {
         given:
             def flow = new CustomerAddressFlow()
             def executionContext = Mock(ExecutionContext)

@@ -13,7 +13,7 @@ import spock.lang.Unroll
 class AddLinkTest extends Specification {
 
     @Unroll
-    def "Add link to external resource #resource with parameters #from returns #code"(resource, from, code, linkData) {
+    def "Create link to '#resource' from #from, set context attribute 'document.links.example' to #linkData and return status code '#code'"(resource, from, code, linkData) {
         given:
             def command = new AddLink()
             def commandContext = Mock(CommandContext)
@@ -33,7 +33,7 @@ class AddLinkTest extends Specification {
     }
 
     @Ignore
-    def "Add link to internal resource #resource returns #code"(resource, from, code, linkData) {
+    def "Create link to internal resource"(resource, from, code, linkData) {
         given:
             def command = new AddLink()
             def commandContext = Mock(CommandContext)

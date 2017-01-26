@@ -12,7 +12,7 @@ import spock.lang.Unroll
 class ExternalCustomerInformationTest extends Specification {
 
     @Unroll
-    def "T24 customer information command"(id, map) {
+    def "Set 'finalResult' context attribute to #map and return status code '200' if a customer with ID #id is requested"(id, map) {
         setup:
             def command = new ExternalCustomerInformation()
             def context = Mock(CommandContext)
@@ -31,7 +31,7 @@ class ExternalCustomerInformationTest extends Specification {
 
 
     @Unroll
-    def "T24 customer information command for inexistent customers"(id) {
+    def "Set 'finalResult' context attribute to a blank entity and return status code '404' if nonexistent customer ID #id is requested"(id) {
         setup:
             def command = new ExternalCustomerInformation()
             def context = Mock(CommandContext)

@@ -12,7 +12,7 @@ import spock.lang.Unroll
 class T24CustomerInformationTest extends Specification {
 
     @Unroll
-    def "T24 customer information command"(id, map) {
+    def "Set 'finalResult' to #map and set response code to '#responseCode'"(id, map) {
         setup:
             def command = new T24CustomerInformation()
             def context = Mock(CommandContext)
@@ -30,7 +30,7 @@ class T24CustomerInformationTest extends Specification {
     }
 
     @Unroll
-    def "T24 customer information command for nonexistent customers"(id) {
+    def "Set 'finalResult' context attribute to an empty entity and return status code '404' if nonexistent customer ID #id is requested"(id) {
         setup:
             def command = new T24CustomerInformation()
             def context = Mock(CommandContext)
