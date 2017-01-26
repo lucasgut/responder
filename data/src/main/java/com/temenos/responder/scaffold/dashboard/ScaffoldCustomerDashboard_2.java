@@ -9,7 +9,7 @@ import com.temenos.responder.scaffold.Scaffold;
  * @author Douglas Groves
  * @author Andres Burgos
  */
-public class ScaffoldCustomerDashboard_1 implements Scaffold {
+public class ScaffoldCustomerDashboard_2 implements Scaffold {
     /**
      * An integer to uniquely identify a customer.
      */

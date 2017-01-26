@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response
  *
  * @author Andres Burgos
  */
-public class CustomerDashboardTransformer implements Command {
+public class CustomerDashboardTransformer_2 implements Command {
 
     @Override
     void execute(CommandContext context) {
@@ -71,6 +71,7 @@ public class CustomerDashboardTransformer implements Command {
                 Map<?, ?> order = new HashMap<>()
                 order.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS_TARGET, t24StdOrder.get(ScaffoldT24StandingOrder.TARGET_ACCOUNT))
                 order.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS_AMOUNT, t24StdOrder.get(ScaffoldT24StandingOrder.AMOUNT))
+                order.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS_TRANSACTION_DATE, t24StdOrder.get(ScaffoldT24StandingOrder.TRANSACTION_DATE))
                 orders.add(order)
             }
             account.put(ScaffoldCustomerDashboard_1.ACCOUNTS_STANDING_ORDERS, orders);

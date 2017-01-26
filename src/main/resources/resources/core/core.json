@@ -125,7 +125,7 @@
                 "description": "This is the main flow for version 2.0",
                 "response": {
                   "description": "Account dashboard C-Model 2.0",
-                  "item": "com.temenos.responder.scaffold.dashboard.ScaffoldCustomerDashboard_2"
+                  "item": "resources.models.core.dashboard.CustomerDashboard_Model_2"
                 },
                 "error": {
                   "description": "Error model",

@@ -22,4 +22,9 @@ public class ScaffoldT24StandingOrder implements Scaffold {
      */
     public static final String AMOUNT = "AMOUNT";
     public static final Type AMOUNT_TYPE = Type.NUMBER;
+    /**
+     * The standing order's transaction date.
+     */
+    public static final String TRANSACTION_DATE = "TRANSACTION\\.DATE";
+    public static final Type TRANSACTION_DATE_TYPE = Type.STRING;
 }

@@ -3,7 +3,7 @@ package com.temenos.responder.flows.dashboard;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.commands.dashboard.T24AccountInformation;
 import com.temenos.responder.commands.dashboard.T24StandingOrder
-import com.temenos.responder.commands.transformers.CustomerDashboardTransformer;
+import com.temenos.responder.commands.transformers.CustomerDashboardTransformer_1;
 import com.temenos.responder.commands.transformers.CustomerTransformer;
 
 import com.temenos.responder.context.CommandContext;
@@ -106,7 +106,7 @@ class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
         t24Customer.set(ScaffoldT24CustomerInformation.ACCOUNTS, accounts);
 
         // transform external customer model into internal customer model
-        Command transformer = new CustomerDashboardTransformer();
+        Command transformer = new CustomerDashboardTransformer_1();
         CommandContext trnsCmd = new DefaultCommandContext([from: ['ExtnCustomer'], into: 'finalResult']);
         trnsCmd.setAttribute('ExtnCustomer', t24Customer);
         transformer.execute(trnsCmd);
