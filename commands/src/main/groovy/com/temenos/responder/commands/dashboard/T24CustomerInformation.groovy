@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response
 
 /**
  * A stub of a resource that returns customer data as a
- * {@link com.temenos.responder.scaffold.ScaffoldExternalCustomer scaffold of an external customer}.
+ * {@link com.temenos.responder.scaffold.dashboard.ScaffoldT24CustomerInformation scaffold of an external customer}.
  *
  * @author aburgos
  */
@@ -27,16 +27,16 @@ class T24CustomerInformation implements Command {
             if(customerId == "100100") {
                 map.put("ID", 100100)
                 map.put("NAME", "John Smith")
-                map.put("HOME.ADDRESS", "No Name Street")
-                map.put("WORK.ADDRESS", "85 Albert Embankment")
-                map.put("RELATIVES", ["0": ["NAME": "Jim Cain", "RELATIONSHIP": "Father"], "1": ["NAME": "Rick Perry", "RELATIONSHIP": "Sibling"]])
+                map.put("HOME.ADDRESS", ["LINE1": "No Name Street", "LINE2": "", "POSTCODE": "NW9 6LR"])
+                map.put("WORK.ADDRESS", ["LINE1": "85 Albert Embankment", "LINE2": "Lambeth", "POSTCODE": "SE1 1BD"])
+                map.put("RELATIVES", [["NAME": "Jim Cain", "RELATIONSHIP": "Father"], ["NAME": "Rick Perry", "RELATIONSHIP": "Sibling"]])
                 map.put("ACCOUNTS", ["1001", "1004", "1009"])
             } else if(customerId == "100200") {
                 map.put("ID", 100200)
                 map.put("NAME", "Iris Law")
-                map.put("HOME.ADDRESS", "2 Lansdowne Rd")
-                map.put("WORK.ADDRESS", "9 Argyll Street")
-                map.put("RELATIVES", ["0": ["NAME": "Jeff Barry", "RELATIONSHIP": "Father"], "1": ["NAME": "T Mayhem", "RELATIONSHIP": "Mother"]])
+                map.put("HOME.ADDRESS", ["LINE1": "2 Lansdowne Rd", "LINE2": "", "POSTCODE": "CR8 2PA"])
+                map.put("WORK.ADDRESS", ["LINE1": "9 Argyll Street", "LINE2": "", "POSTCODE": "SE1 9TG"])
+                map.put("RELATIVES", [["NAME": "Jeff Barry", "RELATIONSHIP": "Father"], ["NAME": "T Mayhem", "RELATIONSHIP": "Mother"]])
                 map.put("ACCOUNTS", ["1002", "1003"])
             }
 

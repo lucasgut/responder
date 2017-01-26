@@ -6,6 +6,7 @@ import com.temenos.responder.commands.transformers.CustomerTransformer
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.ExecutionContext
 import com.temenos.responder.entity.runtime.Entity
+import com.temenos.responder.flows.CustomerInformationWithTransformer
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -19,13 +20,13 @@ class CustomerInformationTest extends Specification {
     @Unroll
     def "Customer information command"(id, map, extnMap) {
         setup:
-            def command = new CustomerInformationWithTransformer()
+            def flow = new CustomerInformationWithTransformer()
             def context = Mock(ExecutionContext)
             def externalCommand = Mock(ExternalCustomerInformation)
             def transformCommand = Mock(CustomerTransformer)
             def addLinkCommand = Mock(AddLink)
         when:
-            command.execute(context)
+            flow.execute(context)
         then:
             _ * context.getAttribute('id') >> id
             _ * context.getAttribute('into') >> 'finalResult'
@@ -51,12 +52,12 @@ class CustomerInformationTest extends Specification {
     @Unroll
     def "Customer information command for inexistent customers"(id) {
         setup:
-            def command = new CustomerInformationWithTransformer()
+            def flow = new CustomerInformationWithTransformer()
             def context = Mock(ExecutionContext)
             def externalCommand = Mock(ExternalCustomerInformation)
             def addLinkCommand = Mock(AddLink)
         when:
-            command.execute(context)
+            flow.execute(context)
         then:
             _ * context.getAttribute('id') >> id
             _ * context.getAttribute('into') >> 'finalResult'

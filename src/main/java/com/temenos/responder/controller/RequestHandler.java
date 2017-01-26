@@ -1,6 +1,7 @@
 package com.temenos.responder.controller;
 
 import javax.ws.rs.*;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Context;
 
@@ -17,6 +18,13 @@ import com.temenos.responder.validator.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -59,7 +67,7 @@ public class RequestHandler {
         Resource resource = handler.resolvePathSpecification(path);
         Parameters parameters = handler.resolvePathParameters(path, resource);
         String origin = info.getBaseUri().toString() + path;
-        LOGGER.info("Found: {} / {}", methodName, resource.getPath());
+        LOGGER.info("Found: {} /{}", methodName, resource.getPath());
 
         ResourceHandler resourceHandler = new ResourceHandler();
         Version version = resourceHandler.getVersion(resource, methodName, versionName);
@@ -86,16 +94,35 @@ public class RequestHandler {
         //execute the version's flow
         Document result = dispatcher.notify(version.getFlow());
         String responseModel = version.getResponse().getModel();
-        Class<Scaffold> response = null;
+
         try {
-            response = (Class<Scaffold>) Class.forName(responseModel);
+            Class<Scaffold> response = (Class<Scaffold>) Class.forName(responseModel);
+
+            //validate the entity against the scaffold model definition
+            if (!ApplicationContext.getInjector(Validator.class)
+                    .isValid(result.getBody(), response)) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        //validate the entity against the model definition
-        if (!ApplicationContext.getInjector(Validator.class)
-                .isValid(result.getBody(), response)) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
+
+            try {
+                String responseModelFilename = '\\' + version.getResponse().getModel().replace('.','\\') + ".json";
+                String workingDirectory = System.getProperty("user.dir");
+                String filename = workingDirectory + "\\src\\main" + responseModelFilename;
+
+                byte[] schemaBytes = Files.readAllBytes(Paths.get(filename));
+                String schema = new String(schemaBytes);
+
+                //validate the entity against the schema model definition
+                if (!ApplicationContext.getInjector(Validator.class)
+                        .isValid(result.getBody(), schema)) {
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
+                }
+            } catch (IOException ioe) {
+                e.printStackTrace();
+                ioe.printStackTrace();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
         }
 
         //construct a response

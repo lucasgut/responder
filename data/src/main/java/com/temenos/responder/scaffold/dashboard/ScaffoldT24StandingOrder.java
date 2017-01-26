@@ -6,12 +6,12 @@ import com.temenos.responder.scaffold.Scaffold;
 /**
  * @author Andres Burgos
  */
-public class T24StandingOrder implements Scaffold {
+public class ScaffoldT24StandingOrder implements Scaffold {
     /**
      * An integer to uniquely identify a standing order.
      */
     public static final String ID = "ID";
-    public static final Type ID_TYPE = Type.NUMBER;
+    public static final Type ID_TYPE = Type.INTEGER;
     /**
      * The standing order's target account.
      */

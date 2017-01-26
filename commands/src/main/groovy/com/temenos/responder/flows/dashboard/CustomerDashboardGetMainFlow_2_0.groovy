@@ -1,6 +1,7 @@
-package com.temenos.responder.flows
+package com.temenos.responder.flows.dashboard
 
 import com.temenos.responder.context.ExecutionContext
+import com.temenos.responder.flows.AbstractFlow
 
 /**
  * Created by aburgos on 18/01/2017.

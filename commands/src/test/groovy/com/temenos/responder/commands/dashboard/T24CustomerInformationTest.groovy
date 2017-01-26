@@ -1,5 +1,6 @@
-package com.temenos.responder.flows
+package com.temenos.responder.commands.dashboard
 
+import com.temenos.responder.commands.dashboard.T24CustomerInformation
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.entity.runtime.Entity
 import spock.lang.Specification
@@ -8,12 +9,12 @@ import spock.lang.Unroll
 /**
  * Created by aburgos on 24/12/2016.
  */
-class ExternalCustomerDashboardTest extends Specification {
+class T24CustomerInformationTest extends Specification {
 
     @Unroll
     def "T24 customer information command"(id, map) {
         setup:
-            def command = new ExternalCustomerDashboard()
+            def command = new T24CustomerInformation()
             def context = Mock(CommandContext)
         when:
             command.execute(context)
@@ -24,14 +25,14 @@ class ExternalCustomerDashboardTest extends Specification {
             1 * context.setResponseCode('200')
         where:
             id     | map
-            100100 | ['CUSTOMER.ID': 100100, 'CUSTOMER.NAME': 'John Smith', 'CUSTOMER.HOME.ADDRESS': 'No Name Street', 'CUSTOMER.WORK.ADDRESS': '85 Albert Embankment']
-            100200 | ['CUSTOMER.ID': 100200, 'CUSTOMER.NAME': 'Iris Law', 'CUSTOMER.HOME.ADDRESS': '2 Lansdowne Rd', 'CUSTOMER.WORK.ADDRESS': '9 Argyll Street']
+            100100 | ['ID': 100100, 'NAME': 'John Smith', 'HOME.ADDRESS': ["LINE1": "No Name Street", "LINE2": "", "POSTCODE": "NW9 6LR"], 'WORK.ADDRESS': ["LINE1": "85 Albert Embankment", "LINE2": "Lambeth", "POSTCODE": "SE1 1BD"], 'RELATIVES': [["NAME": "Jim Cain", "RELATIONSHIP": "Father"], ["NAME": "Rick Perry", "RELATIONSHIP": "Sibling"]], 'ACCOUNTS': ["1001", "1004", "1009"]]
+            100200 | ['ID': 100200, 'NAME': 'Iris Law', 'HOME.ADDRESS': ["LINE1": "2 Lansdowne Rd", "LINE2": "", "POSTCODE": "CR8 2PA"], 'WORK.ADDRESS': ["LINE1": "9 Argyll Street", "LINE2": "", "POSTCODE": "SE1 9TG"], 'RELATIVES': [["NAME": "Jeff Barry", "RELATIONSHIP": "Father"], ["NAME": "T Mayhem", "RELATIONSHIP": "Mother"]], 'ACCOUNTS': ["1002", "1003"]]
     }
 
     @Unroll
     def "T24 customer information command for nonexistent customers"(id) {
         setup:
-            def command = new ExternalCustomerDashboard()
+            def command = new T24CustomerInformation()
             def context = Mock(CommandContext)
         when:
             command.execute(context)

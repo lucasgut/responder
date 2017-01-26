@@ -123,7 +123,7 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "GET request to /dashboard/#id in CustomerDashboard version 1.0 mock command"(id, name, homeAddress, workAddress) {
+    def "GET request to /dashboard/#id in CustomerDashboard version 1.0 mock command"(id, name, homeAddress, workAddress, relatives, accounts) {
         setup:
             def path = 'dashboard/' + id
             def request = target(path).request()
@@ -133,15 +133,37 @@ class ResponderIntegrationTest extends Specification {
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
             result.status == Response.Status.OK.statusCode
-            body['CustomerDashboard']['customerName'] == name
-            body['CustomerDashboard']['homeAddress'] == homeAddress
-            body['CustomerDashboard']['workAddress'] == workAddress
+            def customerDashboard = body['CustomerDashboard'] as com.temenos.responder.entity.runtime.Entity
+            customerDashboard.get('customerName') == name
+            customerDashboard.get('homeAddress') == homeAddress
+            customerDashboard.get('workAddress') == workAddress
+            int relIndex = 0
+            relatives.each { rel ->
+                assert customerDashboard.get('relatives['+relIndex+'].name') == rel['name']
+                assert customerDashboard.get('relatives['+relIndex+'].relationship') == rel['relationship']
+                relIndex++
+            }
+            int accIdx = 0
+            accounts['accounts'].each { acc ->
+                def accPrefix = 'accounts[' + accIdx + ']'
+                assert customerDashboard.get(accPrefix + '.accountLabel') == acc[accIdx]['accountLabel']
+                assert customerDashboard.get(accPrefix + '.accountNumber') == acc[accIdx]['accountNumber']
+                assert customerDashboard.get(accPrefix + '.accountBalance') == acc[accIdx]['accountBalance']
+                int stoIdx = 0
+                acc[accIdx]['standingOrders'].each { stoOrder ->
+                    def stoPrefix = accPrefix + '.standingOrders[' + stoIdx + ']'
+                    assert customerDashboard.get(stoPrefix + '.targetAccount') == stoOrder['targetAccount']
+                    assert customerDashboard.get(stoPrefix + '.amount') == stoOrder['amount']
+                    stoIdx++
+                }
+                accIdx++
+            }
             body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
             body['_embedded'] != null
         where:
-            id     | name         | homeAddress      | workAddress
-            100100 | 'John Smith' | 'No Name Street' | '85 Albert Embankment'
-            100200 | 'Iris Law'   | '2 Lansdowne Rd' | '9 Argyll Street'
+            id     | name         | homeAddress                                                      | workAddress                                                                  | relatives                                                                                           | accounts
+            100100 | 'John Smith' | ['line1': 'No Name Street', 'line2': '', 'postcode': 'NW9 6LR']  | ['line1': '85 Albert Embankment', 'line2': 'Lambeth', 'postcode': 'SE1 1BD'] | [["name": "Jim Cain", "relationship": "Father"], ["name": "Rick Perry", "relationship": "Sibling"]] | ['accounts': [[['accountId': 1001, 'accountLabel': 'Savings', 'accountNumber': 'GB29 NWBK 6016 1331 9268 19', 'accountBalance': 1200000.0, 'standingOrders': []], ['accountId': 1004, 'accountLabel': 'Payments account', 'accountNumber': 'DE89 3704 0044 0532 0130 00', 'accountBalance': 500000.0, 'standingOrders': [['standingOrderId': 400, 'targetAccount': 'GB27 BOFI 9021 2729 8235 29', 'amount': 2020.0], ['standingOrderId': 401, 'targetAccount': 'GB29 NWBK 6016 1331 9268 19', 'amount': 2000.0], ['standingOrderId': 402, 'targetAccount': 'GB29 NWBK 6016 1331 9268 53', 'amount': 4000.0]]], ['accountId': 1009, 'accountLabel': 'H funding account', 'accountNumber': 'LB62 0999 0000 0001 0019 0122 9114', 'accountBalance': 9620000.0, 'standingOrders': []]]]]
+            100200 | 'Iris Law'   | ['line1': '2 Lansdowne Rd', 'line2': '', 'postcode': 'CR8 2PA']  | ['line1': '9 Argyll Street', 'line2': '', 'postcode': 'SE1 9TG']             | [["name": "Jeff Barry", "relationship": "Father"], ["name": "T Mayhem", "relationship": "Mother"]]  | ['accounts': [[['accountId': 1002, 'accountLabel': 'Daily account', 'accountNumber': 'GB29 NWBK 6016 1331 9268 53', 'accountBalance': 8000.0, 'standingOrders': [['standingOrderId': 200, 'targetAccount': 'GB91 BKEN 1000 0041 6100 08', 'amount': 1200.0]]], ['accountId': 1003, 'accountLabel': 'Dubious account', 'accountNumber': 'VG96 VPVG 0000 0123 4567 8901', 'accountBalance': 68000000.0, 'standingOrders': []]]]]
     }
 
     @Unroll

@@ -6,12 +6,12 @@ import com.temenos.responder.scaffold.Scaffold;
 /**
  * @author Andres Burgos
  */
-public class T24AccountInformation implements Scaffold {
+public class ScaffoldT24AccountInformation implements Scaffold {
     /**
      * An integer to uniquely identify an account.
      */
     public static final String ID = "ID";
-    public static final Type ID_TYPE = Type.NUMBER;
+    public static final Type ID_TYPE = Type.INTEGER;
     /**
      * The account's label.
      */

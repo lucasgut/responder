@@ -109,11 +109,11 @@
             "routeOn": "rim.request.header.Accept-Version",
             "routeTo": {
               "1.0": {
-                "flow": "com.temenos.responder.flows.CustomerDashboardGetMainFlow_1_0",
+                "flow": "com.temenos.responder.flows.dashboard.CustomerDashboardGetMainFlow_1_0",
                 "description": "This is the main flow for version 1.0",
                 "response": {
                   "description": "Account dashboard C-Model 1.0",
-                  "item": "com.temenos.responder.scaffold.ScaffoldCustomerDashboard_1"
+                  "item": "resources.models.core.dashboard.CustomerDashboard_Model_1"
                 },
                 "error": {
                   "description": "Error model",
@@ -121,11 +121,11 @@
                 }
               },
               "2.0": {
-                "flow": "com.temenos.responder.flows.CustomerDashboardGetMainFlow_2_0",
+                "flow": "com.temenos.responder.flows.dashboard.CustomerDashboardGetMainFlow_2_0",
                 "description": "This is the main flow for version 2.0",
                 "response": {
                   "description": "Account dashboard C-Model 2.0",
-                  "item": "com.temenos.responder.scaffold.ScaffoldCustomerDashboard_2"
+                  "item": "com.temenos.responder.scaffold.dashboard.ScaffoldCustomerDashboard_2"
                 },
                 "error": {
                   "description": "Error model",
