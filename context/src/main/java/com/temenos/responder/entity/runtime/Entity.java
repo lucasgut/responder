@@ -13,7 +13,7 @@ import java.util.*;
  * @author Andres Burgos
  */
 public class Entity {
-    private final Map<String, Object> values;
+    private Map<String, Object> values;
     private final Map<String, Object> accessors;
     private final Map<String, Type> fqAccessorNameAndType;
     private static final String PROPERTY_NOT_FOUND_MSG = "Property %s doesn't exist";
@@ -117,13 +117,167 @@ public class Entity {
 
     /**
      * Update or add another field to the entity definition and regenerate the map of valid accessors.
+     * <p>
+     * TODO: Refactor this method and fix unchecked casts.
      *
-     * @param name       The name of the field being added or updated.
-     * @param properties The [new] value that the field will be set to.
+     * @param name  An accessor referring to the field being added or updated.
+     * @param value The [new] value that the field will be set to.
      */
-    public void set(String name, Object properties) {
-        values.put(name.replace("\\.", "."), properties);
-        getEntityNamesAndTypes(properties, name);
+    @SuppressWarnings("unchecked")
+    public void set(String name, Object value) {
+        //if an accessor already exists
+        if (exists(name)) {
+            int lastDotAccessor = name.lastIndexOf(".");
+            //ascend to its container
+            if (lastDotAccessor == -1) {
+                String arrayAccessor = name.substring(0, name.indexOf("["));
+                String arrayIndex = name.substring(name.indexOf("[") + 1, name.indexOf("]"));
+                //replace existing value with the new value
+                ((List<Object>) ((Map<?, ?>) accessors).get(arrayAccessor)).set(Integer.parseInt(arrayIndex), value);
+            } else {
+                String parentContainer = name.substring(0, name.lastIndexOf("."));
+                String fieldName = name.substring(name.lastIndexOf(".") + 1, name.length());
+                //replace existing value with the new value
+                ((Map<String, Object>) accessors.get(parentContainer)).put(fieldName, value);
+            }
+        }
+        //we are adding a new field; search accessors for the first available container using the given accessor
+        else {
+            Object container = null;
+            String accessor = name, rebuildFrom = "";
+            int lastDotAccessor = accessor.lastIndexOf("."), lastArrayAccessor = accessor.lastIndexOf("[");
+            boolean rebuild = true;
+            Map<String, Object> structure = new LinkedHashMap<>();
+            //subtract segments from the accessor until a valid accessor is found
+            while (container == null) {
+                //it's an object
+                if (lastDotAccessor != -1 && !accessor.endsWith("]")) {
+                    rebuildFrom = accessor.substring(accessor.lastIndexOf(".") + 1, accessor.length())+(rebuildFrom.isEmpty() ? "" : "."+rebuildFrom);
+                    accessor = accessor.substring(0, accessor.lastIndexOf("."));
+                    container = ((Map<?, ?>) accessors).get(accessor);
+                    if(container == null) {
+                        structure.put(rebuildFrom, value);
+                    }
+                }
+                //it's an array
+                else if (lastArrayAccessor != -1) {
+                    String expr = accessor;
+                    accessor = accessor.substring(0, lastArrayAccessor);
+                    container = ((Map<?, ?>) accessors).get(accessor);
+                    //the container doesn't exist and there are no further accessors
+                    if(container == null && rebuildFrom.isEmpty()){
+                        rebuildFrom = expr;
+                        break;
+                    }
+                    //the container doesn't exist
+                    else if(container == null){
+                        rebuildFrom = expr + "."+rebuildFrom;
+                        break;
+                    }
+                    //the container exists so add the value
+                    else{
+                        List<Object> myContainer = (List<Object>)container;
+                        if(structure.isEmpty()) {
+                            myContainer.add(value);
+                        }else{
+                            myContainer.add(structure);
+                        }
+                        rebuild = false;
+                        break;
+                    }
+                } else {
+                    rebuildFrom = accessor + "." + rebuildFrom;
+                    break;
+                }
+                lastDotAccessor = accessor.lastIndexOf(".");
+                lastArrayAccessor = accessor.lastIndexOf("[");
+            }
+            //rebuild values using the parts of the accessor that were removed
+            if(rebuild && container == null) {
+                this.values.putAll((Map<String, Object>) Entity.accessorToDataStructure(rebuildFrom, value));
+            }else if(rebuild && container instanceof Map){
+                ((Map<String, Object>) container).putAll((Map<String,Object>)Entity.accessorToDataStructure(rebuildFrom, value));
+            }else if(rebuild && container instanceof List){
+                ((List<Object>) container).add(((Map<String,Object>)Entity.accessorToDataStructure(rebuildFrom, value)));
+            }
+        }
+        getEntityNamesAndTypes(values, "");
+    }
+
+    public static Object accessorToDataStructure(String accessor, Object value) {
+        Map<String,Object> result = new HashMap<>();
+        Deque<String> accessorSegments = tokeniseAccessor(accessor);
+        String parentField = accessorSegments.pollLast();
+        while(!accessorSegments.isEmpty()){
+            String nextAccessor = accessorSegments.poll();
+            //it's an array
+            if(nextAccessor.contains("[]")) {
+                int arrayNesting = -1;
+                while (!nextAccessor.isEmpty()) {
+                    nextAccessor = nextAccessor.substring(0, nextAccessor.length() - 2);
+                    arrayNesting++;
+                }
+                value = createNestedArray(new ArrayList<>(), value, arrayNesting);
+            }
+            //it's an object
+            else{
+                Map<String, Object> myMap = new LinkedHashMap<>();
+                myMap.put(nextAccessor, value);
+                value = myMap;
+            }
+        }
+        result.put(parentField, value);
+        return result;
+    }
+
+    public static Deque<String> tokeniseAccessor(String accessor){
+        Deque<String> tokens = new LinkedList<>();
+        Deque<String> arrayStack = new LinkedList<>();
+        int index = 0;
+        int finalIndex = 0;
+        while(index < accessor.length()){
+            char myChar = accessor.charAt(index);
+            if(myChar == '.' && accessor.charAt(index - 1) != '\\'){
+                if(!arrayStack.isEmpty()) {
+                    tokens.push(arrayStack.pop());
+                    finalIndex = index + 1;
+                }else{
+                    tokens.push(accessor.substring(finalIndex, index).replace("\\.","."));
+                    finalIndex = index + 1;
+                }
+            }else if(myChar == '['){
+                if(arrayStack.isEmpty()){
+                    tokens.push(accessor.substring(finalIndex, index).replace("\\.","."));
+                    arrayStack.push("[]");
+                }else{
+                    arrayStack.push(arrayStack.pop()+"[]");
+                }
+            }else if(myChar == ']'){
+                finalIndex = index + 1;
+            }
+            index++;
+        }
+        if(finalIndex != index){
+            tokens.push(accessor.substring(finalIndex, accessor.length()).replace("\\.","."));
+        }
+        if(!arrayStack.isEmpty()){
+            tokens.push(arrayStack.pop());
+        }
+        return tokens;
+    }
+
+    private static List<Object> createNestedArray(List<Object> outer, Object value, int levels){
+        if(levels == 0){
+            outer.add(value);
+            return outer;
+        }else{
+            outer.add(createNestedArray(new ArrayList<>(), value, --levels));
+        }
+        return outer;
+    }
+
+    private boolean exists(String accessor) {
+        return accessors.get(accessor) != null;
     }
 
     /**
@@ -169,6 +323,10 @@ public class Entity {
         return accessors;
     }
 
+    public Map<String, Object> getValues() {
+        return values;
+    }
+
     private void getEntityNamesAndTypes(Object properties, String baseKey) {
         if (properties instanceof Map) {
             if (!baseKey.isEmpty()) {
@@ -176,9 +334,7 @@ public class Entity {
                 fqAccessorNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
             }
             Map<?, ?> propertiesMap = (Map<?, ?>) properties;
-            if(propertiesMap.isEmpty()) {
-                return;
-            } else {
+            if (!propertiesMap.isEmpty()) {
                 for (Map.Entry<?, ?> entry : ((Map<?, ?>) properties).entrySet()) {
                     String key = ((String) entry.getKey()).replace(".", "\\.");
                     getEntityNamesAndTypes(entry.getValue(), baseKey.isEmpty() ? key : baseKey + "." + key);
@@ -200,10 +356,6 @@ public class Entity {
         }
     }
 
-    public Map<String, Object> getValues() {
-        return values;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -221,4 +373,8 @@ public class Entity {
         return Objects.hash(values);
     }
 
+    @Override
+    public String toString() {
+        return values.toString();
+    }
 }

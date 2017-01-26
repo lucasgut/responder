@@ -48,8 +48,4 @@ abstract class AbstractFlow implements Flow {
         context.setAttribute('document.links.self', ctx.getAttribute('document.links.self'))
     }
 
-    public String fromArray(String expression, int... indices){
-        return String.format(expression, indices);
-    }
-
 }

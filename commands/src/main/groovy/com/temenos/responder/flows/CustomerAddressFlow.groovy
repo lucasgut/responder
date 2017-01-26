@@ -1,5 +1,7 @@
 package com.temenos.responder.flows
 
+import static com.temenos.responder.scaffold.Scaffolds.fromArray
+
 import com.temenos.responder.commands.Command
 import com.temenos.responder.commands.ExternalCustomerAddress
 import com.temenos.responder.context.CommandContext

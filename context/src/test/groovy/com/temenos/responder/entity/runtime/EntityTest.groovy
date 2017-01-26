@@ -11,7 +11,7 @@ import spock.lang.Unroll
  */
 class EntityTest extends Specification {
     @Unroll
-    def "Getter obtains value #expectedValue mapped to #key"(key, map, expectedValue) {
+    def "Access #expectedValue from entity #map using #key"(key, map, expectedValue) {
         setup:
             def entity = new Entity(map);
         when:
@@ -38,7 +38,7 @@ class EntityTest extends Specification {
     }
 
     @Unroll
-    def "Type-aware getter obtains #expectedValue as a #expectedType mapped to #key"(key, map, expectedValue, expectedType) {
+    def "Access #expectedValue from entity #map using #key and declared type #expectedType"(key, map, expectedValue, expectedType) {
         setup:
             def entity = new Entity(map)
         when:
@@ -111,7 +111,6 @@ class EntityTest extends Specification {
     }
 
     @Unroll
-    @Ignore
     def "Setter sets #key to #value and alters map structure #originalStructure to #newStructure"(key, value, originalStructure, newStructure) {
         setup:
             def entity = new Entity(originalStructure)
@@ -121,10 +120,62 @@ class EntityTest extends Specification {
             entity.getValues() == newStructure
             entity.get(key) == value
         where:
-            key                | value   | originalStructure     | newStructure
-            'Greeting'         | 'Hello' | [:]                   | ["Greeting": "Hello"]
-            'Greeting.Subject' | 'Hello' | ['Greeting': 'Hello'] | ["Greeting": ["Subject": "Hello"]]
+            key                             | value          | originalStructure                                                                         | newStructure
+            'Greeting'                      | 'Hello'        | [:]                                                                                       | ["Greeting": "Hello"]
+            'Greeting.Subject'              | 'World'        | [:]                                                                                       | ["Greeting": ["Subject": "World"]]
+            'Greeting[0]'                   | 'World'        | [:]                                                                                       | ["Greeting": ["World"]]
+            'Subject'                       | 'World'        | ['Greeting': 'Hello']                                                                     | ["Greeting": "Hello", "Subject": "World"]
+            'Greeting\\.Subject'            | 'Everybody'    | ["Greeting": ["Greeting": "Hello", "Subject": "World"]]                                   | ["Greeting": ["Greeting": "Hello", "Subject": "World"], "Greeting.Subject": "Everybody"]
+            'Greeting.Subject'              | 'Everybody'    | ["Greeting": ["Greeting": "Hello", "Subject": "World"]]                                   | ["Greeting": ["Greeting": "Hello", "Subject": "Everybody"]]
+            'Greeting.Subject.Location'     | 'World'        | ["Greeting": ["Subject": ["Location": "Everywhere"]]]                                     | ["Greeting": ["Subject": ["Location": "World"]]]
+            'Greeting[0]'                   | 'Ciao'         | ["Greeting": ["Hello", "Bonjour", "Guten Tag"]]                                           | ["Greeting": ["Ciao", "Bonjour", "Guten Tag"]]
+            'Greeting[1]'                   | 'Ciao'         | ["Greeting": ["Hello"]]                                                                   | ["Greeting": ["Hello", "Ciao"]]
+            'Greeting[0].Greeting'          | 'Ciao'         | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]] | ["Greeting": [["Greeting": "Ciao"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]
+            'Greeting[0].Subject'           | 'Everyone'     | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]] | ["Greeting": [["Greeting": "Hello", "Subject": "Everyone"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]
+            'Greeting[3].Subject'           | 'Everyone'     | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]] | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"], ["Subject": "Everyone"]]]
+            'Greeting.Subject[0].Location'  | 'World'        | ["Greeting": ["Subject": [["Location": "Everywhere"]]]]                                   | ["Greeting": ["Subject": [["Location": "World"]]]]
+            'Address[0].Address[0].Address' | 'Station Road' | [:]                                                                                       | ['Address': [['Address': [["Address": "Station Road"]]]]]
+            'Address[0].Address[1].Address' | 'Station Road' | ["Address": [['Address': [['Address': 'Turing Road']]]]]                                  | ['Address': [['Address': [["Address": "Turing Road"], ["Address": "Station Road"]]]]]
+            'Address[0].Address[0].Address' | 'Station Road' | ["Address": [['Address': [['Address': 'Turing Road']]]]]                                  | ['Address': [['Address': [["Address": "Station Road"]]]]]
+    }
 
+    @Unroll
+    def "Convert #accessor to #data"(accessor, value, data) {
+        when:
+            def result = Entity.accessorToDataStructure(accessor, value)
+        then:
+            result == data
+        where:
+            accessor                        | value                             | data
+            'Greeting'                      | 'Hello'                           | ["Greeting": 'Hello']
+            'Greetings'                     | ['Hello', 'Bonjour', 'Guten Tag'] | ['Greetings': ['Hello', 'Bonjour', 'Guten Tag']]
+            'Greetings[0]'                  | 'Hello'                           | ['Greetings': ['Hello']]
+            'Greetings[0][1]'               | 'Hello'                           | ['Greetings': [['Hello']]]
+            'Greetings[0].Subject'          | 'Everybody'                       | ['Greetings': [['Subject': 'Everybody']]]
+            'Greetings[0][1].Subject'       | 'Hello'                           | ['Greetings': [[['Subject': 'Hello']]]]
+            'Greetings.Subject.Location'    | 'World'                           | ['Greetings': ['Subject': ['Location': 'World']]]
+            'Address[0].Address[0].Address' | 'Station Road'                    | ['Address': [['Address': [["Address": "Station Road"]]]]]
+    }
+
+    @Unroll
+    def "Tokenize #accessor as #data"(accessor, data) {
+        when:
+            def result = Entity.tokeniseAccessor(accessor)
+        then:
+            result == data
+        where:
+            accessor                                  | data
+            'Greetings.Greeting'                      | ["Greeting", "Greetings"]
+            'Greetings[0]'                            | ["[]", "Greetings"]
+            'Greetings[0][1][1][1][1][1][1]'          | ["[][][][][][][]", "Greetings"]
+            'Greetings[0].Greeting'                   | ["Greeting", "[]", "Greetings"]
+            'Greetings[0].Greeting[0]'                | ["[]", "Greeting", "[]", "Greetings"]
+            'Greetings[0][1][1][1][1][1][1].Greeting' | ["Greeting", "[][][][][][][]", 'Greetings']
+            'Greetings\\.Greeting'                    | ['Greetings.Greeting']
+            'Greetings\\.Greeting[0]'                 | ["[]", 'Greetings.Greeting']
+            'Greetings\\.Greeting.Greeting'           | ['Greeting', 'Greetings.Greeting']
+            'Greetings.Subject.Location'              | ['Location', 'Subject', 'Greetings']
+            'Address[0].Address[0].Address'           | ['Address', '[]', 'Address', '[]', 'Address']
     }
 
 }
