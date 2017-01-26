@@ -8,13 +8,15 @@ import com.temenos.responder.configuration.Resource
 import com.temenos.responder.configuration.ResourceSpec
 import com.temenos.responder.configuration.Version
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * Created by aburgos on 10/01/2017.
  */
 class ResourceBuilderTest extends Specification {
 
-    def "Build resource"(name, path, methods) {
+    @Unroll
+    def "Build #name resource #description to #path"(name, path, methods, description) {
         given:
             def parser = new ResourceBuilder()
             def nodeFactory = JsonNodeFactory.instance;
@@ -36,7 +38,7 @@ class ResourceBuilderTest extends Specification {
                 def versions = methods[methodName][ResourceSpec.ROUTE_TO]
                 assert versions != null
                 def resourceVersions = resourceMethod.getVersions()
-                resourceVersions.forEach ({ resourceVersion ->
+                resourceVersions.forEach({ resourceVersion ->
                     def versionName = resourceVersion.getName()
                     assert versions[versionName] != null
                     def version = versions[versionName]
@@ -44,9 +46,9 @@ class ResourceBuilderTest extends Specification {
                 })
             }
         where:
-            name        | path                | methods
-            "dashboard" | '/accountDashboard' | ["GET": ["routeTo": ["default": ["flow": "com.temenos.responder.flows.AdditionFlow"]]]]
-            "dashboard" | '/accountDashboard' | ["GET": ["routeTo": ["1.0": ["flow": "com.temenos.responder.flows.AdditionFlow"], "2.0": ["flow": "com.temenos.responder.flows.VersionInformationFlow"]]], "POST": ["routeTo": ["1.0": ["flow": "com.temenos.responder.flows.AdditionFlow"], "2.0": ["flow": "com.temenos.responder.flows.VersionInformationFlow"]]]]
-            "dashboard" | '/accountDashboard' | ["GET": ["routeTo": ["1.0": ["flow": "com.temenos.responder.flows.AdditionFlow", "response": ["description": "Account Dashboard response", "item": "savingsAPI.accounts/AccountDashboard" ]], "2.0": ["flow": "com.temenos.responder.flows.VersionInformationFlow"]]], "POST": ["routeTo": ["1.0": ["flow": "com.temenos.responder.flows.AdditionFlow"], "2.0": ["flow": "com.temenos.responder.flows.VersionInformationFlow", "request": ["description": "Account Dashboard request", "item": "savingsAPI.accounts/AccountDashboard" ]]]]]
+            name        | path                | methods                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | description
+            "dashboard" | '/accountDashboard' | ["GET": ["routeTo": ["default": ["flow": "com.temenos.responder.flows.AdditionFlow"]]]]                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 'returning an AdditionFlow if a GET request is made'
+            "dashboard" | '/accountDashboard' | ["GET": ["routeTo": ["1.0": ["flow": "com.temenos.responder.flows.AdditionFlow"], "2.0": ["flow": "com.temenos.responder.flows.VersionInformationFlow"]]], "POST": ["routeTo": ["1.0": ["flow": "com.temenos.responder.flows.AdditionFlow"], "2.0": ["flow": "com.temenos.responder.flows.VersionInformationFlow"]]]]                                                                                                                                                                                                                     | 'returning an AdditionFlow or a VersionInformationFlow if a GET request is made with Accept-Version set to 1.0 or 2.0'
+            "dashboard" | '/accountDashboard' | ["GET": ["routeTo": ["1.0": ["flow": "com.temenos.responder.flows.AdditionFlow", "response": ["description": "Account Dashboard response", "item": "savingsAPI.accounts/AccountDashboard"]], "2.0": ["flow": "com.temenos.responder.flows.VersionInformationFlow"]]], "POST": ["routeTo": ["1.0": ["flow": "com.temenos.responder.flows.AdditionFlow"], "2.0": ["flow": "com.temenos.responder.flows.VersionInformationFlow", "request": ["description": "Account Dashboard request", "item": "savingsAPI.accounts/AccountDashboard"]]]]] | 'returning an AdditionFlow or VersionInformationFlow if a GET or POST request is made with Accept-Version set to 1.0 or 2.0'
     }
 }
