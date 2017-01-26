@@ -8,7 +8,7 @@ import spock.lang.Specification
  * Created by dgroves on 18/01/2017.
  */
 class FlowExecutorTest extends Specification {
-    def "Execute method executes a flow and discards the result"(){
+    def "Execute a flow and discard the result"(){
         given:
             def executor = new FlowExecutor()
             def flow = Mock(Flow)

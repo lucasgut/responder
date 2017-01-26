@@ -20,7 +20,7 @@ import spock.lang.Unroll
 class FlowDispatcherTest extends Specification {
 
     @Unroll
-    def "Invoking notify with #flowClass.simpleName creates a Flow instance and executes it"(Class flowClass) {
+    def "Invocation with #flowClass.simpleName creates a Flow instance and executes it"(Class flowClass) {
         given:
             def mockExecutor = Mock(FlowExecutor)
             def requestContext = Mock(RequestContext)
@@ -53,7 +53,7 @@ class FlowDispatcherTest extends Specification {
     }
 
     @Unroll
-    def "Invoking notify with #flowClasses.simpleName instantiates flows for each class and executes them"(List flowClasses) {
+    def "Invocation with #flowClasses.simpleName instantiates flows for each class and executes them"(List flowClasses) {
         given:
             def mockExecutor = []
             (flowClasses.size()).times { mockExecutor.add(Mock(FlowExecutor)) }
