@@ -1,21 +1,24 @@
-package com.temenos.responder.flows.dashboard
+package com.temenos.responder.flows.dashboard;
 
-import com.temenos.responder.commands.Command
-import com.temenos.responder.commands.dashboard.T24AccountInformation
-import com.temenos.responder.commands.dashboard.T24CustomerInformation
-import com.temenos.responder.commands.dashboard.T24StandingOrder
-import com.temenos.responder.commands.transformers.CustomerDashboardTransformer_2
-import com.temenos.responder.context.CommandContext
-import com.temenos.responder.context.DefaultCommandContext
-import com.temenos.responder.context.ExecutionContext
-import com.temenos.responder.entity.runtime.Entity
-import com.temenos.responder.flows.AbstractFlow
-import com.temenos.responder.scaffold.dashboard.ScaffoldT24AccountInformation
-import com.temenos.responder.scaffold.dashboard.ScaffoldT24CustomerInformation
+import com.temenos.responder.commands.Command;
+import com.temenos.responder.commands.dashboard.T24AccountInformation;
+import com.temenos.responder.commands.dashboard.T24CustomerInformation;
+import com.temenos.responder.commands.dashboard.T24StandingOrder;
+import com.temenos.responder.commands.transformers.dashboard.CustomerDashboardTransformer_2;
+import com.temenos.responder.context.CommandContext;
+import com.temenos.responder.context.DefaultCommandContext;
+import com.temenos.responder.context.ExecutionContext;
+import com.temenos.responder.entity.runtime.Entity;
+import com.temenos.responder.flows.AbstractFlow;
+import com.temenos.responder.scaffold.dashboard.ScaffoldT24AccountInformation;
+import com.temenos.responder.scaffold.dashboard.ScaffoldT24CustomerInformation;
 
-import javax.ws.rs.core.Response
+import javax.ws.rs.core.Response;
 
 /**
+ * This flow retrieves customer information from T24, comprising its accounts and their
+ * respective standing orders.
+ *
  * Created by aburgos on 18/01/2017.
  */
 class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
@@ -38,13 +41,13 @@ class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
         Entity t24Customer = (Entity) customerCtx.getAttribute(into);
 
         // check response from T24 customer information
-        if (!customerCtx.getResponseCode().equals(Response.Status.OK.statusCode as String) || t24Customer.getAccessors().isEmpty()) {
+        if (!customerCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode())) || t24Customer.getAccessors().isEmpty()) {
             executionContext.setResponseCode(customerCtx.getResponseCode());
             executionContext.setAttribute(into, new Entity());
             return;
         }
 
-        List<?> accounts = new ArrayList<>();
+        List<Entity> accounts = new ArrayList<>();
         List<String> customerAccountIds = (List<String>) t24Customer.get(ScaffoldT24CustomerInformation.T24_ACCOUNTS);
         for(String customerAccountId : customerAccountIds) {
             // get external customer information
@@ -62,13 +65,13 @@ class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
             if(t24Account.getAccessors().isEmpty()) continue;
 
             // check response from T24 account information
-            if (!accCtx.getResponseCode().equals(Response.Status.OK.statusCode as String)) {
+            if (!accCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode()))) {
                 executionContext.setResponseCode(accCtx.getResponseCode());
                 executionContext.setAttribute(into, new Entity());
                 return;
             }
 
-            List<?> orders = new ArrayList<>();
+            List<Entity> orders = new ArrayList<>();
             List<String> accountStandingOrderIds = (List<String>) t24Account.get(ScaffoldT24AccountInformation.T24_STANDING_ORDERS);
             for(String accountStandingOrderId : accountStandingOrderIds) {
                 // get external customer information
@@ -86,13 +89,13 @@ class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
                 if(t24StandingOrder.getAccessors().isEmpty()) continue;
 
                 // check response from T24 account information
-                if (!stoCtx.getResponseCode().equals(Response.Status.OK.statusCode as String)) {
+                if (!stoCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode()))) {
                     executionContext.setResponseCode(stoCtx.getResponseCode());
                     executionContext.setAttribute(into, new Entity());
                     return;
                 }
 
-                orders.add(t24StandingOrder)
+                orders.add(t24StandingOrder);
             }
             t24Account.set(ScaffoldT24AccountInformation.T24_STANDING_ORDERS, orders);
             accounts.add(t24Account);
@@ -101,12 +104,12 @@ class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
 
         // transform external customer model into internal customer model
         Command transformer = new CustomerDashboardTransformer_2();
-        CommandContext trnsCmd = new DefaultCommandContext([from: ['ExtnCustomer'], into: 'finalResult']);
-        trnsCmd.setAttribute('ExtnCustomer', t24Customer);
+        CommandContext trnsCmd = new DefaultCommandContext(new ArrayList<>(Collections.singletonList("ExtnCustomer")), "finalResult");
+        trnsCmd.setAttribute("ExtnCustomer", t24Customer);
         transformer.execute(trnsCmd);
 
         Entity responseBody = (Entity) trnsCmd.getAttribute("finalResult");
-        executionContext.setResponseCode(Response.Status.OK.statusCode as String);
+        executionContext.setResponseCode(Integer.toString(Response.Status.OK.getStatusCode()));
         executionContext.setAttribute(into, responseBody);
     }
 }
