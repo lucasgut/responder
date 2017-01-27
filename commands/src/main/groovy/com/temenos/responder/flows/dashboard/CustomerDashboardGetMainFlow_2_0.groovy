@@ -4,7 +4,7 @@ import com.temenos.responder.commands.Command;
 import com.temenos.responder.commands.dashboard.T24AccountInformation;
 import com.temenos.responder.commands.dashboard.T24CustomerInformation;
 import com.temenos.responder.commands.dashboard.T24StandingOrder;
-import com.temenos.responder.commands.transformers.dashboard.CustomerDashboardTransformer_2;
+import com.temenos.responder.transformers.dashboard.CustomerDashboardTransformer_2;
 import com.temenos.responder.context.CommandContext;
 import com.temenos.responder.context.DefaultCommandContext;
 import com.temenos.responder.context.ExecutionContext;
