@@ -38,11 +38,11 @@ By default, the Gradle Cargo plugin will attempt to deploy Responder POC to a To
   
 ## Using Responder POC
 
-Responder POC is bundled with three core APIs defined in /src/main/resources/resources/core/core.json:
+Responder POC is bundled with several core APIs defined in /src/main/resources/resources/core/core.json:
 
-  GET /version - return contents of generated versionInfo.json file
+  GET /responder/version - return contents of generated versionInfo.json file
   
-  POST /add - add a list of numbers, e.g.
+  POST /responder/add - add a list of numbers, e.g.
   
   ```
   POST /responder/add HTTP/1.1
@@ -56,5 +56,14 @@ Responder POC is bundled with three core APIs defined in /src/main/resources/res
   }
   ```
   
-  GET /customer/{id} - obtain data for a given customer
+  GET /responder/customer/{id} - obtain data for a given customer
 
+  GET /responder/dashboard/{customerId} - orchestration including a customer's name, addresses and any accounts and standing orders that are open.
+  
+  POST /responder/parallelTest - orchestration including the result of adding two or more given numbers (see /responder/add) and the version number of the deployed instance of Responder POC.
+  
+  GET /responder/address/{AddressId} - obtain a list of addresses for a given ID.
+  
+  GET /responder/complexCustomer/customer/{id}/address/{AddressId} - orchestration including a customer's name and an arbitrary list of addresses.
+  
+  GET /responder/customerAddressEmbed/customer/{id}/address/{AddressId} - orchestration returning a customer's name and an embedded list of addresses.
