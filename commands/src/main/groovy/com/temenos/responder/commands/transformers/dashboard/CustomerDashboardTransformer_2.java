@@ -1,4 +1,4 @@
-package com.temenos.responder.transformers.dashboard;
+package com.temenos.responder.commands.transformers.dashboard;
 
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.context.CommandContext;
