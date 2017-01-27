@@ -16,7 +16,7 @@ import javax.script.ScriptEngineManager
 class GroovyScriptingEngineTest extends Specification {
 
     @Unroll
-    def "Script execution failure raises ScriptExecutionException with message: '#message'"(scriptName, message) {
+    def "Throw ScriptExecutionException with message: '#message' if '#qualifiedScriptName' does not exist"(qualifiedScriptName, scriptName, message) {
         setup:
             ScriptLoader loader = Mock(ScriptLoader)
             ScriptEngine scriptExecutor = new ScriptEngineManager().getEngineByName("groovy")
@@ -28,12 +28,12 @@ class GroovyScriptingEngineTest extends Specification {
             def exception = thrown(ScriptExecutionException)
             exception.message == message
         where:
-            scriptName | message
-            'mistake'  | "Could not execute file mistake.groovy as a matching script file could not be found."
+            qualifiedScriptName | scriptName | message
+            'mistake.groovy'    | 'mistake'  | "Could not execute file mistake.groovy as a matching script file could not be found."
     }
 
     @Unroll
-    def "GroovyScriptingEngine.execute(#scriptName, #method, #params) executes #scriptName .groovy and returns #data"(scriptName, script, data, method, params) {
+    def "Fetch '#script' from '#qualifiedScriptName', invoke '#method(#params)' and return '#data'"(qualifiedScriptName, scriptName, script, data, method, params) {
         setup:
             ScriptLoader loader = Mock(ScriptLoader)
             ScriptEngine scriptExecutor = new ScriptEngineManager().getEngineByName("groovy")
@@ -44,10 +44,10 @@ class GroovyScriptingEngineTest extends Specification {
         then:
             result == data
         where:
-            scriptName | script                                                           | data                                      | method  | params
-            'example1' | 'def hello(){ return ["Greeting": "Hello","Subject": "World"] }' | ["Greeting": "Hello", "Subject": "World"] | 'hello' | null
-            'example2' | 'def hello(){ return "Hello" }'                                  | "Hello"                                   | 'hello' | null
-            'example3' | 'def add(x,y){ return x + y }'                                   | 3                                         | 'add'   | [1, 2]
+            qualifiedScriptName | scriptName | script                                                           | data                                      | method  | params
+            'example1.groovy'   | 'example1' | 'def hello(){ return ["Greeting": "Hello","Subject": "World"] }' | ["Greeting": "Hello", "Subject": "World"] | 'hello' | null
+            'example1.groovy'   | 'example2' | 'def hello(){ return "Hello" }'                                  | "Hello"                                   | 'hello' | null
+            'example1.groovy'   | 'example3' | 'def add(x,y){ return x + y }'                                   | 3                                         | 'add'   | [1, 2]
     }
 
     def getScriptName(name) {

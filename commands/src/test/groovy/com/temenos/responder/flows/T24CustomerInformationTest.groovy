@@ -12,7 +12,7 @@ import spock.lang.Unroll
 class T24CustomerInformationTest extends Specification {
 
     @Unroll
-    def "Set 'finalResult' to #map and set response code to '#responseCode'"(id, map) {
+    def "Set 'finalResult' to #map and set response code to '200'"(id, map) {
         setup:
             def command = new T24CustomerInformation()
             def context = Mock(CommandContext)

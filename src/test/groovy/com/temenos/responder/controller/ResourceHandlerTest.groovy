@@ -14,7 +14,7 @@ import spock.lang.Specification
  */
 class ResourceHandlerTest extends Specification {
 
-    def "Successfull getMethod and getVersion invocations"(methodName, versionName, directives) {
+    def "Fetch #methodName version #versionName "(methodName, versionName, directives) {
         given:
             def parser = new ResourceBuilder()
             def nodeFactory = JsonNodeFactory.instance;
@@ -22,9 +22,9 @@ class ResourceHandlerTest extends Specification {
             childNode.put(ResourceSpec.PATH, "/path")
             ObjectMapper mapper = new ObjectMapper()
             JsonNode methodsNode = mapper.valueToTree(directives)
-            childNode.put(ResourceSpec.DIRECTIVES, methodsNode)
+            childNode.set(ResourceSpec.DIRECTIVES, methodsNode)
             def node = nodeFactory.objectNode()
-            node.put("anonymous", childNode)
+            node.set("anonymous", childNode)
             def resource = parser.getResource(node)
             def handler = new ResourceHandler()
         when:
@@ -50,9 +50,9 @@ class ResourceHandlerTest extends Specification {
             childNode.put(ResourceSpec.PATH, "/path")
             ObjectMapper mapper = new ObjectMapper()
             JsonNode methodsNode = mapper.valueToTree(directives)
-            childNode.put(ResourceSpec.DIRECTIVES, methodsNode)
+            childNode.set(ResourceSpec.DIRECTIVES, methodsNode)
             def node = nodeFactory.objectNode()
-            node.put("anonymous", childNode)
+            node.set("anonymous", childNode)
             def resource = parser.getResource(node)
             def handler = new ResourceHandler()
         when:
@@ -74,9 +74,9 @@ class ResourceHandlerTest extends Specification {
             childNode.put(ResourceSpec.PATH, "/path")
             ObjectMapper mapper = new ObjectMapper()
             JsonNode methodsNode = mapper.valueToTree(directives)
-            childNode.put(ResourceSpec.DIRECTIVES, methodsNode)
+            childNode.set(ResourceSpec.DIRECTIVES, methodsNode)
             def node = nodeFactory.objectNode()
-            node.put("anonymous", childNode)
+            node.set("anonymous", childNode)
             def resource = parser.getResource(node)
             def handler = new ResourceHandler()
         when:

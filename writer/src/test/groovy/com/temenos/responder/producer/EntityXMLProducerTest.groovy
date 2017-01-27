@@ -36,7 +36,7 @@ class EntityXMLProducerTest extends Specification {
 
     @Ignore
     @Unroll
-    def "Serialise #data as #output"(data, output) {
+    def "Serialise an Entity object as XML"(data, output) {
         given:
             def producer = new EntityXMLProducer()
             def entity = new Entity(data)

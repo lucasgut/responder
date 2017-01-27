@@ -23,7 +23,7 @@ class ResponderIntegrationTest extends Specification {
 
     def cleanup() { tearDown() }
 
-    def "GET request to /version returns 200 OK and returns contents of versionInfo.json"() {
+    def "GET /version returns status 200 OK and contents of versionInfo.json"() {
         when:
             def result = target('version').request().get()
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
@@ -37,7 +37,7 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "POST request to /add returns 200 OK and returns the sum of #operands as #sum"(data, sum, operands) {
+    def "POST /add returns status 200 OK and returns the sum of #operands as #sum"(data, sum, operands) {
         given:
             def entity = Entity.json(new JsonBuilder(data).toString())
         when:
@@ -55,7 +55,7 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "GET request to /customer/#id in ExternalCustomerInformation mock command"(id, name, address) {
+    def "GET /customer/#id returns status 200 OK and a record for '#name'"(id, name, address) {
         setup:
             def path = 'customer/' + id
         when:
@@ -75,7 +75,7 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "POST request to /#resource with invalid request data returns 400 Bad Request"(data, resource) {
+    def "POST /#resource with invalid request data returns status 400 Bad Request"(data, resource) {
         when:
             def result = target(resource).request().post(Entity.json(new JsonBuilder(data).toString()))
         then:
@@ -85,7 +85,7 @@ class ResponderIntegrationTest extends Specification {
             ['operands': "John Smith"] | 'add'
     }
 
-    def "GET request to nonexistent resource returns 404 Not Found with response body 'Not Found'"() {
+    def "GET /missing returns status 404 Not Found with response body 'Not Found'"() {
         when:
             def result = target('missing').request().get()
             def json = new JsonSlurper().parseText(result.readEntity(String.class));
@@ -95,7 +95,7 @@ class ResponderIntegrationTest extends Specification {
             result.headers.get('Content-Type').first() as String == 'application/json'
     }
 
-    def "GET request to nonexistent version resource returns 404 Not Found with response body 'Not Found'"() {
+    def "GET /version [Accept-Version: nonexistent] returns status 404 Not Found with response body 'Not Found'"() {
         when:
             def request = target('version').request()
             request.header(RequestHandler.DEFAULT_ROUTE_ON, "nonexistent")
@@ -107,7 +107,7 @@ class ResponderIntegrationTest extends Specification {
             result.headers.get('Content-Type').first() as String == 'application/json'
     }
 
-    def "GET request to /version version 2.0 returns 200 OK and returns contents of versionInfo.json"() {
+    def "GET /version [Accept-Version: 2.0] returns status 200 OK and contents of versionInfo.json"() {
         when:
             def request = target('version').request()
             request.header(RequestHandler.DEFAULT_ROUTE_ON, "2.0")
@@ -123,7 +123,8 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "GET request to /dashboard/#id in CustomerDashboard version 1.0 mock command"(id, name, homeAddress, workAddress, relatives, accounts) {
+    def "GET request to /dashboard/#id [Accept-Version: 1.0] returns status 200 OK \
+        and information for customer '#name'"(id, name, homeAddress, workAddress, relatives, accounts) {
         setup:
             def path = 'dashboard/' + id
             def request = target(path).request()
@@ -139,8 +140,8 @@ class ResponderIntegrationTest extends Specification {
             customerDashboard.get('workAddress') == workAddress
             int relIndex = 0
             relatives.each { rel ->
-                assert customerDashboard.get('relatives['+relIndex+'].name') == rel['name']
-                assert customerDashboard.get('relatives['+relIndex+'].relationship') == rel['relationship']
+                assert customerDashboard.get('relatives[' + relIndex + '].name') == rel['name']
+                assert customerDashboard.get('relatives[' + relIndex + '].relationship') == rel['relationship']
                 relIndex++
             }
             int accIdx = 0
@@ -161,13 +162,13 @@ class ResponderIntegrationTest extends Specification {
             body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
             body['_embedded'] != null
         where:
-            id     | name         | homeAddress                                                      | workAddress                                                                  | relatives                                                                                           | accounts
-            100100 | 'John Smith' | ['line1': 'No Name Street', 'line2': '', 'postcode': 'NW9 6LR']  | ['line1': '85 Albert Embankment', 'line2': 'Lambeth', 'postcode': 'SE1 1BD'] | [["name": "Jim Cain", "relationship": "Father"], ["name": "Rick Perry", "relationship": "Sibling"]] | ['accounts': [[['accountId': 1001, 'accountLabel': 'Savings', 'accountNumber': 'GB29 NWBK 6016 1331 9268 19', 'accountBalance': 1200000.0, 'standingOrders': []], ['accountId': 1004, 'accountLabel': 'Payments account', 'accountNumber': 'DE89 3704 0044 0532 0130 00', 'accountBalance': 500000.0, 'standingOrders': [['standingOrderId': 400, 'targetAccount': 'GB27 BOFI 9021 2729 8235 29', 'amount': 2020.0], ['standingOrderId': 401, 'targetAccount': 'GB29 NWBK 6016 1331 9268 19', 'amount': 2000.0], ['standingOrderId': 402, 'targetAccount': 'GB29 NWBK 6016 1331 9268 53', 'amount': 4000.0]]], ['accountId': 1009, 'accountLabel': 'H funding account', 'accountNumber': 'LB62 0999 0000 0001 0019 0122 9114', 'accountBalance': 9620000.0, 'standingOrders': []]]]]
-            100200 | 'Iris Law'   | ['line1': '2 Lansdowne Rd', 'line2': '', 'postcode': 'CR8 2PA']  | ['line1': '9 Argyll Street', 'line2': '', 'postcode': 'SE1 9TG']             | [["name": "Jeff Barry", "relationship": "Father"], ["name": "T Mayhem", "relationship": "Mother"]]  | ['accounts': [[['accountId': 1002, 'accountLabel': 'Daily account', 'accountNumber': 'GB29 NWBK 6016 1331 9268 53', 'accountBalance': 8000.0, 'standingOrders': [['standingOrderId': 200, 'targetAccount': 'GB91 BKEN 1000 0041 6100 08', 'amount': 1200.0]]], ['accountId': 1003, 'accountLabel': 'Dubious account', 'accountNumber': 'VG96 VPVG 0000 0123 4567 8901', 'accountBalance': 68000000.0, 'standingOrders': []]]]]
+            id     | name         | homeAddress                                                     | workAddress                                                                  | relatives                                                                                           | accounts
+            100100 | 'John Smith' | ['line1': 'No Name Street', 'line2': '', 'postcode': 'NW9 6LR'] | ['line1': '85 Albert Embankment', 'line2': 'Lambeth', 'postcode': 'SE1 1BD'] | [["name": "Jim Cain", "relationship": "Father"], ["name": "Rick Perry", "relationship": "Sibling"]] | ['accounts': [[['accountId': 1001, 'accountLabel': 'Savings', 'accountNumber': 'GB29 NWBK 6016 1331 9268 19', 'accountBalance': 1200000.0, 'standingOrders': []], ['accountId': 1004, 'accountLabel': 'Payments account', 'accountNumber': 'DE89 3704 0044 0532 0130 00', 'accountBalance': 500000.0, 'standingOrders': [['standingOrderId': 400, 'targetAccount': 'GB27 BOFI 9021 2729 8235 29', 'amount': 2020.0], ['standingOrderId': 401, 'targetAccount': 'GB29 NWBK 6016 1331 9268 19', 'amount': 2000.0], ['standingOrderId': 402, 'targetAccount': 'GB29 NWBK 6016 1331 9268 53', 'amount': 4000.0]]], ['accountId': 1009, 'accountLabel': 'H funding account', 'accountNumber': 'LB62 0999 0000 0001 0019 0122 9114', 'accountBalance': 9620000.0, 'standingOrders': []]]]]
+            100200 | 'Iris Law'   | ['line1': '2 Lansdowne Rd', 'line2': '', 'postcode': 'CR8 2PA'] | ['line1': '9 Argyll Street', 'line2': '', 'postcode': 'SE1 9TG']             | [["name": "Jeff Barry", "relationship": "Father"], ["name": "T Mayhem", "relationship": "Mother"]]  | ['accounts': [[['accountId': 1002, 'accountLabel': 'Daily account', 'accountNumber': 'GB29 NWBK 6016 1331 9268 53', 'accountBalance': 8000.0, 'standingOrders': [['standingOrderId': 200, 'targetAccount': 'GB91 BKEN 1000 0041 6100 08', 'amount': 1200.0]]], ['accountId': 1003, 'accountLabel': 'Dubious account', 'accountNumber': 'VG96 VPVG 0000 0123 4567 8901', 'accountBalance': 68000000.0, 'standingOrders': []]]]]
     }
 
     @Unroll
-    def "GET request to /dashboard/#id nonexistent in CustomerDashboard version 1.0 mock command"(id) {
+    def "GET /dashboard/#id [Accept-Version: 1.0] returns status 200 OK with no customer information"(id) {
         setup:
             def path = 'dashboard/' + id
             def request = target(path).request()
@@ -185,7 +186,8 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "GET request to /dashboard/#id in CustomerDashboard version 2.0 mock command"(id, name, homeAddress, workAddress, relatives, accounts) {
+    def "GET /dashboard/#id [Accept-Version: 2.0] returns status 200 OK \
+        and information for customer '#name'"(id, name, homeAddress, workAddress, relatives, accounts) {
         setup:
             def path = 'dashboard/' + id
             def request = target(path).request()
@@ -201,8 +203,8 @@ class ResponderIntegrationTest extends Specification {
             customerDashboard.get('workAddress') == workAddress
             int relIndex = 0
             relatives.each { rel ->
-                assert customerDashboard.get('relatives['+relIndex+'].name') == rel['name']
-                assert customerDashboard.get('relatives['+relIndex+'].relationship') == rel['relationship']
+                assert customerDashboard.get('relatives[' + relIndex + '].name') == rel['name']
+                assert customerDashboard.get('relatives[' + relIndex + '].relationship') == rel['relationship']
                 relIndex++
             }
             int accIdx = 0
@@ -223,13 +225,13 @@ class ResponderIntegrationTest extends Specification {
             body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
             body['_embedded'] != null
         where:
-            id     | name         | homeAddress                                                      | workAddress                                                                  | relatives                                                                                           | accounts
-            100100 | 'John Smith' | ['line1': 'No Name Street', 'line2': '', 'postcode': 'NW9 6LR']  | ['line1': '85 Albert Embankment', 'line2': 'Lambeth', 'postcode': 'SE1 1BD'] | [["name": "Jim Cain", "relationship": "Father"], ["name": "Rick Perry", "relationship": "Sibling"]] | ['accounts': [[['accountId': 1001, 'accountLabel': 'Savings', 'accountNumber': 'GB29 NWBK 6016 1331 9268 19', 'accountBalance': 1200000.0, 'standingOrders': []], ['accountId': 1004, 'accountLabel': 'Payments account', 'accountNumber': 'DE89 3704 0044 0532 0130 00', 'accountBalance': 500000.0, 'standingOrders': [['standingOrderId': 400, 'targetAccount': 'GB27 BOFI 9021 2729 8235 29', 'amount': 2020.0, 'transactionDate': '2008-05-14 16:02:50'], ['standingOrderId': 401, 'targetAccount': 'GB29 NWBK 6016 1331 9268 19', 'amount': 2000.0, 'transactionDate': '2011-07-30 12:56:23'], ['standingOrderId': 402, 'targetAccount': 'GB29 NWBK 6016 1331 9268 53', 'amount': 4000.0, 'transactionDate': '1995-11-26 15:20:52']]], ['accountId': 1009, 'accountLabel': 'H funding account', 'accountNumber': 'LB62 0999 0000 0001 0019 0122 9114', 'accountBalance': 9620000.0, 'standingOrders': []]]]]
-            100200 | 'Iris Law'   | ['line1': '2 Lansdowne Rd', 'line2': '', 'postcode': 'CR8 2PA']  | ['line1': '9 Argyll Street', 'line2': '', 'postcode': 'SE1 9TG']             | [["name": "Jeff Barry", "relationship": "Father"], ["name": "T Mayhem", "relationship": "Mother"]]  | ['accounts': [[['accountId': 1002, 'accountLabel': 'Daily account', 'accountNumber': 'GB29 NWBK 6016 1331 9268 53', 'accountBalance': 8000.0, 'standingOrders': [['standingOrderId': 200, 'targetAccount': 'GB91 BKEN 1000 0041 6100 08', 'amount': 1200.0, 'transactionDate': '2001-01-26 11:58:29']]], ['accountId': 1003, 'accountLabel': 'Dubious account', 'accountNumber': 'VG96 VPVG 0000 0123 4567 8901', 'accountBalance': 68000000.0, 'standingOrders': []]]]]
+            id     | name         | homeAddress                                                     | workAddress                                                                  | relatives                                                                                           | accounts
+            100100 | 'John Smith' | ['line1': 'No Name Street', 'line2': '', 'postcode': 'NW9 6LR'] | ['line1': '85 Albert Embankment', 'line2': 'Lambeth', 'postcode': 'SE1 1BD'] | [["name": "Jim Cain", "relationship": "Father"], ["name": "Rick Perry", "relationship": "Sibling"]] | ['accounts': [[['accountId': 1001, 'accountLabel': 'Savings', 'accountNumber': 'GB29 NWBK 6016 1331 9268 19', 'accountBalance': 1200000.0, 'standingOrders': []], ['accountId': 1004, 'accountLabel': 'Payments account', 'accountNumber': 'DE89 3704 0044 0532 0130 00', 'accountBalance': 500000.0, 'standingOrders': [['standingOrderId': 400, 'targetAccount': 'GB27 BOFI 9021 2729 8235 29', 'amount': 2020.0, 'transactionDate': '2008-05-14 16:02:50'], ['standingOrderId': 401, 'targetAccount': 'GB29 NWBK 6016 1331 9268 19', 'amount': 2000.0, 'transactionDate': '2011-07-30 12:56:23'], ['standingOrderId': 402, 'targetAccount': 'GB29 NWBK 6016 1331 9268 53', 'amount': 4000.0, 'transactionDate': '1995-11-26 15:20:52']]], ['accountId': 1009, 'accountLabel': 'H funding account', 'accountNumber': 'LB62 0999 0000 0001 0019 0122 9114', 'accountBalance': 9620000.0, 'standingOrders': []]]]]
+            100200 | 'Iris Law'   | ['line1': '2 Lansdowne Rd', 'line2': '', 'postcode': 'CR8 2PA'] | ['line1': '9 Argyll Street', 'line2': '', 'postcode': 'SE1 9TG']             | [["name": "Jeff Barry", "relationship": "Father"], ["name": "T Mayhem", "relationship": "Mother"]]  | ['accounts': [[['accountId': 1002, 'accountLabel': 'Daily account', 'accountNumber': 'GB29 NWBK 6016 1331 9268 53', 'accountBalance': 8000.0, 'standingOrders': [['standingOrderId': 200, 'targetAccount': 'GB91 BKEN 1000 0041 6100 08', 'amount': 1200.0, 'transactionDate': '2001-01-26 11:58:29']]], ['accountId': 1003, 'accountLabel': 'Dubious account', 'accountNumber': 'VG96 VPVG 0000 0123 4567 8901', 'accountBalance': 68000000.0, 'standingOrders': []]]]]
     }
 
     @Unroll
-    def "GET request to /dashboard/#id nonexistent in CustomerDashboard version 2.0 mock command"(id) {
+    def "GET /dashboard/#id [Accept-Version: 2.0] returns status 200 OK with no customer information"(id) {
         setup:
             def path = 'dashboard/' + id
             def request = target(path).request()
@@ -247,9 +249,9 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "POST request to /parallelTest with request body #data returns 200 OK"(data, sum, version) {
+    def "POST /parallelTest [#data] returns status 200 OK and sum of both operands"(data, sum, version) {
         given:
-            def entity = Entity.json(new JsonBuilder(data).toString())
+            def entity = Entity.json(data)
         when:
             def request = target('parallelTest').request().post(entity)
             def body = new JsonSlurper().parseText(request.readEntity(String.class))
@@ -263,11 +265,12 @@ class ResponderIntegrationTest extends Specification {
             body['_embedded'] != null
         where:
             data                 | sum | version
-            ["operands": [1, 1]] | 2   | '0.1-SNAPSHOT'
+            '{"operands":[1,1]}' | 2   | '0.1-SNAPSHOT'
     }
 
     @Unroll
-    def "GET request to /complexCustomer/customer/#customerId/address/#addressId returns 200 OK"(customerId, addressId, customerName, addresses) {
+    def "GET /complexCustomer/customer/#customerId/address/#addressId returns status 200 OK \
+        and customer and address information for customer '#customerName'"(customerId, addressId, customerName, addresses) {
         when:
             def result = target("complexCustomer/customer/${customerId}/address/${addressId}").request().get()
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
@@ -284,7 +287,7 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "GET request to /address/#addressId returns 200 OK"(addressId, data) {
+    def "GET /address/#addressId returns status 200 OK and information for address ID #addressId"(addressId, data) {
         when:
             def result = target("address/${addressId}").request().get()
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
@@ -299,7 +302,8 @@ class ResponderIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "GET request to /customerAddressEmbed/customer/#customerId/address/#addressId returns 200 OK"(customerId, addressId, addressData, customerData) {
+    def "GET /customerAddressEmbed/customer/#customerId/address/#addressId returns \
+        status 200 OK and a document with embedded address data and customer data"(customerId, addressId, addressData, customerData) {
         when:
             def result = target("customerAddressEmbed/customer/${customerId}/address/${addressId}").request().get()
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
