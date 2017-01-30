@@ -32,6 +32,7 @@ class FlowDispatcherTest extends Specification {
         when:
             def result = dispatcher.notify(flowClass)
         then:
+            contextBuilder.serverRoot(_) >> contextBuilder
             contextBuilder.origin(_) >> contextBuilder
             contextBuilder.dispatcher(_) >> contextBuilder
             contextBuilder.requestBody(_) >> contextBuilder
@@ -66,6 +67,7 @@ class FlowDispatcherTest extends Specification {
         when:
             def result = dispatcher.notify(flowClasses)
         then:
+            contextBuilder.serverRoot(_) >> contextBuilder
             contextBuilder.origin(_) >> contextBuilder
             contextBuilder.dispatcher(_) >> contextBuilder
             contextBuilder.requestBody(_) >> contextBuilder

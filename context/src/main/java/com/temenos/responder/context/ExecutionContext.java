@@ -23,6 +23,8 @@ public interface ExecutionContext extends Context {
      */
     String getSelf();
 
+    String getInternalResource(String resourcePath);
+
     /**
      * Returns the name of the {@link com.temenos.responder.configuration.Resource resource} that was requested.
      *

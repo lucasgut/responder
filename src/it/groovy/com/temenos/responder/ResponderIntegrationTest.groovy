@@ -33,7 +33,7 @@ class ResponderIntegrationTest extends Specification {
             body['appVersion']['buildDate'] == '2016-12-09T16:00:00Z'
             body['appVersion']['blameThisPerson'] == 'Jenkins'
             body['_links']['self']['href'] == 'http://localhost:9998/version'
-            body['_embedded'] != null
+            body['_embedded'] == null
     }
 
     @Unroll
@@ -48,7 +48,7 @@ class ResponderIntegrationTest extends Specification {
             body['add']['result'] == sum
             body['add']['operands'] == null
             body['_links']['self']['href'] == 'http://localhost:9998/add'
-            body['_embedded'] != null
+            body['_embedded'] == null
         where:
             data                 | sum | operands
             ['operands': [1, 1]] | 2   | '1 and 1'
@@ -67,7 +67,7 @@ class ResponderIntegrationTest extends Specification {
             body['customerInfo']['CustomerName'] == name
             body['customerInfo']['CustomerAddress'] == address
             body['_links']['self']['href'] == "http://localhost:9998/customer/${id}"
-            body['_embedded'] != null
+            body['_embedded'] == null
         where:
             id     | name         | address
             100100 | 'John Smith' | 'No Name Street'
@@ -119,7 +119,7 @@ class ResponderIntegrationTest extends Specification {
             body['appVersion']['buildDate'] == '2017-01-16T10:53:00Z'
             body['appVersion']['blameThisPerson'] == 'Jenkins'
             body['_links']['self']['href'] == 'http://localhost:9998/version'
-            body['_embedded'] != null
+            body['_embedded'] == null
     }
 
     @Unroll
@@ -160,7 +160,7 @@ class ResponderIntegrationTest extends Specification {
                 accIdx++
             }
             body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
-            body['_embedded'] != null
+            body['_embedded'] == null
         where:
             id     | name         | homeAddress                                                     | workAddress                                                                  | relatives                                                                                           | accounts
             100100 | 'John Smith' | ['line1': 'No Name Street', 'line2': '', 'postcode': 'NW9 6LR'] | ['line1': '85 Albert Embankment', 'line2': 'Lambeth', 'postcode': 'SE1 1BD'] | [["name": "Jim Cain", "relationship": "Father"], ["name": "Rick Perry", "relationship": "Sibling"]] | ['accounts': [[['accountId': 1001, 'accountLabel': 'Savings', 'accountNumber': 'GB29 NWBK 6016 1331 9268 19', 'accountBalance': 1200000.0, 'standingOrders': []], ['accountId': 1004, 'accountLabel': 'Payments account', 'accountNumber': 'DE89 3704 0044 0532 0130 00', 'accountBalance': 500000.0, 'standingOrders': [['standingOrderId': 400, 'targetAccount': 'GB27 BOFI 9021 2729 8235 29', 'amount': 2020.0], ['standingOrderId': 401, 'targetAccount': 'GB29 NWBK 6016 1331 9268 19', 'amount': 2000.0], ['standingOrderId': 402, 'targetAccount': 'GB29 NWBK 6016 1331 9268 53', 'amount': 4000.0]]], ['accountId': 1009, 'accountLabel': 'H funding account', 'accountNumber': 'LB62 0999 0000 0001 0019 0122 9114', 'accountBalance': 9620000.0, 'standingOrders': []]]]]
@@ -180,7 +180,7 @@ class ResponderIntegrationTest extends Specification {
             result.status == Response.Status.OK.statusCode
             body['CustomerDashboard'] == [:]
             body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
-            body['_embedded'] != null
+            body['_embedded'] == null
         where:
             id << [66666, 99999]
     }
@@ -223,7 +223,7 @@ class ResponderIntegrationTest extends Specification {
                 accIdx++
             }
             body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
-            body['_embedded'] != null
+            body['_embedded'] == null
         where:
             id     | name         | homeAddress                                                     | workAddress                                                                  | relatives                                                                                           | accounts
             100100 | 'John Smith' | ['line1': 'No Name Street', 'line2': '', 'postcode': 'NW9 6LR'] | ['line1': '85 Albert Embankment', 'line2': 'Lambeth', 'postcode': 'SE1 1BD'] | [["name": "Jim Cain", "relationship": "Father"], ["name": "Rick Perry", "relationship": "Sibling"]] | ['accounts': [[['accountId': 1001, 'accountLabel': 'Savings', 'accountNumber': 'GB29 NWBK 6016 1331 9268 19', 'accountBalance': 1200000.0, 'standingOrders': []], ['accountId': 1004, 'accountLabel': 'Payments account', 'accountNumber': 'DE89 3704 0044 0532 0130 00', 'accountBalance': 500000.0, 'standingOrders': [['standingOrderId': 400, 'targetAccount': 'GB27 BOFI 9021 2729 8235 29', 'amount': 2020.0, 'transactionDate': '2008-05-14 16:02:50'], ['standingOrderId': 401, 'targetAccount': 'GB29 NWBK 6016 1331 9268 19', 'amount': 2000.0, 'transactionDate': '2011-07-30 12:56:23'], ['standingOrderId': 402, 'targetAccount': 'GB29 NWBK 6016 1331 9268 53', 'amount': 4000.0, 'transactionDate': '1995-11-26 15:20:52']]], ['accountId': 1009, 'accountLabel': 'H funding account', 'accountNumber': 'LB62 0999 0000 0001 0019 0122 9114', 'accountBalance': 9620000.0, 'standingOrders': []]]]]
@@ -243,7 +243,7 @@ class ResponderIntegrationTest extends Specification {
             result.status == Response.Status.OK.statusCode
             body['CustomerDashboard'] == [:]
             body['_links']['self']['href'] == "http://localhost:9998/dashboard/${id}"
-            body['_embedded'] != null
+            body['_embedded'] == null
         where:
             id << [66666, 99999]
     }
@@ -262,7 +262,7 @@ class ResponderIntegrationTest extends Specification {
             body['parallelTest']['operands'] == null
             body['parallelTest']['blameThisPerson'] == null
             body['_links']['self']['href'] == 'http://localhost:9998/parallelTest'
-            body['_embedded'] != null
+            body['_embedded'] == null
         where:
             data                 | sum | version
             '{"operands":[1,1]}' | 2   | '0.1-SNAPSHOT'
@@ -278,6 +278,8 @@ class ResponderIntegrationTest extends Specification {
             result.status == Response.Status.OK.statusCode
             body['complexCustomer']['CustomerName'] == customerName
             body['complexCustomer']['Addresses'] == addresses
+            body['_links']['self']['href'] == "http://localhost:9998/complexCustomer/customer/${customerId}/address/${addressId}"
+            body['_embedded'] == null
         where:
             customerId | addressId | customerName | addresses
             100100     | 1         | "John Smith" | [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]
@@ -295,6 +297,8 @@ class ResponderIntegrationTest extends Specification {
             result.status == Response.Status.OK.statusCode
             body['address']['AddressId'] == addressId
             body['address'] == data
+            body['_links']['self']['href'] == "http://localhost:9998/address/${addressId}"
+            body['_embedded'] == null
         where:
             addressId | data
             1         | ["AddressId": 1, "Addresses": [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]]
@@ -309,7 +313,8 @@ class ResponderIntegrationTest extends Specification {
             def body = new JsonSlurper().parseText(result.readEntity(String.class))
         then:
             result.status == Response.Status.OK.statusCode
-            body['_embedded']['CustomerAddresses'] == addressData
+            body['_embedded']['CustomerAddresses']['address'] == addressData
+            body['_embedded']['CustomerAddresses']['_links']['self'] != null
             body['customerAddressEmbed'] == customerData
         where:
             customerId | addressId | addressData                                                                                                               | customerData
