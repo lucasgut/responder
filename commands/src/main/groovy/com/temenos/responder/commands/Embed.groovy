@@ -17,6 +17,6 @@ class Embed implements Command {
         def id = from[0], body = context.getAttribute(from[1])
         def model = ((Entity)body).getValues();
         context.setAttribute(into, new Entity([(id):model]))
-        context.setResponseCode(Response.Status.OK.getStatusCode() as String)
+        context.setResponseCode(Response.Status.OK.getStatusCode())
     }
 }

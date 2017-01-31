@@ -21,7 +21,7 @@ class T24StandingOrderTest extends Specification {
             _ * context.getAttribute('standingOrderId') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity(map))
-            1 * context.setResponseCode('200')
+            1 * context.setResponseCode(200)
         where:
             id   | map
             200  | ['ID': 200, 'TARGET.ACCOUNT': 'GB91 BKEN 1000 0041 6100 08', 'AMOUNT': 1200.0, 'TRANSACTION.DATE': '2001-01-26 11:58:29']
@@ -41,7 +41,7 @@ class T24StandingOrderTest extends Specification {
             _ * context.getAttribute('standingOrderId') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity())
-            1 * context.setResponseCode('200')
+            1 * context.setResponseCode(200)
         where:
             id << [666666, 999999]
     }

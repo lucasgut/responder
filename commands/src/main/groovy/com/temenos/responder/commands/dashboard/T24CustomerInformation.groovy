@@ -40,10 +40,10 @@ class T24CustomerInformation implements Command {
                 map.put("ACCOUNTS", ["1002", "1003"])
             }
 
-            context.setResponseCode(Response.Status.OK.statusCode as String)
+            context.setResponseCode(Response.Status.OK.statusCode)
             context.setAttribute(intoDirective, new Entity(map))
         } catch(IOException exception) {
-            context.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
+            context.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode)
             context.setAttribute('exception', new ScriptExecutionException(exception))
         }
     }

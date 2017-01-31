@@ -39,6 +39,6 @@ class CustomerAddressEmbed extends AbstractFlow {
         //fetch customer data
         Document customerData = context.notifyDispatchers(CustomerInformation)
         context.setAttribute("finalResult", customerData.getBody())
-        context.setResponseCode("200")
+        context.setResponseCode(200)
     }
 }

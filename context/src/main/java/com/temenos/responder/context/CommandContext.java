@@ -14,6 +14,6 @@ public interface CommandContext extends Context{
     void from(List<String> params);
     String into();
     void into(String param);
-    String getResponseCode();
-    void setResponseCode(String code);
+    int getResponseCode();
+    void setResponseCode(int code);
 }

@@ -36,7 +36,7 @@ public class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
         Entity t24Customer = (Entity) customerCtx.getAttribute("finalResult");
 
         // check response from T24 customer information
-        if (!customerCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode())) || t24Customer.getAccessors().isEmpty()) {
+        if (customerCtx.getResponseCode() != Response.Status.OK.getStatusCode() || t24Customer.getAccessors().isEmpty()) {
             executionContext.setResponseCode(customerCtx.getResponseCode());
             executionContext.setAttribute("finalResult", new Entity());
             return;
@@ -57,7 +57,7 @@ public class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
             if(t24Account.getAccessors().isEmpty()) continue;
 
             // check response from T24 account information
-            if (!accCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode()))) {
+            if (accCtx.getResponseCode() != Response.Status.OK.getStatusCode()) {
                 executionContext.setResponseCode(accCtx.getResponseCode());
                 executionContext.setAttribute("finalResult", new Entity());
                 return;
@@ -78,7 +78,7 @@ public class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
                 if(t24StandingOrder.getAccessors().isEmpty()) continue;
 
                 // check response from T24 account information
-                if (!stoCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode()))) {
+                if (stoCtx.getResponseCode() != Response.Status.OK.getStatusCode()) {
                     executionContext.setResponseCode(stoCtx.getResponseCode());
                     executionContext.setAttribute("finalResult", new Entity());
                     return;
@@ -98,7 +98,7 @@ public class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
         transformer.execute(trnsCmd);
 
         Entity responseBody = (Entity) trnsCmd.getAttribute("finalResult");
-        executionContext.setResponseCode(Integer.toString(Response.Status.OK.getStatusCode()));
+        executionContext.setResponseCode(Response.Status.OK.getStatusCode());
         executionContext.setAttribute("finalResult", responseBody);
     }
 }

@@ -36,7 +36,7 @@ public class DefaultExecutionContext implements ExecutionContext {
     private final Lock lock;
     private final Dispatcher dispatcher;
     private final String serverRoot;
-    private String responseCode;
+    private int responseCode;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExecutionContext.class);
     private static final int LOCK_TIMEOUT = 10;
@@ -104,7 +104,7 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public String getResponseCode() {
+    public int getResponseCode() {
         return responseCode;
     }
 
@@ -114,7 +114,7 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public void setResponseCode(String responseCode) {
+    public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
     }
 

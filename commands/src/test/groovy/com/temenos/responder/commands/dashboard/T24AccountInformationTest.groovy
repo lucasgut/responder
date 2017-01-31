@@ -20,7 +20,7 @@ class T24AccountInformationTest extends Specification {
             _ * context.getAttribute('accountId') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity(map))
-            1 * context.setResponseCode('200')
+            1 * context.setResponseCode(200)
         where:
             id   | map
             1001 | ['ID': 1001, 'LABEL': 'Savings', 'NUMBER': 'GB29 NWBK 6016 1331 9268 19', 'BALANCE': 1200000.0, 'STANDING.ORDERS': []]
@@ -41,7 +41,7 @@ class T24AccountInformationTest extends Specification {
             _ * context.getAttribute('accountId') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity())
-            1 * context.setResponseCode('200')
+            1 * context.setResponseCode(200)
         where:
             id << [666666, 999999]
     }

@@ -68,16 +68,16 @@ public interface ExecutionContext extends Context {
      * Set the response code of the {@link com.temenos.responder.flows.Flow flow} based on the state the
      * transaction was left in following the last {@link Command command} that was executed.
      *
-     * @param code A string representation of a response code.
+     * @param code An integer representation of a response code.
      */
-    void setResponseCode(String code);
+    void setResponseCode(int code);
 
     /**
      * Obtain the response code of the {@link com.temenos.responder.flows.Flow flow} that was executed.
      *
-     * @return A string representation of the response code.
+     * @return An integer representation of the response code.
      */
-    String getResponseCode();
+    int getResponseCode();
 
     /**
      * Notify a dispatcher that a flow is available to use.

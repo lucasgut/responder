@@ -21,7 +21,7 @@ class AdditionCommand implements Command {
         commandContext.from().each { element ->
             sum += element
         }
-        commandContext.setResponseCode(Response.Status.OK.statusCode as String)
+        commandContext.setResponseCode(Response.Status.OK.statusCode)
         commandContext.setAttribute(commandContext.into(), new Entity([(ScaffoldAdditionOutput.RESULT):sum]))
     }
 

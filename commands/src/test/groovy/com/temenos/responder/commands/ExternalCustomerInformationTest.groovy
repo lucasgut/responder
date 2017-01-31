@@ -22,7 +22,7 @@ class ExternalCustomerInformationTest extends Specification {
             _ * context.getAttribute('id') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity(map))
-            1 * context.setResponseCode('200')
+            1 * context.setResponseCode(200)
         where:
             id     | map
             100100 | ['CUSTOMER.ID': 100100, 'CUSTOMER.NAME': 'John Smith', 'CUSTOMER.ADDRESS': 'No Name Street']
@@ -41,7 +41,7 @@ class ExternalCustomerInformationTest extends Specification {
             _ * context.getAttribute('id') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity())
-            1 * context.setResponseCode('404')
+            1 * context.setResponseCode(404)
         where:
             id << [666666, 999999]
     }

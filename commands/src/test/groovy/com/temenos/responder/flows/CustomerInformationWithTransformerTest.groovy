@@ -30,17 +30,17 @@ class CustomerInformationWithTransformerTest extends Specification {
             _ * context.getAttribute('id') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity(map))
-            1 * context.setResponseCode('200')
+            1 * context.setResponseCode(200)
             1 * context.getCommand(ExternalCustomerInformation) >> externalCommand
             1 * context.getCommand(CustomerTransformer) >> transformCommand
             1 * context.getCommand(AddLink) >> addLinkCommand
             1 * externalCommand.execute(_) >> { CommandContext ctx ->
                 ctx.setAttribute("finalResult", new Entity(extnMap))
-                ctx.setResponseCode('200')
+                ctx.setResponseCode(200)
             }
             1 * transformCommand.execute(_) >> { CommandContext ctx ->
                 ctx.setAttribute('finalResult', new Entity(map))
-                ctx.setResponseCode('200')
+                ctx.setResponseCode(200)
             }
         where:
             id     | map                                                                                         | extnMap
@@ -61,12 +61,12 @@ class CustomerInformationWithTransformerTest extends Specification {
             _ * context.getAttribute('id') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity())
-            1 * context.setResponseCode('404')
+            1 * context.setResponseCode(404)
             1 * context.getCommand(ExternalCustomerInformation) >> externalCommand
             1 * context.getCommand(AddLink) >> addLinkCommand
             1 * externalCommand.execute(_) >> { CommandContext ctx ->
                 ctx.setAttribute('finalResult', new Entity())
-                ctx.setResponseCode('404')
+                ctx.setResponseCode(404)
             }
         where:
             id << [666666, 999999]

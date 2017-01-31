@@ -46,10 +46,10 @@ class T24StandingOrder implements Command {
                 map.put("TRANSACTION.DATE", "1995-11-26 15:20:52")
             }
 
-            context.setResponseCode(Response.Status.OK.statusCode as String)
+            context.setResponseCode(Response.Status.OK.statusCode)
             context.setAttribute(intoDirective, new Entity(map))
         } catch(IOException exception) {
-            context.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
+            context.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode)
             context.setAttribute('exception', new ScriptExecutionException(exception))
         }
     }
