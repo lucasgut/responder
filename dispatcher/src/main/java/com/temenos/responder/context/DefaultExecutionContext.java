@@ -119,7 +119,7 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public Command getCommand(Class<Command> clazz) {
+    public <T extends Command> Command getCommand(Class<T> clazz) {
         return clazz.cast(commandInjector.getInstance(clazz));
     }
 

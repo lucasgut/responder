@@ -38,7 +38,7 @@ public interface ExecutionContext extends Context {
      * @param clazz The class name of the {@link com.temenos.responder.commands.Command command}.
      * @return A {@link com.temenos.responder.commands.Command command} singleton object.
      */
-    Command getCommand(Class<Command> clazz);
+    <T extends Command> Command getCommand(Class<T> clazz);
 
     /**
      * Fetch a map of {@link com.temenos.responder.configuration.Resource resource} parameter names and values that
