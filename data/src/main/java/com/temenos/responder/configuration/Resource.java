@@ -10,7 +10,6 @@ public class Resource {
     private String friendlyName;
     private String description;
     private final String path;
-    private List<Parameter> parameters;
     private List<String> tags;
     private final List<Method> directives;
 
@@ -60,13 +59,5 @@ public class Resource {
 
     public List<String> getTags() {
         return tags;
-    }
-
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
-    }
-
-    public List<Parameter> getParameters() {
-        return parameters;
     }
 }

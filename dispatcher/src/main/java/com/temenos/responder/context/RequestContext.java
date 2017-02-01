@@ -7,7 +7,6 @@ import com.temenos.responder.entity.runtime.Entity;
  */
 public interface RequestContext extends Context {
     String getResourcePath();
-    String getServerRoot();
     String getResourceName();
     Parameters getRequestParameters();
     Entity getRequestBody();

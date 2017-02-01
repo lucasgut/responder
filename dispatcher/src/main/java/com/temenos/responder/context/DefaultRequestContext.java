@@ -11,18 +11,16 @@ import java.util.Map;
  */
 public class DefaultRequestContext implements RequestContext {
 
-    private final String serverRoot;
     private final Resource resource;
     private final Parameters parameters;
     private final Entity requestBody;
     private final String origin;
 
-    public DefaultRequestContext(String serverRoot, Resource resource, Parameters parameters, Entity requestBody, String origin){
+    public DefaultRequestContext(Resource resource, Parameters parameters, Entity requestBody, String origin){
         this.resource = resource;
         this.parameters = parameters;
         this.requestBody = requestBody;
         this.origin = origin;
-        this.serverRoot = serverRoot;
     }
 
     @Override
@@ -59,10 +57,5 @@ public class DefaultRequestContext implements RequestContext {
     @Override
     public String getOrigin() {
         return origin;
-    }
-
-    @Override
-    public String getServerRoot() {
-        return this.serverRoot;
     }
 }

@@ -117,9 +117,7 @@ public class FlowDispatcher implements Dispatcher {
     }
 
     private ExecutionContext getExecutionContext() {
-        return builder
-                .serverRoot(context.getServerRoot())
-                .origin(context.getOrigin())
+        return builder.origin(context.getOrigin())
                 .resourceName(context.getResourceName())
                 .requestParameters(context.getRequestParameters())
                 .requestBody(context.getRequestBody())

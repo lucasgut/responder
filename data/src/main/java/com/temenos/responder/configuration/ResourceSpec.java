@@ -12,11 +12,6 @@ public class ResourceSpec {
     public static final String TAGS = "tags";
     public static final String DIRECTIVES = "directive";
 
-    public static final String PARAMETERS = "parameters";
-    public static final String PARAMETER_TYPE = "type";
-    public static final String PARAMETER_DESCRIPTION = "description";
-    public static final String PARAMETER_IN = "in";
-
     public static final String CACHE_SECONDS = "cacheSeconds";
     public static final String CACHE_REASON = "cacheReason";
     public static final String ROUTE_ON = "routeOn";

@@ -5,10 +5,7 @@ import com.google.inject.Singleton;
 import com.temenos.responder.commands.AdditionCommand
 import com.temenos.responder.commands.Embed;
 import com.temenos.responder.commands.GETResource;
-import com.temenos.responder.commands.VersionInformation
-import com.temenos.responder.commands.dashboard.T24AccountInformation
-import com.temenos.responder.commands.dashboard.T24CustomerInformation
-import com.temenos.responder.commands.dashboard.T24StandingOrder;
+import com.temenos.responder.commands.VersionInformation;
 import com.temenos.responder.commands.transformers.CustomerTransformer;
 import com.temenos.responder.flows.CustomerInformationWithTransformer;
 import com.temenos.responder.loader.ClasspathScriptLoader;
@@ -38,8 +35,5 @@ public class CommandInjector extends AbstractModule {
         bind(VersionInformation.class).in(Singleton.class);
         bind(CustomerTransformer.class).in(Singleton.class);
         bind(Embed.class).in(Singleton.class);
-        bind(T24CustomerInformation.class).in(Singleton.class);
-        bind(T24AccountInformation.class).in(Singleton.class);
-        bind(T24StandingOrder.class).in(Singleton.class);
     }
 }

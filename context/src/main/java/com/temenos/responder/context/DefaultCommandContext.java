@@ -15,7 +15,7 @@ public class DefaultCommandContext implements CommandContext {
     private final Map<String, Object> attributes;
     private List<String> fromParams;
     private String intoParam;
-    private int responseCode;
+    private String responseCode;
 
     public DefaultCommandContext(){
         this.attributes = new HashMap<>();
@@ -44,12 +44,12 @@ public class DefaultCommandContext implements CommandContext {
     }
 
     @Override
-    public int getResponseCode() {
+    public String getResponseCode() {
         return responseCode;
     }
 
     @Override
-    public void setResponseCode(int responseCode) {
+    public void setResponseCode(String responseCode) {
         this.responseCode = responseCode;
     }
 

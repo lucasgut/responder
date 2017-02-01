@@ -19,6 +19,6 @@ class ComplexCustomerInformation extends AbstractFlow {
                 (ScaffoldComplexCustomer.CUSTOMER_ADDRESSES): outputs[CustomerAddressFlow.simpleName][0].getBody().get(ScaffoldAddress.ADDRESSES)
         ])
         context.setAttribute("finalResult", result)
-        context.setResponseCode(200)
+        context.setResponseCode("200")
     }
 }

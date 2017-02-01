@@ -8,7 +8,6 @@ import com.temenos.responder.entity.runtime.Entity;
  */
 public class ExecutionContextBuilder {
 
-    private String serverRoot;
     private String origin;
     private String resourceName;
     private Parameters requestParameters;
@@ -16,12 +15,7 @@ public class ExecutionContextBuilder {
     private Dispatcher dispatcher;
 
     public ExecutionContext build() {
-        return new DefaultExecutionContext(serverRoot, origin, resourceName, requestParameters, requestBody, dispatcher);
-    }
-
-    public ExecutionContextBuilder serverRoot(String serverRoot){
-        this.serverRoot = serverRoot;
-        return this;
+        return new DefaultExecutionContext(origin, resourceName, requestParameters, requestBody, dispatcher);
     }
 
     public ExecutionContextBuilder origin(String origin) {

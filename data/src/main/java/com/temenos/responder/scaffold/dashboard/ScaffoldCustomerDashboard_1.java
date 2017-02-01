@@ -110,4 +110,9 @@ public class ScaffoldCustomerDashboard_1 implements Scaffold {
      */
     public static final String ACCOUNTS_STANDING_ORDERS_AMOUNT = "amount";
     public static final Type ACCOUNTS_STANDING_ORDERS_AMOUNT_TYPE = Type.NUMBER;
+    /**
+     * The standing orders' transaction date.
+     */
+    public static final String ACCOUNTS_STANDING_ORDERS_TRANSACTION_DATE = "transactionDate";
+    public static final Type ACCOUNTS_STANDING_ORDERS_TRANSACTION_DATE_TYPE = Type.STRING;
 }

@@ -28,7 +28,7 @@ class VersionInformationTest extends Specification {
             _ * context.from() >> [versionFile]
             _ * context.into() >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity(data))
-            1 * context.setResponseCode(200)
+            1 * context.setResponseCode('200')
         where:
             versionFile        | dataAsJson                                                                              | data                                                                                      | pData
             'versionInfo.json' | '{"versionNumber":0.1,"buildDate":"2016-12-09T16:00:00Z","blameThisPerson": "Jenkins"}' | ['versionNumber': 0.1, "buildDate": '2016-12-09T16:00:00Z', 'blameThisPerson': 'Jenkins'] | ['versionNumber': 0.1, "buildDate": '2016-12-09T16:00:00Z', 'blameThisPerson': 'Jenkins']
@@ -49,7 +49,7 @@ class VersionInformationTest extends Specification {
             expectedLoaderInvocations * scriptLoader.load(_) >> { throw new IOException() }
             0 * producer.deserialise(_)
             1 * context.setAttribute('exception', _)
-            1 * context.setResponseCode(500)
+            1 * context.setResponseCode('500')
         where:
             exception                | condition                                    | fromField        | intoField     | expectedLoaderInvocations
             ScriptExecutionException | 'a version information file cannot be found' | ['missing.json'] | 'finalResult' | 1

@@ -1,5 +1,6 @@
 package com.temenos.responder.context;
 
+import com.temenos.responder.adapter.AdapterDispatcher;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
@@ -23,8 +24,6 @@ public interface ExecutionContext extends Context {
      */
     String getSelf();
 
-    String getInternalResource(String resourcePath);
-
     /**
      * Returns the name of the {@link com.temenos.responder.configuration.Resource resource} that was requested.
      *
@@ -38,7 +37,7 @@ public interface ExecutionContext extends Context {
      * @param clazz The class name of the {@link com.temenos.responder.commands.Command command}.
      * @return A {@link com.temenos.responder.commands.Command command} singleton object.
      */
-    <T extends Command> Command getCommand(Class<T> clazz);
+    Command getCommand(Class<Command> clazz);
 
     /**
      * Fetch a map of {@link com.temenos.responder.configuration.Resource resource} parameter names and values that
@@ -68,16 +67,16 @@ public interface ExecutionContext extends Context {
      * Set the response code of the {@link com.temenos.responder.flows.Flow flow} based on the state the
      * transaction was left in following the last {@link Command command} that was executed.
      *
-     * @param code An integer representation of a response code.
+     * @param code A string representation of a response code.
      */
-    void setResponseCode(int code);
+    void setResponseCode(String code);
 
     /**
      * Obtain the response code of the {@link com.temenos.responder.flows.Flow flow} that was executed.
      *
-     * @return An integer representation of the response code.
+     * @return A string representation of the response code.
      */
-    int getResponseCode();
+    String getResponseCode();
 
     /**
      * Notify a dispatcher that a flow is available to use.
@@ -113,4 +112,14 @@ public interface ExecutionContext extends Context {
      */
     void notifyDispatchers(List<Class<Flow>> flow, String name);
 
+    AdapterDispatcher getAdapterDispatcher();
+
+    Entity getFlowResponse(Class<? extends Flow> flowType);
+
+    String getQueryParameter(String parameterName);
+
+    void setFlowResponse(Entity t24CustomerEntity);
+
+    FlowDispatcher getFlowDispatcher();
 }
+

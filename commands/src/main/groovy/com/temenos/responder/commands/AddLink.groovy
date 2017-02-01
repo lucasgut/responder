@@ -27,6 +27,6 @@ class AddLink implements Command {
         }
         def entity = new Entity(myMap)
         context.setAttribute(into, entity)
-        context.setResponseCode(Response.Status.OK.getStatusCode())
+        context.setResponseCode(Response.Status.OK.getStatusCode() as String)
     }
 }

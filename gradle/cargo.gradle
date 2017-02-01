@@ -23,5 +23,6 @@ cargo {
       downloadDir = file("$buildDir/tomcat")
       extractDir = file("$buildDir/tomcat/runtime")
     }
+	jvmArgs = '-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005'
   }
 }

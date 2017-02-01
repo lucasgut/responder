@@ -39,6 +39,6 @@ class CustomerAddressFlow extends AbstractFlow {
                 (ScaffoldAddress.ADDRESSES) : houseNumbersAndRoads
         ])
         context.setAttribute("finalResult", result)
-        context.setResponseCode(200)
+        context.setResponseCode("200")
     }
 }

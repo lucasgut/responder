@@ -33,15 +33,15 @@ class ExternalCustomerInformation implements Command {
                 map.put("CUSTOMER.NAME", "Iris Law")
                 map.put("CUSTOMER.ADDRESS", "2 Lansdowne Rd")
             } else {
-                executionContext.setResponseCode(Response.Status.NOT_FOUND.statusCode)
+                executionContext.setResponseCode(Response.Status.NOT_FOUND.statusCode as String)
                 executionContext.setAttribute(intoDirective, new Entity())
                 return;
             }
             Entity responseBody = new Entity(map);
-            executionContext.setResponseCode(Response.Status.OK.statusCode)
+            executionContext.setResponseCode(Response.Status.OK.statusCode as String)
             executionContext.setAttribute(intoDirective, responseBody)
         } catch(IOException exception) {
-            executionContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode)
+            executionContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
             executionContext.setAttribute('exception', new ScriptExecutionException(exception))
         }
     }

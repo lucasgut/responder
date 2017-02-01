@@ -22,7 +22,7 @@ class T24CustomerInformationTest extends Specification {
             _ * context.getAttribute('customerId') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity(map))
-            1 * context.setResponseCode(200)
+            1 * context.setResponseCode('200')
         where:
             id     | map
             100100 | ['ID': 100100, 'NAME': 'John Smith', 'HOME.ADDRESS': ["LINE1": "No Name Street", "LINE2": "", "POSTCODE": "NW9 6LR"], 'WORK.ADDRESS': ["LINE1": "85 Albert Embankment", "LINE2": "Lambeth", "POSTCODE": "SE1 1BD"], 'RELATIVES': [["NAME": "Jim Cain", "RELATIONSHIP": "Father"], ["NAME": "Rick Perry", "RELATIONSHIP": "Sibling"]], 'ACCOUNTS': ["1001", "1004", "1009"]]
@@ -40,7 +40,7 @@ class T24CustomerInformationTest extends Specification {
             _ * context.getAttribute('customerId') >> id
             _ * context.getAttribute('into') >> 'finalResult'
             1 * context.setAttribute('finalResult', new Entity())
-            1 * context.setResponseCode(200)
+            1 * context.setResponseCode('200')
         where:
             id << [666666, 999999]
     }

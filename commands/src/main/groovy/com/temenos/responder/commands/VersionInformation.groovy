@@ -35,10 +35,10 @@ class VersionInformation implements Command {
             String intoDirective = commandContext.into()
             String fileContents = loader.load(fromDirective[0])
             Entity deserialisedContents = (Entity)producer.deserialise(fileContents)
-            commandContext.setResponseCode(Response.Status.OK.statusCode)
+            commandContext.setResponseCode(Response.Status.OK.statusCode as String)
             commandContext.setAttribute(intoDirective, deserialisedContents)
         }catch(IOException exception){
-            commandContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode)
+            commandContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
             commandContext.setAttribute('exception', new ScriptExecutionException(exception))
         }
     }

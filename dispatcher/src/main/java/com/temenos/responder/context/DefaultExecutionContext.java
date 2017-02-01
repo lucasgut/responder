@@ -35,13 +35,12 @@ public class DefaultExecutionContext implements ExecutionContext {
     private final Injector commandInjector;
     private final Lock lock;
     private final Dispatcher dispatcher;
-    private final String serverRoot;
-    private int responseCode;
+    private String responseCode;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExecutionContext.class);
     private static final int LOCK_TIMEOUT = 10;
 
-    public DefaultExecutionContext(String serverRoot, String self, String resourceName, Dispatcher dispatcher){
+    public DefaultExecutionContext(String self, String resourceName, Dispatcher dispatcher){
         this.self = self;
         this.resourceName = resourceName;
         this.contextAttributes = new ConcurrentHashMap<>();
@@ -49,10 +48,9 @@ public class DefaultExecutionContext implements ExecutionContext {
         this.commandInjector = Guice.createInjector(new CommandInjector());
         this.lock = new ReentrantLock();
         this.dispatcher = dispatcher;
-        this.serverRoot = serverRoot;
     }
 
-    public DefaultExecutionContext(String serverRoot, String self, String resourceName, Map<String, Object> contextAttributes, Dispatcher dispatcher){
+    public DefaultExecutionContext(String self, String resourceName, Map<String, Object> contextAttributes, Dispatcher dispatcher){
         this.self = self;
         this.resourceName = resourceName;
         this.contextAttributes = new ConcurrentHashMap<>(contextAttributes);
@@ -60,10 +58,9 @@ public class DefaultExecutionContext implements ExecutionContext {
         this.commandInjector = Guice.createInjector(new CommandInjector());
         this.lock = new ReentrantLock();
         this.dispatcher = dispatcher;
-        this.serverRoot = serverRoot;
     }
 
-    public DefaultExecutionContext(String serverRoot, String self, String resourceName, Parameters parameters, Entity requestBody, Dispatcher dispatcher){
+    public DefaultExecutionContext(String self, String resourceName, Parameters parameters, Entity requestBody, Dispatcher dispatcher){
         this.self = self;
         this.resourceName = resourceName;
         this.contextAttributes = new ConcurrentHashMap<>();
@@ -74,7 +71,6 @@ public class DefaultExecutionContext implements ExecutionContext {
         this.commandInjector = Guice.createInjector(new CommandInjector());
         this.lock = new ReentrantLock();
         this.dispatcher = dispatcher;
-        this.serverRoot = serverRoot;
     }
 
     @Override
@@ -104,7 +100,7 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public int getResponseCode() {
+    public String getResponseCode() {
         return responseCode;
     }
 
@@ -114,12 +110,12 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public void setResponseCode(int responseCode) {
+    public void setResponseCode(String responseCode) {
         this.responseCode = responseCode;
     }
 
     @Override
-    public <T extends Command> Command getCommand(Class<T> clazz) {
+    public Command getCommand(Class<Command> clazz) {
         return clazz.cast(commandInjector.getInstance(clazz));
     }
 
@@ -146,10 +142,5 @@ public class DefaultExecutionContext implements ExecutionContext {
     @Override
     public void notifyDispatchers(List<Class<Flow>> flows, String name) {
         contextAttributes.put(name, this.dispatcher.notify(flows));
-    }
-
-    @Override
-    public String getInternalResource(String resourcePath) {
-        return this.serverRoot + resourcePath;
     }
 }

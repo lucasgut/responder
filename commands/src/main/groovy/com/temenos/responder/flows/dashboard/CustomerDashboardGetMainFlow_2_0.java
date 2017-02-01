@@ -44,7 +44,7 @@ public class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
         Entity t24Customer = (Entity) customerCtx.getAttribute(into);
 
         // check response from T24 customer information
-        if (customerCtx.getResponseCode() != Response.Status.OK.getStatusCode() || t24Customer.getAccessors().isEmpty()) {
+        if (!customerCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode())) || t24Customer.getAccessors().isEmpty()) {
             executionContext.setResponseCode(customerCtx.getResponseCode());
             executionContext.setAttribute(into, new Entity());
             return;
@@ -68,7 +68,7 @@ public class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
             if(t24Account.getAccessors().isEmpty()) continue;
 
             // check response from T24 account information
-            if (accCtx.getResponseCode() != Response.Status.OK.getStatusCode()) {
+            if (!accCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode()))) {
                 executionContext.setResponseCode(accCtx.getResponseCode());
                 executionContext.setAttribute(into, new Entity());
                 return;
@@ -92,7 +92,7 @@ public class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
                 if(t24StandingOrder.getAccessors().isEmpty()) continue;
 
                 // check response from T24 account information
-                if (stoCtx.getResponseCode() != Response.Status.OK.getStatusCode()) {
+                if (!stoCtx.getResponseCode().equals(Integer.toString(Response.Status.OK.getStatusCode()))) {
                     executionContext.setResponseCode(stoCtx.getResponseCode());
                     executionContext.setAttribute(into, new Entity());
                     return;
@@ -112,7 +112,7 @@ public class CustomerDashboardGetMainFlow_2_0 extends AbstractFlow {
         transformer.execute(trnsCmd);
 
         Entity responseBody = (Entity) trnsCmd.getAttribute("finalResult");
-        executionContext.setResponseCode(Response.Status.OK.getStatusCode());
+        executionContext.setResponseCode(Integer.toString(Response.Status.OK.getStatusCode()));
         executionContext.setAttribute(into, responseBody);
     }
 }

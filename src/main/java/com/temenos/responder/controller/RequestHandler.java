@@ -67,7 +67,6 @@ public class RequestHandler {
         PathHandler handler = ApplicationContext.getInjector(PathHandler.class);
         Resource resource = handler.resolvePathSpecification(path);
         Parameters parameters = handler.resolvePathParameters(path, resource);
-        String serverRoot = info.getBaseUri().toString();
         String origin = info.getBaseUri().toString() + path;
         LOGGER.info("Found: {} /{}", methodName, resource.getPath());
 
@@ -90,7 +89,7 @@ public class RequestHandler {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
         }
-        RequestContext requestContext = new DefaultRequestContext(serverRoot, resource, parameters, requestBody, origin);
+        RequestContext requestContext = new DefaultRequestContext(resource, parameters, requestBody, origin);
         Dispatcher dispatcher = new FlowDispatcher(NO_OF_EXECUTORS, requestContext);
 
         //execute the version's flow

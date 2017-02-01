@@ -31,7 +31,7 @@ class ComplexCustomerInformationTest extends Specification {
         then:
             executionContext.getCommand(AddLink) >> addLink
             1 * executionContext.notifyDispatchers(flows) >> ["CustomerInformation": [customerInfoDoc], "CustomerAddressFlow": [customerAddressDoc]]
-            1 * executionContext.setResponseCode(200)
+            1 * executionContext.setResponseCode("200")
             1 * executionContext.setAttribute("finalResult", new Entity(data))
             customerInfoDoc.getBody() >> new Entity(["CustomerId": 1, "CustomerName": "John Smith", "CustomerAddress": "Not Known"])
             1 * customerAddressDoc.getBody() >> new Entity(["AddressId": 1, "Addresses": data['Addresses']])
