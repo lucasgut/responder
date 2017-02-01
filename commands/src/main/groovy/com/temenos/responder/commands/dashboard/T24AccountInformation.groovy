@@ -56,10 +56,10 @@ class T24AccountInformation implements Command {
                 map.put("STANDING.ORDERS", [])
             }
 
-            context.setResponseCode(Response.Status.OK.statusCode as String)
+            context.setResponseCode(Response.Status.OK.statusCode)
             context.setAttribute(intoDirective, new Entity(map))
         } catch(IOException exception) {
-            context.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
+            context.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode)
             context.setAttribute('exception', new ScriptExecutionException(exception))
         }
     }

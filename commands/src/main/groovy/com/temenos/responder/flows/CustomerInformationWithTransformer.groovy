@@ -39,8 +39,8 @@ class CustomerInformationWithTransformer extends AbstractFlow {
             Entity extnCustomer = commandContext.getAttribute('finalResult') as Entity
 
             //TODO: use an exception instead
-            if (!commandContext.getResponseCode().equals(Response.Status.OK.statusCode as String)) {
-                executionContext.setResponseCode(commandContext.getResponseCode() as String)
+            if (commandContext.getResponseCode() != Response.Status.OK.statusCode) {
+                executionContext.setResponseCode(commandContext.getResponseCode())
                 executionContext.setAttribute(into, new Entity())
                 return;
             }
@@ -52,10 +52,10 @@ class CustomerInformationWithTransformer extends AbstractFlow {
             transformer.execute(commandContext)
 
             Entity responseBody = commandContext.getAttribute('finalResult') as Entity;
-            executionContext.setResponseCode(Response.Status.OK.statusCode as String)
+            executionContext.setResponseCode(Response.Status.OK.statusCode)
             executionContext.setAttribute(into, responseBody)
         } catch (IOException exception) {
-            executionContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode as String)
+            executionContext.setResponseCode(Response.Status.INTERNAL_SERVER_ERROR.statusCode)
             executionContext.setAttribute('exception', new ScriptExecutionException(exception))
         }
     }

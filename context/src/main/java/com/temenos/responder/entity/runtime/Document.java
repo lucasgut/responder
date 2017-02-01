@@ -34,7 +34,9 @@ public class Document {
     private Entity render(){
         Map<String, Object> data = new LinkedHashMap<>();
         data.put(LINKS_ELEM, links.getValues());
-        data.put(EMBED_ELEM, embedded.getValues());
+        if(!embedded.getValues().isEmpty()) {
+            data.put(EMBED_ELEM, embedded.getValues());
+        }
         data.put(modelName, body.getValues());
         return new Entity(data);
     }

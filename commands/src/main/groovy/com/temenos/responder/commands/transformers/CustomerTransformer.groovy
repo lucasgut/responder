@@ -30,7 +30,7 @@ public class CustomerTransformer implements Command {
         ])
 
         //construct response
-        context.setResponseCode(Response.Status.OK.statusCode as String)
+        context.setResponseCode(Response.Status.OK.statusCode)
         context.setAttribute(context.into(), responseBody)
     }
 }

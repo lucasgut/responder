@@ -38,6 +38,9 @@ public class ResourceBuilder {
         if(childNode.has(ResourceSpec.TAGS)) {
             resource.setTags(getTags(childNode));
         }
+        if(childNode.has(ResourceSpec.PARAMETERS)) {
+            resource.setParameters(getParameters(childNode));
+        }
         return resource;
     }
 
@@ -50,8 +53,27 @@ public class ResourceBuilder {
         return tags;
     }
 
-    private List<Method> getMethods(JsonNode jsonNode) {
-        JsonNode directivesNode = jsonNode.get(ResourceSpec.DIRECTIVES);
+    private List<Parameter> getParameters(JsonNode resourceNode) {
+        JsonNode parametersNode = resourceNode.get(ResourceSpec.PARAMETERS);
+        if(parametersNode == null) {
+            throw new ResourceParsingException();
+        }
+        List<Parameter> parameters = new ArrayList<>();
+        for (Iterator<String> it = parametersNode.fieldNames(); it.hasNext(); ) {
+            String name = it.next();
+            JsonNode parameterNode = parametersNode.get(name);
+            String type = parameterNode.get(ResourceSpec.PARAMETER_TYPE).asText();
+            ParameterLocation in = ParameterLocation.valueOf(parameterNode.get(ResourceSpec.PARAMETER_IN).asText());
+            Parameter parameter = new Parameter(name, type, in);
+            if(parameterNode.has(ResourceSpec.PARAMETER_DESCRIPTION))
+                parameter.setDescription(parameterNode.get(ResourceSpec.PARAMETER_DESCRIPTION).asText());
+            parameters.add(parameter);
+        }
+        return parameters;
+    }
+
+    private List<Method> getMethods(JsonNode resourceNode) {
+        JsonNode directivesNode = resourceNode.get(ResourceSpec.DIRECTIVES);
         if(directivesNode == null) {
             throw new ResourceParsingException();
         }

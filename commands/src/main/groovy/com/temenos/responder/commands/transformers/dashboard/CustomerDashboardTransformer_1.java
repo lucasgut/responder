@@ -84,7 +84,7 @@ public class CustomerDashboardTransformer_1 implements Command {
         responseBody.set(ScaffoldCustomerDashboard_1.ACCOUNTS, accounts);
 
         // construct response
-        context.setResponseCode(Integer.toString(Response.Status.OK.getStatusCode()));
+        context.setResponseCode(Response.Status.OK.getStatusCode());
         context.setAttribute(intoDirective, responseBody);
     }
 }
