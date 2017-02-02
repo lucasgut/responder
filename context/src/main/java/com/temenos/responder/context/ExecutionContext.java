@@ -43,15 +43,6 @@ public interface ExecutionContext extends Context {
     <T extends Command> Command getCommand(Class<T> clazz);
 
     /**
-     * Fetch a map of {@link com.temenos.responder.configuration.Resource resource} parameter names and values that
-     * were resolved from the request URL.
-     *
-     * @return {@link com.temenos.responder.configuration.Resource Resource} parameter names and values resolved
-     * with the request URL.
-     */
-    Parameters getParameters();
-
-    /**
      * Fetch the contents of the request payload deserialised as an {@link Entity object}.
      *
      * @return The request payload deserialised as an {@link Entity object}.
@@ -82,39 +73,26 @@ public interface ExecutionContext extends Context {
     int getResponseCode();
 
     /**
-     * Notify a dispatcher that a flow is available to use.
-     *
-     * @param flow A flow reference that will be attached to the notification event.
-     * @return A boolean value indicating whether the notification was triggered successfully or not.
-     */
-    Document notifyDispatchers(Class<Flow> flow);
-
-    /**
      * Notify a dispatcher that a flow is available to use and map the result of the operation to the given
      * context attribute name.
      *
-     * @param flow
-     * @param name
+     * @param targetFlow
+     * @param parameters
+     * @param into
      */
-    void notifyDispatchers(Class<Flow> flow, String name);
-
-    /**
-     * Notify a dispatcher that multiple flows are available to execute in parallel.
-     *
-     * @param flow A flow reference that will be attached to the notification event.
-     * @return A boolean value indicating whether the notification was triggered successfully or not.
-     */
-    Map<String,List<Document>> notifyDispatchers(List<Class<Flow>> flow);
+    void executeFlow(Class<? extends Flow> targetFlow, Parameters parameters, String into);
 
     /**
      * Notify a dispatcher that multiple flows are available to use and map the results of the operations to the given
      * context attribute name.
      *
-     * @param flow
-     * @param name
+     * @param targetFlows
+     * @param parameters
+     * @param into
      */
-    void notifyDispatchers(List<Class<Flow>> flow, String name);
+    void executeFlows(List<Class<? extends Flow>> targetFlows, Parameters parameters, String... into);
 
+    Class<? extends Flow> getFlowClass();
     FlowInvoker flow(String name);
     FlowDispatcher getFlowDispatcher();
 

@@ -153,7 +153,7 @@ public class ResourceBuilder {
 
     private Action getAction(JsonNode actionNode) {
         String description = actionNode.get(ResourceSpec.ACTION_DESCRIPTION).asText();
-        Multiplicity multiplicity = Multiplicity.valueOf(Multiplicity.ITEM.name());;
+        Multiplicity multiplicity = Multiplicity.valueOf(Multiplicity.ITEM.name());
         if(actionNode.has(Multiplicity.COLLECTION.getValue())) {
             multiplicity = Multiplicity.valueOf(Multiplicity.COLLECTION.name());
         }

@@ -3,6 +3,7 @@ package com.temenos.responder.flows
 import com.temenos.responder.commands.AddLink
 import com.temenos.responder.commands.Command
 import com.temenos.responder.context.ExecutionContext
+import com.temenos.responder.context.Parameters
 import com.temenos.responder.entity.runtime.Document
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.scaffold.ScaffoldAddress
@@ -30,11 +31,15 @@ class ComplexCustomerInformationTest extends Specification {
             flow.execute(executionContext)
         then:
             executionContext.getCommand(AddLink) >> addLink
-            1 * executionContext.notifyDispatchers(flows) >> ["CustomerInformation": [customerInfoDoc], "CustomerAddressFlow": [customerAddressDoc]]
+            1 * executionContext.executeFlows(flows, { Parameters param -> param.getValue('AddressId') == '1' && param.getValue('id') == '1' }, ['custInfo', 'custAddress'] as String[])
             1 * executionContext.setResponseCode(200)
+            1 * executionContext.getAttribute('AddressId') >> '1'
+            1 * executionContext.getAttribute('CustomerId') >> '1'
+            1 * executionContext.getAttribute('custInfo') >> customerInfoDoc
+            1 * executionContext.getAttribute('custAddress') >> customerAddressDoc
             1 * executionContext.setAttribute("finalResult", new Entity(data))
             customerInfoDoc.getBody() >> new Entity(["CustomerId": 1, "CustomerName": "John Smith", "CustomerAddress": "Not Known"])
-            1 * customerAddressDoc.getBody() >> new Entity(["AddressId": 1, "Addresses": data['Addresses']])
+            customerAddressDoc.getBody() >> new Entity(["AddressId": 1, "Addresses": data['Addresses']])
         where:
             flowNames                                      | flows                                      | data                                                                                                                                    | producerModelNames                      | producerModels                      | consumerModelName         | consumerModel
             ['CustomerInformation', 'CustomerAddressFlow'] | [CustomerInformation, CustomerAddressFlow] | ["CustomerName": "John Smith", "Addresses": [["HouseNumber": 1, "Road": "Station Road"], ["HouseNumber": 321, "Road": "Dustbin Road"]]] | ['ScaffoldCustomer', 'ScaffoldAddress'] | [ScaffoldCustomer, ScaffoldAddress] | 'ScaffoldComplexCustomer' | ScaffoldComplexCustomer

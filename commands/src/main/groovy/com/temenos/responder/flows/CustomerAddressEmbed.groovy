@@ -6,6 +6,7 @@ import com.temenos.responder.commands.GETResource
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.DefaultCommandContext
 import com.temenos.responder.context.ExecutionContext
+import com.temenos.responder.context.Parameters
 import com.temenos.responder.entity.runtime.Document
 import com.temenos.responder.entity.runtime.Entity
 
@@ -16,8 +17,6 @@ class CustomerAddressEmbed extends AbstractFlow {
 
     @Override
     void doExecute(ExecutionContext context) {
-        //fetch customer addresses
-        Document customerAddresses = context.notifyDispatchers(CustomerAddressFlow)
 
         String addressId = context.getAttribute("AddressId")
 
@@ -34,11 +33,14 @@ class CustomerAddressEmbed extends AbstractFlow {
         ctx.from(['CustomerAddresses','address'])
         ctx.into('finalResult')
         context.getCommand(Embed).execute(ctx)
+
         context.setAttribute("document.embedded", ((Entity)ctx.getAttribute("finalResult")))
 
         //fetch customer data
-        Document customerData = context.notifyDispatchers(CustomerInformation)
-        context.setAttribute("finalResult", customerData.getBody())
+        Parameters parameters = new Parameters()
+        parameters.setValue('id', context.getAttribute("CustomerId"))
+        context.executeFlow(CustomerInformation, parameters, 'customer')
+        context.setAttribute('finalResult', context.getAttribute('customer').getBody())
         context.setResponseCode(200)
     }
 }

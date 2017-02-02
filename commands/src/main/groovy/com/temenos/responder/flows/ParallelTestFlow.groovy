@@ -1,6 +1,7 @@
 package com.temenos.responder.flows
 
 import com.temenos.responder.context.ExecutionContext
+import com.temenos.responder.context.Parameters
 import com.temenos.responder.entity.runtime.Document
 import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.scaffold.ScaffoldAdditionOutput
@@ -14,10 +15,10 @@ class ParallelTestFlow extends AbstractFlow {
 
     @Override
     void doExecute(ExecutionContext context) {
-        Map<String, List<Document>> results = context.notifyDispatchers([VersionInformationFlow, AdditionFlow])
+        context.executeFlows([VersionInformationFlow, AdditionFlow], Parameters.none(), ['version','add'] as String[])
         context.setAttribute("finalResult", new Entity([
-                (ScaffoldParallelTestOutput.ADDITION_RESULT): results[AdditionFlow.simpleName][0].getBody().get(ScaffoldAdditionOutput.RESULT),
-                (ScaffoldParallelTestOutput.VERSION)        : results[VersionInformationFlow.simpleName][0].getBody().get(ScaffoldVersion.VERSION_NUMBER)
+                (ScaffoldParallelTestOutput.ADDITION_RESULT): context.getAttribute('add').getBody().get(ScaffoldAdditionOutput.RESULT),
+                (ScaffoldParallelTestOutput.VERSION)        : context.getAttribute('version').getBody().get(ScaffoldVersion.VERSION_NUMBER)
         ]))
     }
 }

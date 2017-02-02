@@ -6,23 +6,25 @@ import com.temenos.responder.adapter.AdapterDispatcher;
 import com.temenos.responder.adapter.AdapterIdentifier;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.commands.injector.CommandInjector;
+import com.temenos.responder.context.builder.ContextBuilderFactory;
+import com.temenos.responder.context.builder.CrossFlowContextBuilder;
+import com.temenos.responder.context.manager.ContextManager;
+import com.temenos.responder.context.manager.DefaultContextManager;
 import com.temenos.responder.dispatcher.Dispatcher;
-import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.flows.Flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Default implementation of Execution Context class.
+ * Default {@link ExecutionContext execution context} implementation.
+ * <p>
  *
- * Created by Douglas Groves on 18/12/2016.
+ * @author Douglas Groves
  */
 public class DefaultExecutionContext implements ExecutionContext {
 
@@ -31,62 +33,52 @@ public class DefaultExecutionContext implements ExecutionContext {
     private final String self;
     private final Entity requestBody;
     private final Injector commandInjector;
-    private final Lock lock;
     private final Dispatcher dispatcher;
     private final String serverRoot;
+    private final ContextBuilderFactory factory;
+    private final ContextManager manager;
     private int responseCode;
+    private final Class<? extends Flow> flowClass;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExecutionContext.class);
-    private static final int LOCK_TIMEOUT = 10;
 
-    public DefaultExecutionContext(String serverRoot, String self, String resourceName, Dispatcher dispatcher){
-        this.self = self;
-        this.resourceName = resourceName;
-        this.contextAttributes = new ConcurrentHashMap<>();
-        this.requestBody = null;
-        this.commandInjector = Guice.createInjector(new CommandInjector());
-        this.lock = new ReentrantLock();
-        this.dispatcher = dispatcher;
-        this.serverRoot = serverRoot;
+    public DefaultExecutionContext(String serverRoot, String self, String resourceName, Dispatcher dispatcher, Class<? extends Flow> flowClass) {
+        this(serverRoot, self, resourceName, new Parameters(), new HashMap<>(), null, dispatcher, ContextBuilderFactory.factory(), DefaultContextManager.getManager(), flowClass);
     }
 
-    public DefaultExecutionContext(String serverRoot, String self, String resourceName, Map<String, Object> contextAttributes, Dispatcher dispatcher){
-        this.self = self;
-        this.resourceName = resourceName;
-        this.contextAttributes = new ConcurrentHashMap<>(contextAttributes);
-        this.requestBody = null;
-        this.commandInjector = Guice.createInjector(new CommandInjector());
-        this.lock = new ReentrantLock();
-        this.dispatcher = dispatcher;
-        this.serverRoot = serverRoot;
+    public DefaultExecutionContext(String serverRoot, String self,
+                                   String resourceName, Parameters parameters, Entity requestBody, Dispatcher dispatcher, Class<? extends Flow> flowClass) {
+        this(serverRoot, self, resourceName, parameters, new HashMap<>(),
+                requestBody, dispatcher, ContextBuilderFactory.factory(), DefaultContextManager.getManager(), flowClass);
     }
 
-    public DefaultExecutionContext(String serverRoot, String self, String resourceName, Parameters parameters, Entity requestBody, Dispatcher dispatcher){
+    public DefaultExecutionContext(String serverRoot, String self, String resourceName,
+                                   Parameters parameters, Map<String, Object> contextAttributes, Entity requestBody,
+                                   Dispatcher dispatcher, ContextBuilderFactory factory, ContextManager manager, Class<? extends Flow> flowClass) {
+        this.serverRoot = serverRoot;
         this.self = self;
         this.resourceName = resourceName;
-        this.contextAttributes = new ConcurrentHashMap<>();
-        this.requestBody = requestBody;
-        for(String paramKey : parameters.getParameterKeys()) {
-            setAttribute(paramKey, parameters.getValue(paramKey));
+        this.contextAttributes = contextAttributes;
+        if (parameters != null) {
+            for (String paramKey : parameters.getParameterKeys()) {
+                setAttribute(paramKey, parameters.getValue(paramKey));
+            }
         }
+        this.requestBody = requestBody;
         this.commandInjector = Guice.createInjector(new CommandInjector());
-        this.lock = new ReentrantLock();
         this.dispatcher = dispatcher;
-        this.serverRoot = serverRoot;
+        this.factory = factory;
+        this.manager = manager;
+        this.flowClass = flowClass;
     }
 
     @Override
-    public Parameters getParameters() {
-        return null;
-    }
-
-    @Override
-    public synchronized Object getAttribute(String name) {
+    public Object getAttribute(String name) {
         return contextAttributes.get(name);
     }
 
     @Override
-    public synchronized boolean setAttribute(String name, Object value) {
+    public boolean setAttribute(String name, Object value) {
         contextAttributes.put(name, value);
         return true;
     }
@@ -127,23 +119,22 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public Document notifyDispatchers(Class<Flow> flow) {
-        return this.dispatcher.notify(flow);
+    public Class<? extends Flow> getFlowClass(){
+        return flowClass;
     }
 
     @Override
-    public void notifyDispatchers(Class<Flow> flow, String name) {
-        this.contextAttributes.put(name, this.dispatcher.notify(flow));
+    public void executeFlow(Class<? extends Flow> targetFlow, Parameters from, String into) {
+        try (CrossFlowContextBuilder builder = factory.getCrossFlowContextBuilder(manager)) {
+            this.contextAttributes.put(into, this.dispatcher.notify(targetFlow, crossFlowContext(builder, flowClass, into, from)));
+        }
     }
 
     @Override
-    public Map<String, List<Document>> notifyDispatchers(List<Class<Flow>> flows) {
-        return this.dispatcher.notify(flows);
-    }
-
-    @Override
-    public void notifyDispatchers(List<Class<Flow>> flows, String name) {
-        contextAttributes.put(name, this.dispatcher.notify(flows));
+    public void executeFlows(List<Class<? extends Flow>> targetFlows, Parameters from, String... into) {
+        try (CrossFlowContextBuilder builder = factory.getCrossFlowContextBuilder(manager)) {
+            this.contextAttributes.putAll(this.dispatcher.notify(targetFlows, crossFlowContext(builder, flowClass, into, from), into));
+        }
     }
 
     @Override
@@ -194,5 +185,21 @@ public class DefaultExecutionContext implements ExecutionContext {
     @Override
     public String getInternalResource(String resourcePath) {
         return this.serverRoot + resourcePath;
+    }
+
+    private long crossFlowContext(CrossFlowContextBuilder builder, Class<? extends Flow> sourceFlow, String into, Parameters from) {
+        return builder
+                .origin(this.serverRoot, this.self, sourceFlow)
+                .parameters(from)
+                .into(into)
+                .buildAndGetId();
+    }
+
+    private long crossFlowContext(CrossFlowContextBuilder builder, Class<? extends Flow> sourceFlow, String[] into, Parameters from) {
+        return builder
+                .origin(this.serverRoot, this.self, sourceFlow)
+                .parameters(from)
+                .into(into)
+                .buildAndGetId();
     }
 }

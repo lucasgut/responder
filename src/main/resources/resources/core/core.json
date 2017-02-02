@@ -175,7 +175,7 @@
         "resourceType": "resource",
         "cleanName": "Customer information",
         "description": "This static resource returns information about a customer",
-        "path": "complexCustomer/customer/{id}/address/{AddressId}",
+        "path": "complexCustomer/customer/{CustomerId}/address/{AddressId}",
         "version": "0.0.1",
         "tags": [
           "Complex",
@@ -229,7 +229,7 @@
         "resourceType": "resource",
         "cleanName": "Customer with embedded address",
         "description": "This static resource returns information about a customer",
-        "path": "customerAddressEmbed/customer/{id}/address/{AddressId}",
+        "path": "customerAddressEmbed/customer/{CustomerId}/address/{AddressId}",
         "version": "0.0.1",
         "tags": [
           "Customer",
