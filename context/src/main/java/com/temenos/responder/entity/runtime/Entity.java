@@ -210,7 +210,7 @@ public class Entity {
             }else if(rebuild && container instanceof Map){
                 ((Map<String, Object>) container).putAll((Map<String,Object>)Entity.accessorToDataStructure(rebuildFrom, value));
             }else if(rebuild && container instanceof List){
-                ((List<Object>) container).add(((Map<String,Object>)Entity.accessorToDataStructure(rebuildFrom, value)));
+                ((List<Object>) container).add(Entity.accessorToDataStructure(rebuildFrom, value));
             }
         }
         getEntityNamesAndTypes(values, "");

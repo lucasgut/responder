@@ -36,7 +36,7 @@ public class ModelValidator implements Validator {
                     //validate an array by looking at the first item
                     Object field = entity.get(((String)scaffold.getDeclaredField(f.getName().substring(0, f.getName().indexOf("_TYPE"))).get(null)).replace("%d", "0"));
                     Type fieldType = entity.getType(((String)scaffold.getDeclaredField(f.getName().substring(0, f.getName().indexOf("_TYPE"))).get(null)).replace("%d", "0"));
-                    if(field == null || fieldType != (Type)f.get(null)){
+                    if(field == null || fieldType != f.get(null)){
                         return false;
                     }
                 }

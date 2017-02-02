@@ -36,7 +36,7 @@ public class DefaultRequestContext implements RequestContext {
     }
 
     @Override
-    public Parameters getRequestParameters() {
+    public Parameters parameters() {
         return parameters;
     }
 

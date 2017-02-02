@@ -13,5 +13,5 @@ public interface Condition {
      *
      * @return A boolean result of the evaluation.
      */
-    public boolean evaluate();
+    boolean evaluate();
 }

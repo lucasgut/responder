@@ -1,6 +1,10 @@
 package com.temenos.responder.dispatcher;
 
 import com.temenos.responder.context.*;
+import com.temenos.responder.context.builder.ContextBuilderFactory;
+import com.temenos.responder.context.builder.ExecutionContextBuilder;
+import com.temenos.responder.context.manager.ContextManager;
+import com.temenos.responder.context.manager.DefaultContextManager;
 import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.executor.FlowExecutor;
@@ -10,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Douglas Groves
@@ -18,58 +21,67 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FlowDispatcher implements Dispatcher {
 
     private final ExecutorService runner;
-    private final List<FlowExecutor> executors;
+    private final FlowExecutor executor;
     private final RequestContext context;
-    private final AtomicInteger next;
-    private final ExecutionContextBuilder builder;
+    private final ContextBuilderFactory factory;
+    private final ContextManager manager;
 
-    private static final int FIRST_EXECUTOR = 0;
+    private static final int NOT_A_FLOW = -1;
+    private static final int THREADS = 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(FlowDispatcher.class);
 
-    public FlowDispatcher(int executors, RequestContext context) {
-        this.executors = new ArrayList<>();
-        for (int i = 0; i < executors; i++) {
-            this.executors.add(new FlowExecutor());
-        }
-        this.next = new AtomicInteger(FIRST_EXECUTOR);
-        this.runner = Executors.newCachedThreadPool();
+    public FlowDispatcher(int threads, RequestContext context) {
+        this.executor = new FlowExecutor();
+        this.runner = Executors.newFixedThreadPool(threads);
         this.context = context;
-        this.builder = new ExecutionContextBuilder();
+        this.factory = ContextBuilderFactory.factory();
+        this.manager = DefaultContextManager.getManager();
     }
 
-    public FlowDispatcher(List<FlowExecutor> executors, RequestContext context, ExecutionContextBuilder builder) {
-        this.executors = executors;
-        this.next = new AtomicInteger(FIRST_EXECUTOR);
-        this.runner = Executors.newFixedThreadPool(executors.size());
+    public FlowDispatcher(FlowExecutor executor, RequestContext context, ContextManager manager, ContextBuilderFactory factory) {
+        this.executor = executor;
+        this.runner = Executors.newFixedThreadPool(THREADS);
         this.context = context;
-        this.builder = builder;
+        this.factory = factory;
+        this.manager = manager;
     }
 
     @Override
-    public Document notify(Class<Flow> flow) {
+    public Document notify(Class<? extends Flow> flow) {
+        return notify(flow, NOT_A_FLOW);
+    }
+
+    @Override
+    public Document notify(Class<? extends Flow> flow, long crossFlowContextId) {
         Document result = null;
+        ParameterisedContext context;
+        if(crossFlowContextId != NOT_A_FLOW) {
+            context = manager.getManagedContext(crossFlowContextId, CrossFlowContext.class);
+        }else{
+            context = this.context;
+        }
         try {
-            ExecutionContext ctx = getExecutionContext();
-            result = runner.submit(getCallable(flow)).get();
-        } catch (InterruptedException | ExecutionException e) {
+            result = runner.submit(
+                getCallable(flow, context.parameters())
+            ).get();
+        } catch (Throwable e) {
             LOGGER.error("Unable to execute Flow: {}", flow, e);
         }
         return result;
     }
 
     @Override
-    public Map<String, List<Document>> notify(List<Class<Flow>> flows) {
-        Map<String,List<Document>> result = new ConcurrentHashMap<>();
+    public Map<String, Document> notify(List<Class<? extends Flow>> flows, long crossFlowContextId, String... into) {
+        Map<String, Document> result = new ConcurrentHashMap<>();
         try {
-            runner.invokeAll(getCallables(flows)).forEach(flowResult -> {
+            int[] index = {0};
+            runner.invokeAll(
+                    getCallables(flows, manager.getManagedContext(crossFlowContextId, CrossFlowContext.class))
+            ).forEach(flowResult -> {
                 try {
                     Document flowResponse = flowResult.get();
-                    List<Document> documents = result.get(flowResponse.getFlowName());
-                    if(documents == null){
-                        documents = new ArrayList<>();
-                        result.put(flowResponse.getFlowName(), documents);
-                    }
-                    documents.add(flowResponse);
+                    result.put(into[index[0]], flowResponse);
+                    index[0]++;
                 } catch (InterruptedException | ExecutionException ie) {
                     throw new RuntimeException(ie);
                 }
@@ -81,59 +93,42 @@ public class FlowDispatcher implements Dispatcher {
         return result;
     }
 
-    private Callable<Document> getCallable(Class<Flow> flow){
+    private Callable<Document> getCallable(Class<? extends Flow> flow, Parameters parameters) {
         return () -> {
-            ExecutionContext ctx = getExecutionContext();
-            try {
-                getNextFlowExecutor().execute(flow.newInstance(), ctx);
-            } catch (IllegalAccessException | InstantiationException ie) {
-                LOGGER.error("Unable to execute Flow: {}", flow, ie);
+            try(ExecutionContextBuilder builder = this.factory.getExecutionContextBuilder(manager)) {
+                ExecutionContext ctx = manager.getManagedContext(getExecutionContext(flow, builder, parameters), ExecutionContext.class);
+                try {
+                    executor.execute(flow.newInstance(), ctx);
+                } catch (IllegalAccessException | InstantiationException ie) {
+                    LOGGER.error("Unable to execute Flow: {}", flow, ie);
+                }
+                Object embeddedContents = ctx.getAttribute("document.embedded");
+                if (embeddedContents == null) {
+                    embeddedContents = new Entity();
+                }
+                return new Document((Entity) ctx.getAttribute("document.links.self"),
+                        (Entity) embeddedContents,
+                        (Entity) ctx.getAttribute("finalResult"),
+                        context.getResourceName(),
+                        flow.getSimpleName());
             }
-            Object embeddedContents = ctx.getAttribute("document.embedded");
-            if(embeddedContents == null){
-                embeddedContents = new Entity();
-            }
-            return new Document((Entity) ctx.getAttribute("document.links.self"),
-                    (Entity)embeddedContents,
-                    (Entity) ctx.getAttribute("finalResult"),
-                    context.getResourceName(),
-                    flow.getSimpleName());
         };
     }
 
-    private Collection<Callable<Document>> getCallables(List<Class<Flow>> flows) {
+    private Collection<Callable<Document>> getCallables(List<Class<? extends Flow>> flows, CrossFlowContext cfc) {
         List<Callable<Document>> result = new ArrayList<>();
-        flows.forEach(flow -> result.add(getCallable(flow)));
+        flows.forEach(flow -> result.add(getCallable(flow, cfc.parameters())));
         return result;
     }
 
-    /**
-     * Fetch the next executor in the list using a round-robin algorithm.
-     *
-     * @return The next executor that a {@link Flow flow} will be executed with.
-     */
-    private FlowExecutor getNextFlowExecutor() {
-        return executors.get(getNextIndex());
-    }
-
-    private ExecutionContext getExecutionContext() {
-        return builder
+    private long getExecutionContext(Class<? extends Flow> flow, ExecutionContextBuilder builder, Parameters parameters) {
+        return builder.flow(flow)
                 .serverRoot(context.getServerRoot())
                 .origin(context.getOrigin())
                 .resourceName(context.getResourceName())
-                .requestParameters(context.getRequestParameters())
+                .requestParameters(parameters)
                 .requestBody(context.getRequestBody())
                 .dispatcher(this)
-                .build();
+                .buildAndGetId();
     }
-
-    private int getNextIndex() {
-        if (next.get() + 1 >= executors.size()) {
-            next.set(0);
-        } else {
-            next.incrementAndGet();
-        }
-        return next.get();
-    }
-
 }
