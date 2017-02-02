@@ -11,7 +11,6 @@ import com.temenos.responder.entity.runtime.Entity
 import com.temenos.responder.executor.FlowExecutor
 import com.temenos.responder.flows.AdditionFlow
 import com.temenos.responder.flows.CustomerInformation
-import com.temenos.responder.flows.Flow
 import com.temenos.responder.flows.VersionInformationFlow
 import com.temenos.responder.context.builder.ExecutionContextBuilder
 import spock.lang.Specification
@@ -23,85 +22,121 @@ import spock.lang.Unroll
 class FlowDispatcherTest extends Specification {
 
     @Unroll
-    def "Create and execute an instance of Flow class #flowClass.simpleName"(Class flowClass) {
-        given:
+    def "Create and execute an instance of Flow class #flowClass.simpleName from a Resource"(Class flowClass){
+        given: "Resource 'helloWorld' triggered the flow"
+            def requestContext = Mock(RequestContext){ RequestContext req ->
+                req.getResourceName() >> "helloWorld"
+                req.parameters() >> Mock(Parameters)
+            }
+        and: "Context builder returns the next available context ID when a new execution context is created"
             def mockExecutor = Mock(FlowExecutor)
-            def requestContext = Mock(RequestContext)
             def executionContext = Mock(ExecutionContext)
-            def factory = Mock(ContextBuilderFactory)
-            def contextBuilder = Mock(ExecutionContextBuilder)
-            def manager = Mock(ContextManager)
-            def dispatcher = new FlowDispatcher(mockExecutor, requestContext, manager, factory)
-            def parameters = Mock(Parameters)
+            def contextBuilder = Mock(ExecutionContextBuilder){ contextBuilder ->
+                contextBuilder._(_) >> contextBuilder
+                contextBuilder.build() >> executionContext
+                contextBuilder.buildAndGetId() >> 1
+            }
             def links = Mock(Entity), body = Mock(Entity)
-            def crossFlowContext = Mock(CrossFlowContext)
-        when:
-            def result = dispatcher.notify(flowClass, 1)
-        then:
-            factory.getExecutionContextBuilder(manager) >> contextBuilder
-            manager.manageContext(_) >> 2
-            contextBuilder.flow(_) >> contextBuilder
-            contextBuilder.serverRoot(_) >> contextBuilder
-            contextBuilder.origin(_) >> contextBuilder
-            contextBuilder.dispatcher(_) >> contextBuilder
-            contextBuilder.requestBody(_) >> contextBuilder
-            contextBuilder.requestParameters(_) >> contextBuilder
-            contextBuilder.resourceName(_) >> contextBuilder
-            contextBuilder.build() >> executionContext
-            contextBuilder.buildAndGetId() >> 2
-            parameters.getParameterKeys() >> ['alpha', 'beta', 'gamma']
-            parameters.getValue('alpha') >> 'a'
-            parameters.getValue('beta') >> 'b'
-            parameters.getValue('gamma') >> 'c'
-            crossFlowContext.parameters() >> parameters
-
-            1 * executionContext.getAttribute("document.links.self") >> links
+            def manager = Mock(ContextManager){ manager ->
+                manager.manageContext(_) >> 1
+            }
+        and: "Context builder factory returns a managed execution context builder"
+            def factory = Mock(ContextBuilderFactory){ factory ->
+                factory.getExecutionContextBuilder(manager) >> contextBuilder
+            }
+            def dispatcher = new FlowDispatcher(mockExecutor, requestContext, manager, factory)
+        when: "The flow is executed"
+            def result = dispatcher.notify(flowClass)
+        then: "The result of the operation should be a rendered document containing links, embedded data and a body"
+            result instanceof Document
+        and: "The result of the operation should be mapped to the 'finalResult' attribute name"
             1 * executionContext.getAttribute("finalResult") >> body
+        and: 'Any outgoing data should be encapsulated in an Entity instance'
+            1 * body.getValues() >> ["Greeting": "Hello", "Subject": "World"]
+        and: "Links should be present in the body"
+            1 * executionContext.getAttribute("document.links.self") >> links
+            1 * links.getValues() >> [:]
+        and: "All context instances should be managed by the context manager"
+            1 * manager.getManagedContext(1, ExecutionContext) >> executionContext
+        and: "The created flow instance should be executed by the flow executor"
+            1 * mockExecutor.execute({ flowClass.isAssignableFrom(it.class) }, _)
+        where:
+            flowClass << [VersionInformationFlow]
+    }
+
+    @Unroll
+    def "Create and execute an instance of Flow class #flowClass.simpleName from a Flow"(Class flowClass) {
+        given: "Resource 'helloWorld' triggered the parent flow"
+            def requestContext = Mock(RequestContext){ requestContext ->
+                requestContext.getResourceName() >> "helloWorld"
+            }
+        and: "Context builder returns the next available context ID when a new execution context is created"
+            def mockExecutor = Mock(FlowExecutor)
+            def executionContext = Mock(ExecutionContext)
+            def contextBuilder = Mock(ExecutionContextBuilder){ contextBuilder ->
+                contextBuilder._(_) >> contextBuilder
+                contextBuilder.build() >> executionContext
+                contextBuilder.buildAndGetId() >> 2
+            }
+            def links = Mock(Entity), body = Mock(Entity)
+            def manager = Mock(ContextManager){ manager ->
+                manager.manageContext(_) >> 2
+            }
+        and: "Context builder factory returns a managed execution context builder"
+            def factory = Mock(ContextBuilderFactory){ factory ->
+                factory.getExecutionContextBuilder(manager) >> contextBuilder
+            }
+        and: "The flow was triggered by another flow"
+            def parameters = Mock(Parameters)
+            def crossFlowContext = Mock(CrossFlowContext){ crossFlowContext ->
+                crossFlowContext.parameters() >> parameters
+            }
+            def dispatcher = new FlowDispatcher(mockExecutor, requestContext, manager, factory)
+        when: "The flow is executed"
+            def result = dispatcher.notify(flowClass, 1)
+        then: "The result of the operation should be a rendered document containing links, embedded data and a body"
+            result instanceof Document
+        and: "The result of the operation should be mapped to the 'finalResult' attribute name"
+            1 * executionContext.getAttribute("finalResult") >> body
+        and: 'Any outgoing data should be encapsulated in an Entity instance'
+            1 * body.getValues() >> ["Greeting": "Hello", "Subject": "World"]
+        and: "Links should be present in the body"
+            1 * executionContext.getAttribute("document.links.self") >> links
+            1 * links.getValues() >> [:]
+        and: "All context instances should be managed by the context manager"
             1 * manager.getManagedContext(1, CrossFlowContext) >> crossFlowContext
             1 * manager.getManagedContext(2, ExecutionContext) >> executionContext
-            1 * links.getValues() >> [:]
-            1 * body.getValues() >> ["Greeting": "Hello", "Subject": "World"]
+        and: "The created flow instance should be executed by the flow executor"
             1 * mockExecutor.execute({ flowClass.isAssignableFrom(it.class) }, _)
-
-            requestContext.getResourceName() >> "helloWorld"
-            result instanceof Document
         where:
             flowClass << [AdditionFlow]
     }
 
     @Unroll
-    def "Create and execute instances of Flow classes #flowClasses.simpleName in parallel"(List flowClasses, String[] into) {
+    def "Create and execute instances of Flow classes #flowClasses.simpleName in parallel"(flowClasses, into) {
         given:
+            def requestContext = Mock(RequestContext){ requestContext ->
+                requestContext.getResourceName() >> "helloWorld"
+            }
             def mockExecutor = Mock(FlowExecutor)
-            def requestContext = Mock(RequestContext)
             def executionContext = Mock(ExecutionContext)
-            def contextBuilder = Mock(ExecutionContextBuilder)
+            def contextBuilder = Mock(ExecutionContextBuilder){ contextBuilder ->
+                contextBuilder._(_) >> contextBuilder
+                contextBuilder.build() >> executionContext
+                contextBuilder.buildAndGetId() >> 2
+            }
             def manager = Mock(ContextManager)
             def factory = Mock(ContextBuilderFactory)
             def dispatcher = new FlowDispatcher(mockExecutor, requestContext, manager, factory)
-            def parameters = Mock(Parameters)
             def links = Mock(Entity), body = Mock(Entity)
             def crossFlowContext = Mock(CrossFlowContext)
 
         when:
-            def result = dispatcher.notify(flowClasses, 1, into)
+            def result = dispatcher.notify(flowClasses, 1)
         then:
             factory.getExecutionContextBuilder(manager) >> contextBuilder
-            contextBuilder.flow(_) >> contextBuilder
-            contextBuilder.serverRoot(_) >> contextBuilder
-            contextBuilder.origin(_) >> contextBuilder
-            contextBuilder.dispatcher(_) >> contextBuilder
-            contextBuilder.requestBody(_) >> contextBuilder
-            contextBuilder.requestParameters(_) >> contextBuilder
-            contextBuilder.resourceName(_) >> contextBuilder
-            contextBuilder.build() >> executionContext
-            contextBuilder.buildAndGetId() >> 2
             crossFlowContext.into() >> into
-            parameters.getParameterKeys() >> ['alpha', 'beta', 'gamma']
-            parameters.getValue('alpha') >> 'a'
-            parameters.getValue('beta') >> 'b'
-            parameters.getValue('gamma') >> 'c'
-            crossFlowContext.parameters() >> parameters
+            crossFlowContext.allParameters() >> flowClasses.collect { Mock(Parameters) }
 
             manager.manageContext(_) >> 1
             manager.getManagedContext(1, CrossFlowContext) >> crossFlowContext
@@ -113,7 +148,6 @@ class FlowDispatcherTest extends Specification {
 
             links.getValues() >> [:]
             body.getValues() >> ["Greeting": "Hello", "Subject": "World"]
-            requestContext.parameters() >> parameters
             requestContext.getResourceName() >> "helloWorld"
             flowClasses.collect { Class flowClass -> result.collect { key, val -> key == flowClass.simpleName } }.size() == flowClasses.size()
         where:
