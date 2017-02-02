@@ -1,11 +1,13 @@
 package com.temenos.responder.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Context;
 
 import com.temenos.responder.configuration.*;
+import com.temenos.responder.configuration.Resource;
 import com.temenos.responder.context.*;
 import com.temenos.responder.dispatcher.Dispatcher;
 import com.temenos.responder.dispatcher.FlowDispatcher;
@@ -18,16 +20,9 @@ import com.temenos.responder.validator.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.*;
-import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 @Path("/{path: .*}")
 public class RequestHandler {
@@ -43,7 +38,7 @@ public class RequestHandler {
     private UriInfo info;
 
     @GET
-    public Response get(@HeaderParam(DEFAULT_ROUTE_ON) String versionName) {
+    public Response get(@HeaderParam(DEFAULT_ROUTE_ON) String versionName, @Context HttpServletRequest request) {
         return serviceRequest(info.getPath(), "GET", versionName, null);
     }
 

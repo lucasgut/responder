@@ -43,4 +43,8 @@ public class Parameters {
     public Set<String> getParameterKeys() {
         return parameters.keySet();
     }
+
+    public static Parameters none(){
+        return new Parameters();
+    }
 }
