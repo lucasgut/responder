@@ -1,6 +1,7 @@
 package com.temenos.responder.context;
 
 import com.temenos.responder.adapter.AdapterDispatcher;
+import com.temenos.responder.adapter.AdapterIdentifier;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
@@ -114,14 +115,18 @@ public interface ExecutionContext extends Context {
      */
     void notifyDispatchers(List<Class<Flow>> flow, String name);
 
-    AdapterDispatcher getAdapterDispatcher();
+    FlowInvoker flow(String name);
+    FlowDispatcher getFlowDispatcher();
 
-    Entity getFlowResponse(Class<? extends Flow> flowType);
+    void setFlowParameters(Map<String, Object> flowParameters);
+    Object getFlowParameter(String parameterName);
+
+    void setFlowResult(FlowResult flowResult);
+    Entity getFlowResult(Class<? extends Flow> flowType);
 
     String getQueryParameter(String parameterName);
 
-    void setFlowResponse(Entity t24CustomerEntity);
-
-    FlowDispatcher getFlowDispatcher();
+    AdapterInvoker adapter(AdapterIdentifier adapterIdentifier);
+    AdapterDispatcher getAdapterDispatcher();
 }
 

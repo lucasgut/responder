@@ -2,22 +2,20 @@ package com.temenos.responder.context;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.temenos.responder.adapter.AdapterDispatcher;
+import com.temenos.responder.adapter.AdapterIdentifier;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.commands.injector.CommandInjector;
 import com.temenos.responder.dispatcher.Dispatcher;
-import com.temenos.responder.dispatcher.FlowDispatcher;
 import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.flows.Flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -146,6 +144,51 @@ public class DefaultExecutionContext implements ExecutionContext {
     @Override
     public void notifyDispatchers(List<Class<Flow>> flows, String name) {
         contextAttributes.put(name, this.dispatcher.notify(flows));
+    }
+
+    @Override
+    public FlowInvoker flow(String name) {
+        return new FlowInvoker(name, this);
+    }
+
+    @Override
+    public void setFlowParameters(Map<String, Object> flowParameters) {
+
+    }
+
+    @Override
+    public Object getFlowParameter(String parameterName) {
+        return null;
+    }
+
+    @Override
+    public void setFlowResult(FlowResult flowResult) {
+
+    }
+
+    @Override
+    public Entity getFlowResult(Class<? extends Flow> flowType) {
+        return null;
+    }
+
+    @Override
+    public String getQueryParameter(String parameterName) {
+        return null;
+    }
+
+    @Override
+    public AdapterInvoker adapter(AdapterIdentifier adapterIdentifier) {
+        return null;
+    }
+
+    @Override
+    public com.temenos.responder.context.FlowDispatcher getFlowDispatcher() {
+        return null;
+    }
+
+    @Override
+    public AdapterDispatcher getAdapterDispatcher() {
+        return null;
     }
 
     @Override

@@ -1,26 +1,38 @@
 package com.temenos.responder.flows.dashboard;
 
-import com.temenos.responder.adapter.AdapterParameters;
+import com.temenos.responder.adapter.AdapterResult;
 import com.temenos.responder.adapter.t24.T24AdapterIdentifier;
 import com.temenos.responder.adapter.t24.T24GetEntityAdapter;
 import com.temenos.responder.context.ExecutionContext;
-import com.temenos.responder.entity.runtime.Entity;
-import com.temenos.responder.flows.T24Flow;
+import com.temenos.responder.context.FlowException;
+import com.temenos.responder.context.FlowResult;
+import com.temenos.responder.flows.AbstractFlow;
 
-public class GetT24CustomerFlow extends T24Flow {
+import java.util.Date;
+
+public class GetT24CustomerFlow extends AbstractFlow {
 
     @Override
-    public void doExecute(ExecutionContext executionContext) {
-        String customerId = (String) executionContext.getFlowParameter("customerId");
+    public FlowResult doExecute(ExecutionContext flowContext) {
+        String customerId = (String) flowContext.getFlowParameter("customerId");
 
-        // Execute adapter
-        AdapterParameters adapterParameters = T24GetEntityAdapter.requestBuilder()
-                .t24EnquiryName("CUSTOMER.ENQUIRY")
-                .id(customerId)
+        AdapterResult adapterResult = flowContext
+                .adapter(T24AdapterIdentifier.GetEntity)
+                .parameters(T24GetEntityAdapter.requestBuilder()
+                        .t24EnquiryName("CUSTOMER.ENQUIRY")
+                        .id(customerId)
+                        .build())
+                .invoke();
+        if(!adapterResult.isSuccess()) {
+            throw new FlowException(convertT24AdapterToHttpError(adapterResult.getErrorCode()), adapterResult.getErrorMessage());
+        }
+        return FlowResult.builder()
+                .entity(adapterResult.getEntity())
+                .attribute("time", new Date())
                 .build();
-        Entity response = invokeT24Adapter(executionContext, T24AdapterIdentifier.GetEntity, adapterParameters);
+    }
 
-        executionContext.setFlowResponse(response);
-        executionContext.setAttribute("status", "OK");
+    private int convertT24AdapterToHttpError(int errorCode) {
+        return 0;
     }
 }
