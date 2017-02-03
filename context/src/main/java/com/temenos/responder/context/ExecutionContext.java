@@ -1,6 +1,7 @@
 package com.temenos.responder.context;
 
 import com.temenos.responder.commands.Command;
+import com.temenos.responder.context.builder.ExecutionParameterBuilder;
 import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.flows.Flow;
@@ -88,7 +89,9 @@ public interface ExecutionContext extends Context {
      * @param parameters
      * @param into
      */
-    void executeFlows(List<Class<? extends Flow>> targetFlows, Parameters parameters, String... into);
+    void executeFlows(List<Class<? extends Flow>> targetFlows, List<Parameters> parameters, List<String> into);
+
+    ExecutionParameterBuilder buildExecution();
 
     Class<? extends Flow> getFlowClass();
 }

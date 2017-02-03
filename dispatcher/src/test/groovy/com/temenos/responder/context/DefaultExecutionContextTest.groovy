@@ -50,7 +50,7 @@ class DefaultExecutionContextTest extends Specification {
     }
 
     @Unroll
-    def "Notify dispatchers that #flows.simpleName are ready to execute in parallel with parameters and map the results to #into"(List<Class<Flow>> flows, String[] into) {
+    def "Notify dispatchers that #flows.simpleName are ready to execute in parallel with parameters and map the results to #into"(flows, into) {
         given: "A parent flow executed from a resource"
             def serverRoot = 'http://0.0.0.0/root'
             def self = 'http://0.0.0.0/root/resource'
@@ -71,14 +71,14 @@ class DefaultExecutionContextTest extends Specification {
                 factory.getCrossFlowContextBuilder(manager) >> builder
             }
             def context = Mock(CrossFlowContext)
-            def from = Mock(Parameters)
+            def from = [Mock(Parameters)]
             def executionContext = new DefaultExecutionContext(serverRoot, self, resourceName, null, contextAttributes, null, dispatcher, factory, manager, ParallelTestFlow)
         when: "A list of flows are made available to the dispatcher"
             executionContext.executeFlows(flows, from, into)
         then: "The result of each flow must be mapped to a respective context attribute name"
             contextAttributes == responseData
         and: "The dispatcher will execute the given flows and will map each result to each parameter name"
-            1 * dispatcher.notify(flows, 1, into) >> responseData
+            1 * dispatcher.notify(flows, 1) >> responseData
         where:
             flows                                                              | into
             [VersionInformationFlow, CustomerAddressFlow, CustomerInformation] | ['versionResult', 'addressResult', 'customerInfoResult']

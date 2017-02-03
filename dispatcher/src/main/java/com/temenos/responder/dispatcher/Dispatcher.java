@@ -30,10 +30,9 @@ public interface Dispatcher {
     /**
      * Notify the dispatcher instance that multiple {@link Flow flows} are available to execute in parallel.
      *
-     * @param flow
+     * @param flows
      * @param crossFlowContextId
-     * @param into
      * @return
      */
-    Map<String, Document> notify(List<Class<? extends Flow>> flow, long crossFlowContextId, String... into);
+    Map<String, Document> notify(List<Class<? extends Flow>> flows, long crossFlowContextId);
 }

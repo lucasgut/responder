@@ -15,7 +15,14 @@ class ParallelTestFlow extends AbstractFlow {
 
     @Override
     void doExecute(ExecutionContext context) {
-        context.executeFlows([VersionInformationFlow, AdditionFlow], Parameters.none(), ['version','add'] as String[])
+        context.buildExecution()
+                .flow(VersionInformationFlow)
+                .into('version')
+                .execution()
+                .inParallelWith(AdditionFlow)
+                .into('add')
+                .execution()
+                .execute();
         context.setAttribute("finalResult", new Entity([
                 (ScaffoldParallelTestOutput.ADDITION_RESULT): context.getAttribute('add').getBody().get(ScaffoldAdditionOutput.RESULT),
                 (ScaffoldParallelTestOutput.VERSION)        : context.getAttribute('version').getBody().get(ScaffoldVersion.VERSION_NUMBER)

@@ -106,7 +106,12 @@ public class Entity {
      */
     public <T> T get(String key, Class<T> expected) throws EntityException {
         Object value = get(key);
-        Class<?> valueType = value.getClass();
+        Class<?> valueType;
+        if(value == null){
+            valueType = Void.class;
+        }else {
+            valueType = value.getClass();
+        }
         if (!expected.isAssignableFrom(valueType)) {
             throw new TypeMismatchException(String.format(INVALID_TYPE_MSG,
                     expected.getSimpleName(), valueType.getSimpleName()));
@@ -363,7 +368,11 @@ public class Entity {
         } else {
             if (!baseKey.isEmpty()) {
                 accessors.put(baseKey, properties);
-                fqAccessorNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
+                if(properties == null){
+                    fqAccessorNameAndType.put(baseKey, Type.fromStaticType(Void.class));
+                }else {
+                    fqAccessorNameAndType.put(baseKey, Type.fromStaticType(properties.getClass()));
+                }
             }
         }
     }

@@ -6,6 +6,8 @@ import com.temenos.responder.commands.Command;
 import com.temenos.responder.commands.injector.CommandInjector;
 import com.temenos.responder.context.builder.ContextBuilderFactory;
 import com.temenos.responder.context.builder.CrossFlowContextBuilder;
+import com.temenos.responder.context.builder.ExecutionParameterBuilder;
+import com.temenos.responder.context.builder.FlowExecutionParameterBuilder;
 import com.temenos.responder.context.manager.ContextManager;
 import com.temenos.responder.context.manager.DefaultContextManager;
 import com.temenos.responder.dispatcher.Dispatcher;
@@ -129,15 +131,20 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public void executeFlows(List<Class<? extends Flow>> targetFlows, Parameters from, String... into) {
+    public void executeFlows(List<Class<? extends Flow>> targetFlows, List<Parameters> from, List<String> into) {
         try (CrossFlowContextBuilder builder = factory.getCrossFlowContextBuilder(manager)) {
-            this.contextAttributes.putAll(this.dispatcher.notify(targetFlows, crossFlowContext(builder, flowClass, into, from), into));
+            this.contextAttributes.putAll(this.dispatcher.notify(targetFlows, crossFlowContext(builder, flowClass, into, from)));
         }
     }
 
     @Override
     public String getInternalResource(String resourcePath) {
         return this.serverRoot + resourcePath;
+    }
+
+    @Override
+    public ExecutionParameterBuilder buildExecution() {
+        return new FlowExecutionParameterBuilder(this);
     }
 
     private long crossFlowContext(CrossFlowContextBuilder builder, Class<? extends Flow> sourceFlow, String into, Parameters from) {
@@ -148,7 +155,7 @@ public class DefaultExecutionContext implements ExecutionContext {
                 .buildAndGetId();
     }
 
-    private long crossFlowContext(CrossFlowContextBuilder builder, Class<? extends Flow> sourceFlow, String[] into, Parameters from) {
+    private long crossFlowContext(CrossFlowContextBuilder builder, Class<? extends Flow> sourceFlow, List<String> into, List<Parameters> from) {
         return builder
                 .origin(this.serverRoot, this.self, sourceFlow)
                 .parameters(from)
