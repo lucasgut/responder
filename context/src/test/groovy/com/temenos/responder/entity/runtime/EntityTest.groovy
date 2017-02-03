@@ -35,6 +35,7 @@ class EntityTest extends Specification {
             'Greeting.Subject[0][1].LastName' | ["Greeting": ["Subject": [[["LastName": "Ferrari"], ["LastName": "Lamborghini"], ["LastName": "Escort"]]]]] | "Lamborghini"
             'Greeting.Subject'                | ["Greeting": ["Subject": "Everybody"], "Greeting.Subject": "World"]                                         | "Everybody"
             'Greeting\\.Subject'              | ["Greeting": ["Subject": "Everybody"], "Greeting.Subject": "World"]                                         | "World"
+            'Greeting'                        | ['Greeting': null]                                                                                          | null
     }
 
     @Unroll
@@ -63,6 +64,23 @@ class EntityTest extends Specification {
             'Greeting.Subject[0][1].LastName' | ["Greeting": ["Subject": [[["LastName": "Ferrari"], ["LastName": "Lamborghini"], ["LastName": "Escort"]]]]] | "Lamborghini"                             | String.class
             'Greeting.Subject'                | ["Greeting": ["Subject": "Everybody"], "Greeting.Subject": "World"]                                         | "Everybody"                               | String.class
             'Greeting\\.Subject'              | ["Greeting": ["Subject": "Everybody"], "Greeting.Subject": "World"]                                         | "World"                                   | String.class
+    }
+
+    @Unroll
+    def "Access null value from entity #map using #key and declared type Void.class"(key, map) {
+        given:
+            def entity = new Entity(map)
+        when:
+            def result = entity.get(key, Void.class)
+        then:
+            result == null
+        where:
+            key                   | map
+            'Greeting'            | ['Greeting': null]
+            'Greeting.Subject'    | ['Greeting': ['Subject': null]]
+            'Greeting[0]'         | ['Greeting': [null, null, null]]
+            'Greeting[0].Subject' | ['Greeting': [['Subject': null]]]
+
     }
 
     @Unroll
@@ -120,25 +138,33 @@ class EntityTest extends Specification {
             entity.getValues() == newStructure
             entity.get(key) == value
         where:
-            key                             | value          | originalStructure                                                                         | newStructure
-            'Greeting'                      | 'Hello'        | [:]                                                                                       | ["Greeting": "Hello"]
-            'Greeting.Subject'              | 'World'        | [:]                                                                                       | ["Greeting": ["Subject": "World"]]
-            'Greeting[0]'                   | 'World'        | [:]                                                                                       | ["Greeting": ["World"]]
-            'Greeting'                      | 'Ciao'         | ['Greeting': 'Hello']                                                                     | ["Greeting": "Ciao"]
-            'Subject'                       | 'World'        | ['Greeting': 'Hello']                                                                     | ["Greeting": "Hello", "Subject": "World"]
-            'Greeting\\.Subject'            | 'Everybody'    | ["Greeting": ["Greeting": "Hello", "Subject": "World"]]                                   | ["Greeting": ["Greeting": "Hello", "Subject": "World"], "Greeting.Subject": "Everybody"]
-            'Greeting\\.Subject'            | 'Everybody'    | ['Greeting.Subject': 'World']                                                             | ['Greeting.Subject': 'Everybody']
-            'Greeting.Subject'              | 'Everybody'    | ["Greeting": ["Greeting": "Hello", "Subject": "World"]]                                   | ["Greeting": ["Greeting": "Hello", "Subject": "Everybody"]]
-            'Greeting.Subject.Location'     | 'World'        | ["Greeting": ["Subject": ["Location": "Everywhere"]]]                                     | ["Greeting": ["Subject": ["Location": "World"]]]
-            'Greeting[0]'                   | 'Ciao'         | ["Greeting": ["Hello", "Bonjour", "Guten Tag"]]                                           | ["Greeting": ["Ciao", "Bonjour", "Guten Tag"]]
-            'Greeting[1]'                   | 'Ciao'         | ["Greeting": ["Hello"]]                                                                   | ["Greeting": ["Hello", "Ciao"]]
-            'Greeting[0].Greeting'          | 'Ciao'         | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]] | ["Greeting": [["Greeting": "Ciao"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]
-            'Greeting[0].Subject'           | 'Everyone'     | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]] | ["Greeting": [["Greeting": "Hello", "Subject": "Everyone"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]
-            'Greeting[3].Subject'           | 'Everyone'     | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]] | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"], ["Subject": "Everyone"]]]
-            'Greeting.Subject[0].Location'  | 'World'        | ["Greeting": ["Subject": [["Location": "Everywhere"]]]]                                   | ["Greeting": ["Subject": [["Location": "World"]]]]
-            'Address[0].Address[0].Address' | 'Station Road' | [:]                                                                                       | ['Address': [['Address': [["Address": "Station Road"]]]]]
-            'Address[0].Address[1].Address' | 'Station Road' | ["Address": [['Address': [['Address': 'Turing Road']]]]]                                  | ['Address': [['Address': [["Address": "Turing Road"], ["Address": "Station Road"]]]]]
-            'Address[0].Address[0].Address' | 'Station Road' | ["Address": [['Address': [['Address': 'Turing Road']]]]]                                  | ['Address': [['Address': [["Address": "Station Road"]]]]]
+            key                             | value          | originalStructure                                                                                                                                                                                                                                                                 | newStructure
+            'Greeting'                      | 'Hello'        | [:]                                                                                                                                                                                                                                                                               | ["Greeting": "Hello"]
+            'Greeting.Subject'              | 'World'        | [:]                                                                                                                                                                                                                                                                               | ["Greeting": ["Subject": "World"]]
+            'Greeting[0]'                   | 'World'        | [:]                                                                                                                                                                                                                                                                               | ["Greeting": ["World"]]
+            'Greeting'                      | 'Ciao'         | ['Greeting': 'Hello']                                                                                                                                                                                                                                                             | ["Greeting": "Ciao"]
+            'Subject'                       | 'World'        | ['Greeting': 'Hello']                                                                                                                                                                                                                                                             | ["Greeting": "Hello", "Subject": "World"]
+            'Greeting\\.Subject'            | 'Everybody'    | ["Greeting": ["Greeting": "Hello", "Subject": "World"]]                                                                                                                                                                                                                           | ["Greeting": ["Greeting": "Hello", "Subject": "World"], "Greeting.Subject": "Everybody"]
+            'Greeting\\.Subject'            | 'Everybody'    | ['Greeting.Subject': 'World']                                                                                                                                                                                                                                                     | ['Greeting.Subject': 'Everybody']
+            'Greeting.Subject'              | 'Everybody'    | ["Greeting": ["Greeting": "Hello", "Subject": "World"]]                                                                                                                                                                                                                           | ["Greeting": ["Greeting": "Hello", "Subject": "Everybody"]]
+            'Greeting.Subject.Location'     | 'World'        | ["Greeting": ["Subject": ["Location": "Everywhere"]]]                                                                                                                                                                                                                             | ["Greeting": ["Subject": ["Location": "World"]]]
+            'Greeting[0]'                   | 'Ciao'         | ["Greeting": ["Hello", "Bonjour", "Guten Tag"]]                                                                                                                                                                                                                                   | ["Greeting": ["Ciao", "Bonjour", "Guten Tag"]]
+            'Greeting[1]'                   | 'Ciao'         | ["Greeting": ["Hello"]]                                                                                                                                                                                                                                                           | ["Greeting": ["Hello", "Ciao"]]
+            'Greeting[10]'                  | 'Hola'         | ["Greeting": ["Hello", "Hey", "Howdy", "Hi", "Good day", "Yo", "Good evening", "Guten Tag", "Bonjour", "Ciao"]]                                                                                                                                                                   | ["Greeting": ["Hello", "Hey", "Howdy", "Hi", "Good day", "Yo", "Good evening", "Guten Tag", "Bonjour", "Ciao", "Hola"]]
+            'Greeting[10]'                  | 'Hej'          | ["Greeting": ["Hello", "Hey", "Howdy", "Hi", "Good day", "Yo", "Good evening", "Guten Tag", "Bonjour", "Ciao", "Hola"]]                                                                                                                                                           | ["Greeting": ["Hello", "Hey", "Howdy", "Hi", "Good day", "Yo", "Good evening", "Guten Tag", "Bonjour", "Ciao", "Hej"]]
+            'Greeting[10].Greeting'         | 'Hej'          | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Hey"], ["Greeting": "Howdy"], ["Greeting": "Hi"], ["Greeting": "Good day"], ["Greeting": "Yo"], ["Greeting": "Good evening"], ["Greeting": "Guten Tag"], ["Greeting": "Bonjour"], ["Greeting": "Ciao"]]]                       | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Hey"], ["Greeting": "Howdy"], ["Greeting": "Hi"], ["Greeting": "Good day"], ["Greeting": "Yo"], ["Greeting": "Good evening"], ["Greeting": "Guten Tag"], ["Greeting": "Bonjour"], ["Greeting": "Ciao"], ["Greeting": "Hej"]]]
+            'Greeting[10].Greeting'         | 'Hej'          | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Hey"], ["Greeting": "Howdy"], ["Greeting": "Hi"], ["Greeting": "Good day"], ["Greeting": "Yo"], ["Greeting": "Good evening"], ["Greeting": "Guten Tag"], ["Greeting": "Bonjour"], ["Greeting": "Ciao"], ["Greeting": "Hola"]]] | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Hey"], ["Greeting": "Howdy"], ["Greeting": "Hi"], ["Greeting": "Good day"], ["Greeting": "Yo"], ["Greeting": "Good evening"], ["Greeting": "Guten Tag"], ["Greeting": "Bonjour"], ["Greeting": "Ciao"], ["Greeting": "Hej"]]]
+            'Greeting[0].Greeting'          | 'Ciao'         | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]                                                                                                                                                                                         | ["Greeting": [["Greeting": "Ciao"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]
+            'Greeting[0].Subject'           | 'Everyone'     | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]                                                                                                                                                                                         | ["Greeting": [["Greeting": "Hello", "Subject": "Everyone"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]
+            'Greeting[3].Subject'           | 'Everyone'     | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"]]]                                                                                                                                                                                         | ["Greeting": [["Greeting": "Hello"], ["Greeting": "Bonjour"], ["Greeting": "Guten Tag"], ["Subject": "Everyone"]]]
+            'Greeting.Subject[0].Location'  | 'World'        | ["Greeting": ["Subject": [["Location": "Everywhere"]]]]                                                                                                                                                                                                                           | ["Greeting": ["Subject": [["Location": "World"]]]]
+            'Address[0].Address[0].Address' | 'Station Road' | [:]                                                                                                                                                                                                                                                                               | ['Address': [['Address': [["Address": "Station Road"]]]]]
+            'Address[0].Address[1].Address' | 'Station Road' | ["Address": [['Address': [['Address': 'Turing Road']]]]]                                                                                                                                                                                                                          | ['Address': [['Address': [["Address": "Turing Road"], ["Address": "Station Road"]]]]]
+            'Address[0].Address[0].Address' | 'Station Road' | ["Address": [['Address': [['Address': 'Turing Road']]]]]                                                                                                                                                                                                                          | ['Address': [['Address': [["Address": "Station Road"]]]]]
+            'Address'                       | null           | ["Address": 'Turing Road']                                                                                                                                                                                                                                                        | ["Address": null]
+            'Greeting.Subject'              | null           | ["Greeting": ["Greeting": "Hello"]]                                                                                                                                                                                                                                               | ["Greeting": ["Greeting": "Hello", "Subject": null]]
+            'Greeting[0]'                   | null           | ["Greeting": ["Hello", "Ciao", "Hola", "Bonjour"]]                                                                                                                                                                                                                                | ["Greeting": [null, "Ciao", "Hola", "Bonjour"]]
+            'Greeting[1]'                   | null           | ["Greeting": ["Hello"]]                                                                                                                                                                                                                                                           | ["Greeting": ["Hello", null]]
     }
 
     @Unroll
@@ -152,6 +178,7 @@ class EntityTest extends Specification {
             'Greeting'                      | 'Hello'                           | ["Greeting": 'Hello']
             'Greetings'                     | ['Hello', 'Bonjour', 'Guten Tag'] | ['Greetings': ['Hello', 'Bonjour', 'Guten Tag']]
             'Greetings[0]'                  | 'Hello'                           | ['Greetings': ['Hello']]
+            'Greetings[1]'                  | 'Hello'                           | ['Greetings': ['Hello']]
             'Greetings[0][1]'               | 'Hello'                           | ['Greetings': [['Hello']]]
             'Greetings[0].Subject'          | 'Everybody'                       | ['Greetings': [['Subject': 'Everybody']]]
             'Greetings[0][1].Subject'       | 'Hello'                           | ['Greetings': [[['Subject': 'Hello']]]]
@@ -178,6 +205,7 @@ class EntityTest extends Specification {
             'Greetings\\.Greeting.Greeting'           | ['Greeting', 'Greetings.Greeting']
             'Greetings.Subject.Location'              | ['Location', 'Subject', 'Greetings']
             'Address[0].Address[0].Address'           | ['Address', '[]', 'Address', '[]', 'Address']
+            'Address[10].Address[10].Address'         | ['Address', '[]', 'Address', '[]', 'Address']
     }
 
 }
