@@ -1,5 +1,6 @@
 package com.temenos.responder.context;
 
+import com.temenos.responder.entity.runtime.Entity;
 import rx.Observable;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class FlowInvoker {
         return this;
     }
 
-    public FlowResult invoke() {
+    public Entity invoke() {
         return executionContext.getFlowDispatcher().invokeFlow(flowName, parameters, executionContext);
     }
 

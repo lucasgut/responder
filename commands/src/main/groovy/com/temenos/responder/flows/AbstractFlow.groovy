@@ -5,7 +5,7 @@ import com.temenos.responder.commands.Command
 import com.temenos.responder.context.CommandContext
 import com.temenos.responder.context.DefaultCommandContext
 import com.temenos.responder.context.ExecutionContext
-import com.temenos.responder.context.FlowResult
+import com.temenos.responder.entity.runtime.Entity
 
 /**
  * An AbstractFlow executes a command and automatically adds a self link to the document.
@@ -16,7 +16,7 @@ import com.temenos.responder.context.FlowResult
 abstract class AbstractFlow implements Flow {
 
     @Override
-    public final FlowResult execute(ExecutionContext context){
+    public final Entity execute(ExecutionContext context){
         doExecute(context)
         generateSelfLink(context)
     }
@@ -29,7 +29,7 @@ abstract class AbstractFlow implements Flow {
      * @param context An {@link ExecutionContext execution context} instance. All flow parameters should be passed in using
      * {@link ExecutionContext#setAttribute(java.lang.String, java.lang.Object) the setAttribute method}.
      */
-    public abstract FlowResult doExecute(ExecutionContext context);
+    public abstract Entity doExecute(ExecutionContext context);
 
     protected void generateSelfLink(ExecutionContext context){
         //fetch command

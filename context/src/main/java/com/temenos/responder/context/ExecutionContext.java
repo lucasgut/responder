@@ -1,9 +1,8 @@
 package com.temenos.responder.context;
 
 import com.temenos.responder.adapter.AdapterDispatcher;
-import com.temenos.responder.adapter.AdapterIdentifier;
+import com.temenos.responder.adapter.AdapterClient;
 import com.temenos.responder.commands.Command;
-import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.flows.Flow;
 
@@ -43,11 +42,11 @@ public interface ExecutionContext extends Context {
     <T extends Command> Command getCommand(Class<T> clazz);
 
     /**
-     * Fetch the contents of the request payload deserialised as an {@link Entity object}.
+     * Fetch the contents of the request payload deserialised as an {@link com.temenos.responder.entity.runtime.Entity object}.
      *
-     * @return The request payload deserialised as an {@link Entity object}.
+     * @return The request payload deserialised as an {@link com.temenos.responder.entity.runtime.Entity object}.
      */
-    Entity getRequestBody();
+    com.temenos.responder.entity.runtime.Entity getRequestBody();
 
     /**
      * Obtain the value of a field inside the request body.
@@ -98,13 +97,12 @@ public interface ExecutionContext extends Context {
 
     void setFlowParameters(Map<String, Object> flowParameters);
     Object getFlowParameter(String parameterName);
-
-    void setFlowResult(FlowResult flowResult);
-    Entity getFlowResult(Class<? extends Flow> flowType);
+    String getFlowParameterAsString(String parameterName);
+    Entity getFlowParameterAsEntity(String parameterName);
 
     String getQueryParameter(String parameterName);
 
-    AdapterInvoker adapter(AdapterIdentifier adapterIdentifier);
+    <T extends AdapterClient> AdapterInvoker<T> adapter(Class<T> parameterType);
     AdapterDispatcher getAdapterDispatcher();
 }
 

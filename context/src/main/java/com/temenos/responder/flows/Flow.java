@@ -1,7 +1,7 @@
 package com.temenos.responder.flows;
 
 import com.temenos.responder.context.ExecutionContext;
-import com.temenos.responder.context.FlowResult;
+import com.temenos.responder.entity.runtime.Entity;
 
 /**
  * Created by Douglas Groves on 04/01/2017.
@@ -14,5 +14,5 @@ public interface Flow {
      * @param context An {@link ExecutionContext execution context} instance. All flow parameters should be passed in using
      * {@link ExecutionContext#setAttribute(java.lang.String, java.lang.Object) the setAttribute method}.
      */
-    FlowResult execute(ExecutionContext context);
+    Entity execute(ExecutionContext context);
 }

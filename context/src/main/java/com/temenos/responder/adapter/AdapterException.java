@@ -1,14 +1,20 @@
 package com.temenos.responder.adapter;
 
 public class AdapterException extends RuntimeException {
-    private final int code;
+    private final String code;
+    private final AdapterFailureType type;
 
-    public AdapterException(int code, String message) {
+    public AdapterException(String code, String message, AdapterFailureType type) {
         super(message);
         this.code = code;
+        this.type = type;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
+    }
+
+    public AdapterFailureType getFailureType() {
+        return type;
     }
 }

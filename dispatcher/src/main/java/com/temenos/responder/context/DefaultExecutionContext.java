@@ -3,7 +3,7 @@ package com.temenos.responder.context;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.temenos.responder.adapter.AdapterDispatcher;
-import com.temenos.responder.adapter.AdapterIdentifier;
+import com.temenos.responder.adapter.AdapterClient;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.commands.injector.CommandInjector;
 import com.temenos.responder.context.builder.ContextBuilderFactory;
@@ -31,7 +31,7 @@ public class DefaultExecutionContext implements ExecutionContext {
     private final Map<String, Object> contextAttributes;
     private final String resourceName;
     private final String self;
-    private final Entity requestBody;
+    private final com.temenos.responder.entity.runtime.Entity requestBody;
     private final Injector commandInjector;
     private final Dispatcher dispatcher;
     private final String serverRoot;
@@ -47,13 +47,13 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     public DefaultExecutionContext(String serverRoot, String self,
-                                   String resourceName, Parameters parameters, Entity requestBody, Dispatcher dispatcher, Class<? extends Flow> flowClass) {
+                                   String resourceName, Parameters parameters, com.temenos.responder.entity.runtime.Entity requestBody, Dispatcher dispatcher, Class<? extends Flow> flowClass) {
         this(serverRoot, self, resourceName, parameters, new HashMap<>(),
                 requestBody, dispatcher, ContextBuilderFactory.factory(), DefaultContextManager.getManager(), flowClass);
     }
 
     public DefaultExecutionContext(String serverRoot, String self, String resourceName,
-                                   Parameters parameters, Map<String, Object> contextAttributes, Entity requestBody,
+                                   Parameters parameters, Map<String, Object> contextAttributes, com.temenos.responder.entity.runtime.Entity requestBody,
                                    Dispatcher dispatcher, ContextBuilderFactory factory, ContextManager manager, Class<? extends Flow> flowClass) {
         this.serverRoot = serverRoot;
         this.self = self;
@@ -99,7 +99,7 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public Entity getRequestBody() {
+    public com.temenos.responder.entity.runtime.Entity getRequestBody() {
         return requestBody;
     }
 
@@ -153,22 +153,12 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public void setFlowResult(FlowResult flowResult) {
-
-    }
-
-    @Override
-    public Entity getFlowResult(Class<? extends Flow> flowType) {
-        return null;
-    }
-
-    @Override
     public String getQueryParameter(String parameterName) {
         return null;
     }
 
     @Override
-    public AdapterInvoker adapter(AdapterIdentifier adapterIdentifier) {
+    public <T extends AdapterClient> AdapterInvoker<T> adapter(Class<T> parameterType) {
         return null;
     }
 
@@ -179,6 +169,16 @@ public class DefaultExecutionContext implements ExecutionContext {
 
     @Override
     public AdapterDispatcher getAdapterDispatcher() {
+        return null;
+    }
+
+    @Override
+    public String getFlowParameterAsString(String parameterName) {
+        return null;
+    }
+
+    @Override
+    public Entity getFlowParameterAsEntity(String parameterName) {
         return null;
     }
 

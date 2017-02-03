@@ -1,25 +1,25 @@
 package com.temenos.responder.context;
 
+import com.temenos.responder.adapter.AdapterClient;
 import com.temenos.responder.adapter.AdapterIdentifier;
-import com.temenos.responder.adapter.AdapterParameters;
-import com.temenos.responder.adapter.AdapterResult;
+import com.temenos.responder.entity.runtime.Entity;
 
-public class AdapterInvoker {
+public class AdapterInvoker<T extends AdapterClient> {
     private AdapterIdentifier adapterIdentifier;
     private ExecutionContext executionContext;
-    private AdapterParameters parameters;
+    private T parameters;
 
-    AdapterInvoker(AdapterIdentifier adapterIdentifier, ExecutionContext executionContext) {
+    protected AdapterInvoker(AdapterIdentifier adapterIdentifier, ExecutionContext executionContext) {
         this.adapterIdentifier = adapterIdentifier;
         this.executionContext = executionContext;
     }
 
-    public AdapterInvoker parameters(AdapterParameters parameters) {
+    public AdapterInvoker parameters(T parameters) {
         this.parameters = parameters;
         return this;
     }
 
-    public AdapterResult invoke() {
+    public Entity invoke() {
         return executionContext.getAdapterDispatcher().invokeAdapter(adapterIdentifier, parameters);
     }
 
