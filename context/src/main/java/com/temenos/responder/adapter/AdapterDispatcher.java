@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
-public class AdapterDispatcher {
-    private final Map<AdapterIdentifier, Adapter> adapters = new HashMap<>();
+public class AdapterDispatcher<T extends AdapterClient> {
+    private final Map<String, Adapter> adapters = new HashMap<>();
 
-    public <T extends AdapterClient> Entity invokeAdapter(AdapterIdentifier adapterId, T adapterParameters) throws AdapterException {
+    public <T extends AdapterClient> Entity invokeAdapter(Class<T> adapterType, T adapterParameters) throws AdapterException {
         try {
-            return adapters.get(adapterId).execute(adapterParameters);
+            return adapters.get(adapterType.getSimpleName()).execute(adapterParameters);
         } catch (AdapterException e) {
             throw new FlowException(convertAdapterToFlowErrorCode(e.getFailureType()), e.getMessage(), e.getCode());
         } catch (Exception e) {

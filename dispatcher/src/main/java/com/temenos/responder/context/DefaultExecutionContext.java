@@ -160,8 +160,8 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public <T extends AdapterClient> AdapterInvoker<T> adapter(Class<T> parameterType) {
-        return null;
+    public <T extends AdapterClient> AdapterInvoker<T> adapter(Class<T> adapterType) {
+        return new AdapterInvoker<>(adapterType, this);
     }
 
     @Override
