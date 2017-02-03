@@ -71,17 +71,18 @@ public class FlowDispatcher implements Dispatcher {
     }
 
     @Override
-    public Map<String, Document> notify(List<Class<? extends Flow>> flows, long crossFlowContextId, String... into) {
+    public Map<String, Document> notify(List<Class<? extends Flow>> flows, long crossFlowContextId) {
         Map<String, Document> result = new ConcurrentHashMap<>();
         try {
+            CrossFlowContext ctx = manager.getManagedContext(crossFlowContextId, CrossFlowContext.class);
+            List<String> into = ctx.into();
             int[] index = {0};
             runner.invokeAll(
-                    getCallables(flows, manager.getManagedContext(crossFlowContextId, CrossFlowContext.class))
+                    getCallables(flows, ctx)
             ).forEach(flowResult -> {
                 try {
                     Document flowResponse = flowResult.get();
-                    result.put(into[index[0]], flowResponse);
-                    index[0]++;
+                    result.put(into.get(index[0]++), flowResponse);
                 } catch (InterruptedException | ExecutionException ie) {
                     throw new RuntimeException(ie);
                 }
@@ -117,7 +118,8 @@ public class FlowDispatcher implements Dispatcher {
 
     private Collection<Callable<Document>> getCallables(List<Class<? extends Flow>> flows, CrossFlowContext cfc) {
         List<Callable<Document>> result = new ArrayList<>();
-        flows.forEach(flow -> result.add(getCallable(flow, cfc.parameters())));
+        int[] index = {0};
+        flows.forEach(flow -> result.add(getCallable(flow, cfc.allParameters().get(index[0]++))));
         return result;
     }
 

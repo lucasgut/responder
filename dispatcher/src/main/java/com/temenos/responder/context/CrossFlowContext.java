@@ -25,6 +25,9 @@ public interface CrossFlowContext extends ParameterisedContext {
      *
      * @return A {@link List list} of parameter values.
      */
+    List<Parameters> allParameters();
+
+
     Parameters parameters();
 
     /**

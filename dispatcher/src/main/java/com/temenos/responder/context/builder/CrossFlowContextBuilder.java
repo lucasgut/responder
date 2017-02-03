@@ -21,7 +21,7 @@ import java.util.*;
 public class CrossFlowContextBuilder implements ContextBuilder<CrossFlowContext>, AutoCloseable {
 
     private Origin origin;
-    private Parameters parameters;
+    private List<Parameters> parameters = new ArrayList<>();
     private List<String> into = new ArrayList<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CrossFlowContextBuilder.class);
@@ -33,25 +33,23 @@ public class CrossFlowContextBuilder implements ContextBuilder<CrossFlowContext>
         return this;
     }
 
-    public CrossFlowContextBuilder parameters(String key, String value){
-        parameters.setValue(key, value);
-        return this;
-    }
-
-    public CrossFlowContextBuilder parameters(Map<String, String> values){
-        for(Map.Entry<String,String> entry : values.entrySet()){
-            parameters.setValue(entry.getKey(), entry.getValue());
-        }
-        return this;
-    }
-
-    public CrossFlowContextBuilder parameters(Parameters parameters){
+    public CrossFlowContextBuilder parameters(List<Parameters> parameters){
         this.parameters = parameters;
         return this;
     }
 
-    public CrossFlowContextBuilder into(String... into){
-        this.into.addAll(Arrays.asList(into));
+    public CrossFlowContextBuilder parameters(Parameters parameters){
+        this.parameters.add(parameters);
+        return this;
+    }
+
+    public CrossFlowContextBuilder into(String into){
+        this.into.add(into);
+        return this;
+    }
+
+    public CrossFlowContextBuilder into(List<String> into){
+        this.into.addAll(into);
         return this;
     }
 

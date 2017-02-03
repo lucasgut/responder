@@ -12,15 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultCrossFlowContext implements CrossFlowContext {
 
     private final Origin origin;
-    private final Parameters parameters;
+    private final List<Parameters> parameters;
     private final List<String> into;
     private final Map<String, Object> attributes;
 
-    public DefaultCrossFlowContext(Origin origin, Parameters parameters, List<String> into){
+    public DefaultCrossFlowContext(Origin origin, List<Parameters> parameters, List<String> into){
         this(origin, parameters, into, new ConcurrentHashMap<>());
     }
 
-    DefaultCrossFlowContext(Origin origin, Parameters parameters, List<String> into, Map<String,Object> attributes){
+    DefaultCrossFlowContext(Origin origin, List<Parameters> parameters, List<String> into, Map<String,Object> attributes){
         this.parameters = parameters;
         this.into = into;
         this.origin = origin;
@@ -44,8 +44,13 @@ public class DefaultCrossFlowContext implements CrossFlowContext {
     }
 
     @Override
-    public Parameters parameters() {
+    public List<Parameters> allParameters() {
         return parameters;
+    }
+
+    @Override
+    public Parameters parameters() {
+        return parameters.get(0);
     }
 
     @Override
