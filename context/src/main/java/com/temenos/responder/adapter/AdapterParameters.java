@@ -1,4 +1,4 @@
 package com.temenos.responder.adapter;
 
-public interface AdapterClient {
+public interface AdapterParameters {
 }

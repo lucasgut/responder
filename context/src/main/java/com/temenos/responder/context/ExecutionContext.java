@@ -1,10 +1,9 @@
 package com.temenos.responder.context;
 
-import com.temenos.responder.adapter.AdapterDispatcher;
-import com.temenos.responder.adapter.AdapterClient;
+import com.temenos.responder.adapter.AdapterCommandDispatcher;
+import com.temenos.responder.adapter.AdapterParameters;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.context.builder.ExecutionParameterBuilder;
-import com.temenos.responder.entity.runtime.Document;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.flows.Flow;
 
@@ -106,7 +105,7 @@ public interface ExecutionContext extends Context {
 
     String getQueryParameter(String parameterName);
 
-    <T extends AdapterClient> AdapterInvoker<T> adapter(Class<T> parameterType);
-    AdapterDispatcher getAdapterDispatcher();
+    <T extends AdapterParameters> AdapterInvoker<T> adapterCommand(Class<T> parameterType);
+    AdapterCommandDispatcher getAdapterDispatcher();
 }
 
