@@ -7,6 +7,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import static com.temenos.responder.flows.dashboard.Iris2Helper.iris2ToJaxRs;
+import static com.temenos.responder.flows.dashboard.Iris2Helper.writeResponse;
 
 @Provider
 public class IRIS2ExceptionMapper implements ExceptionMapper<Exception> {
@@ -14,16 +15,16 @@ public class IRIS2ExceptionMapper implements ExceptionMapper<Exception> {
 
    public javax.ws.rs.core.Response toResponse(Exception e) {
       Response response = iris2.handleFailure(e);
-      return iris2ToJaxRs(response, outStream -> iris2.writeEntity(response, outStream));
+      return iris2ToJaxRs(response, outStream -> writeResponse(response, outStream));
    }
 
    public javax.ws.rs.core.Response toResponse(IRIS2Exception e) {
       Response response = iris2.handleFailure(e);
-      return iris2ToJaxRs(response, outStream -> iris2.writeEntity(response, outStream));
+      return iris2ToJaxRs(response, outStream -> writeResponse(response, outStream));
    }
 
    public javax.ws.rs.core.Response toResponse(IRIS2ValidationException e) {
       Response response = iris2.handleFailure(e);
-      return iris2ToJaxRs(response, outStream -> iris2.writeEntity(response, outStream));
+      return iris2ToJaxRs(response, outStream -> writeResponse(response, outStream));
    }
 }
