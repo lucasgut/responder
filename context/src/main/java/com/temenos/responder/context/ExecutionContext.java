@@ -1,7 +1,7 @@
 package com.temenos.responder.context;
 
+import com.google.common.collect.ImmutableMap;
 import com.temenos.responder.adapter.AdapterCommandDispatcher;
-import com.temenos.responder.adapter.AdapterParameters;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.context.builder.ExecutionParameterBuilder;
 import com.temenos.responder.entity.runtime.Entity;
@@ -105,7 +105,9 @@ public interface ExecutionContext extends Context {
 
     String getQueryParameter(String parameterName);
 
-    <T extends AdapterParameters> AdapterInvoker<T> adapterCommand(Class<T> parameterType);
+    AdapterInvoker useAdapter(String adapterCommand);
     AdapterCommandDispatcher getAdapterDispatcher();
+
+    List<Link> createLinks(String targetResource, String relation, ImmutableMap<String, Object> linkParameters);
 }
 

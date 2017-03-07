@@ -1,23 +1,18 @@
 package com.temenos.responder.context;
 
-public class FlowException extends RuntimeException {
-    private final int status;
-    private final String message;
-    private final String internalErrorCode;
+import com.temenos.responder.IRIS2Exception;
 
-    public FlowException(int status, String message, String internalErrorCode) {
-        this.status = status;
-        this.message = message;
+public class FlowException extends IRIS2Exception {
+     private final String internalErrorCode;
+
+    public FlowException(String code, String message, String internalErrorCode) {
+        super(message);
+        this.code = code;
         this.internalErrorCode = internalErrorCode;
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
+    public String getCode() {
+        return code;
     }
 
     public String getInternalErrorCode() {

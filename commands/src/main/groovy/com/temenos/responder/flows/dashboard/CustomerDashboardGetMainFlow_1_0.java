@@ -8,6 +8,7 @@ import com.temenos.responder.context.CommandContext;
 import com.temenos.responder.context.DefaultCommandContext;
 import com.temenos.responder.context.ExecutionContext;
 import com.temenos.responder.commands.dashboard.T24CustomerInformation;
+import com.temenos.responder.context.FlowException;
 import com.temenos.responder.entity.runtime.Entity;
 import com.temenos.responder.flows.AbstractFlow;
 import com.temenos.responder.scaffold.dashboard.ScaffoldT24AccountInformation;
@@ -26,7 +27,13 @@ public class CustomerDashboardGetMainFlow_1_0 extends AbstractFlow {
 
     @Override
     public void doExecute(ExecutionContext executionContext) {
-        // setup command context
+        Strinc customerId =
+        throw new FlowException(ENTITY_ID_INVALID, "customerId", "Iinvalid customer id"));
+
+        throw new FlowException("MyNordeaCode", new BadRequestException());
+        throw new BadRequestException();
+
+                // setup command context
         CommandContext customerCtx = new DefaultCommandContext();
         customerCtx.setAttribute("customerId", executionContext.getAttribute("customerId"));
 

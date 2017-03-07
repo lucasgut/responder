@@ -3,7 +3,6 @@ package com.temenos.responder.context;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.temenos.responder.adapter.AdapterCommandDispatcher;
-import com.temenos.responder.adapter.AdapterParameters;
 import com.temenos.responder.commands.Command;
 import com.temenos.responder.commands.injector.CommandInjector;
 import com.temenos.responder.context.builder.ContextBuilderFactory;
@@ -160,8 +159,8 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public <T extends AdapterParameters> AdapterInvoker<T> adapterCommand(Class<T> adapterType) {
-        return new AdapterInvoker<>(adapterType, this);
+    public AdapterInvoker useAdapter(String adapterCommand) {
+        return new AdapterInvoker(adapterCommand, this);
     }
 
     @Override

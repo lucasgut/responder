@@ -1,32 +1,30 @@
 package com.temenos.responder.context;
 
-import com.temenos.responder.adapter.AdapterParameters;
 import com.temenos.responder.adapter.AdapterResult;
 
 import java.util.Map;
 
-public class AdapterInvoker<T extends AdapterParameters> {
-    private Class<T> adapterType;
+public class AdapterInvoker {
+    private String adapterCommand;
     private ExecutionContext executionContext;
-    private T parameters;
-    private Map<String, Object> attributes;
+    private Map<String, Object> parameters;
 
-    protected AdapterInvoker(Class<T> adapterType, ExecutionContext executionContext) {
-        this.adapterType = adapterType;
+    protected AdapterInvoker(String adapterCommand, ExecutionContext executionContext) {
+        this.adapterCommand = adapterCommand;
         this.executionContext = executionContext;
     }
 
-    public AdapterInvoker parameters(T parameters) {
-        this.parameters = parameters;
+    public AdapterResult invoke() {
+        return executionContext.getAdapterDispatcher().invokeAdapter(adapterCommand, parameters, executionContext);
+    }
+
+    public AdapterInvoker parameter(String name, String value) {
+        this.parameters.put(name, value);
         return this;
     }
 
-    public AdapterResult invoke() {
-        return executionContext.getAdapterDispatcher().invokeAdapter(adapterType, parameters, executionContext);
-    }
-
-    public AdapterInvoker attributes(Map<String, Object> attributes) {
-        this.attributes = attributes;
+    public AdapterInvoker parameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
         return this;
     }
 }

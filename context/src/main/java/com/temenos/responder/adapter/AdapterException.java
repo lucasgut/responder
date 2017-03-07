@@ -1,6 +1,8 @@
 package com.temenos.responder.adapter;
 
-public class AdapterException extends RuntimeException {
+import com.temenos.responder.IRIS2Exception;
+
+public class AdapterException extends IRIS2Exception {
     private final String code;
     private final AdapterFailureType type;
 

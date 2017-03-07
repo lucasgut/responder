@@ -11,17 +11,16 @@ import java.util.Map;
 public class AdapterCommandDispatcher {
     private final Map<String, AdapterCommand> adapters = new HashMap<>();
 
-    public <P extends AdapterParameters, R extends AdapterResult> R invokeAdapter(Class<P> adapterType, P adapterParameters, ExecutionContext executionContext) throws AdapterException {
+    public <R extends AdapterResult> R invokeAdapter(String adapterCommand, Map<String, Object> adapterParameters, ExecutionContext executionContext) throws AdapterException {
+        final AdapterContext adapterContext = AdapterContext.builder()
+                .parameters(adapterParameters)
+                .headers(executionContext.getHeaders())
+                .queryParameters(executionContext.getQueryParameters())
+                .languagePreference(executionContext.getLanguagePreference())
+                .principal(executionContext.getSecurityContext().getPrincipal())
+                .build();
         try {
-            final AdapterContext<P> adapterContext = AdapterContext.<P>builder()
-                    .parameters(adapterParameters)
-                    .attributes(executionContext.getAttributes())
-                    .headers(executionContext.getHeaders())
-                    .queryParameters(executionContext.getQueryParameters())
-                    .languagePreference(executionContext.getLanguagePreference())
-                    .principal(executionContext.getSecurityContext().getPrincipal())
-                    .build();
-            return adapters.get(adapterType.getSimpleName()).execute(adapterContext);
+            return adapters.get(adapterCommand).execute(adapterContext);
         } catch (AdapterException e) {
             throw new FlowException(convertAdapterToFlowErrorCode(e.getFailureType()), e.getMessage(), e.getCode());
         } catch (Exception e) {

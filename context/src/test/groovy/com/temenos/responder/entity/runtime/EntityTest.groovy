@@ -110,7 +110,7 @@ class EntityTest extends Specification {
         where:
             key                | map                          | expectedType | exception                 | message                                    | cause
             'Greeting.Missing' | ["Greeting": "Hello World!"] | String.class | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching property doesn\'t exist'
-            'Greeting'         | ["Greeting": "Hello World!"] | List.class   | TypeMismatchException     | 'Expected: List but found: String'         | 'an incorrect type qualifier has been used'
+            'Greeting'         | ["Greeting": "Hello World!"] | List.class   | TypeMismatchException     | 'Expected: List but found: String'         | 'an incorrect type term has been used'
     }
 
     @Unroll

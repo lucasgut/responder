@@ -11,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    compile 'javax.servlet:javax.servlet-api:3.0.1'
+    compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
     compile 'org.codehaus.groovy:groovy-all:2.4.6'
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
     compile project(':context')

@@ -8,12 +8,11 @@ import java.util.Map;
 
 @Data
 @Builder
-public class AdapterContext<P extends AdapterParameters> {
-    private P parameters;
+public class AdapterContext {
+    private Map<String, Object> parameters;
 
     private MultivaluedMap<String, String> queryParameters;
     private Map<String, String> headers;
-    private Map<String, Object> attributes;
 
     private String languagePreference;
     private String principal;
