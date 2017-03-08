@@ -25,7 +25,7 @@ package com.temenos.responder.entity.metadata.entity.property.term;
 import com.temenos.responder.entity.metadata.entity.property.Term;
 
 /**
- * This term describes whether an entity property is mandatory
+ * This term describes whether an entity field is mandatory
  */
 public class TermMandatory implements Term {
 	public final static String TERM_NAME = "TERM_MANDATORY";
@@ -37,7 +37,7 @@ public class TermMandatory implements Term {
 	}
 	
 	/**
-	 * Returns true if the property is mandatory
+	 * Returns true if the field is mandatory
 	 * @return true if mandatory, false otherwise
 	 */
 	public boolean isMandatory() {

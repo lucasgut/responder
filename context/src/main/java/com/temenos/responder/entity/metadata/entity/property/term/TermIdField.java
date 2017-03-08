@@ -25,7 +25,7 @@ package com.temenos.responder.entity.metadata.entity.property.term;
 import com.temenos.responder.entity.metadata.entity.property.Term;
 
 /**
- * This term describes whether an entity property is an id field
+ * This term describes whether an entity field is an id field
  */
 public class TermIdField implements Term {
 	public final static String TERM_NAME = "TERM_ID_FIELD";
@@ -37,7 +37,7 @@ public class TermIdField implements Term {
 	}
 	
 	/**
-	 * Returns true if the property is an id field
+	 * Returns true if the field is an id field
 	 * @return true if id field, false otherwise
 	 */
 	public boolean isIdField() {

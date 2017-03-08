@@ -94,8 +94,8 @@ class EntityTest extends Specification {
             expectedException.message == message
         where:
             key                | map                          | exception                 | message                                    | cause
-            'Greeting'         | [] as Map                    | PropertyNotFoundException | 'Property Greeting doesn\'t exist'         | 'a matching property doesn\'t exist'
-            'Greeting.Missing' | ["Greeting": "Hello World!"] | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching property doesn\'t exist'
+            'Greeting'         | [] as Map                    | PropertyNotFoundException | 'Property Greeting doesn\'t exist'         | 'a matching field doesn\'t exist'
+            'Greeting.Missing' | ["Greeting": "Hello World!"] | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching field doesn\'t exist'
     }
 
     @Unroll
@@ -109,7 +109,7 @@ class EntityTest extends Specification {
             expectedException.message == message
         where:
             key                | map                          | expectedType | exception                 | message                                    | cause
-            'Greeting.Missing' | ["Greeting": "Hello World!"] | String.class | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching property doesn\'t exist'
+            'Greeting.Missing' | ["Greeting": "Hello World!"] | String.class | PropertyNotFoundException | 'Property Greeting.Missing doesn\'t exist' | 'a matching field doesn\'t exist'
             'Greeting'         | ["Greeting": "Hello World!"] | List.class   | TypeMismatchException     | 'Expected: List but found: String'         | 'an incorrect type term has been used'
     }
 

@@ -24,7 +24,7 @@ package com.temenos.responder.entity.metadata.entity.property;
 
 import com.temenos.responder.entity.metadata.entity.property.term.*;
 import com.temenos.responder.entity.metadata.qualifier.*;
-import com.temenos.responder.entity.metadata.t24entity.property.term.TermRestriction;
+import com.temenos.responder.entity.metadata.t24entity.field.term.TermRestriction;
 
 /**
  * Factory class responsible for creating vocabulary terms

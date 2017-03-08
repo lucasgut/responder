@@ -25,7 +25,7 @@ package com.temenos.responder.entity.metadata.entity.property.term;
 import com.temenos.responder.entity.metadata.entity.property.Term;
 
 /**
- * This term annotates an entity property as a range of values.
+ * This term annotates an entity field as a range of values.
  */
 public class TermPattern implements Term {
 	public final static String TERM_NAME = "TERM_RANGE";
